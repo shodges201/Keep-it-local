@@ -89,15 +89,33 @@ module.exports = function(app) {
     }
   });
 
-  app.post("api/event/", isAuthenticated ,function(req, res){
+  app.post("/api/event", function(req, res){
     db.Events.create({
       name: req.body.name,
       category: req.body.category,
       location: req.body.location,
+      creatorID: req.user.id,
       upVotes: 0
+    }).then(function() {
+      console.log("event created");
+      res.end();
+    }).catch(function(err) {
+      console.log(err);
+      res.json(err);
+      // res.status(422).json(err.errors[0].message);
     });
   });
 
-  
 
-};
+
+
+  app.get("/api/events", function(req, res){
+    db.Events.findAll({
+      where: {creatorID: "manager"}}).then(function(events){
+       console.table(events)
+      res.json(events)
+      })
+
+    })
+  }
+

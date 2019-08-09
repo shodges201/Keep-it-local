@@ -2,6 +2,31 @@ body {
     background-color: rgb(105, 151, 128);
   }
 
+  .speech-bubble {
+    position: relative;
+    background: #bdbdbd;
+    border-radius: .4em;
+    margin-top: 45%;
+    margin-left: 250px;
+    width: 200px;
+    color:black;
+  }
+  
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-top-color: #bdbdbd;
+    border-bottom: 0;
+    border-left: 0;
+    margin-left: -10px;
+    margin-bottom: -20px;
+  }
+
   #show {
     float: left;
     margin: 20px 0px 30px 40px;

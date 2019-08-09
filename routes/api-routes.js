@@ -56,6 +56,8 @@ module.exports = function(app) {
     }
   });
 
+  //create new event with a name, category, and location passed in
+  //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function(req, res){
     db.Events.create({
       name: req.body.name,

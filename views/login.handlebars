@@ -17,7 +17,7 @@
             <input type="text" name="username" placeholder="username">
             <input type="password" name="password" placeholder="password">
             <button type="submit" id="login-btn">login</button>
-            
+
         </form>
     </div>
 
@@ -32,13 +32,38 @@
 
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $("#login-form").on("submit",function(event){
-            event.preventDefault()
-            let newUser = {
-                username: $("#login")
+    $(document).ready(function () {
+        let usernameInput = $("#login-form [name=username]");
+        let passwordInput = $("#login-form [name=password]");
+        console.log(usernameInput.val());
+        $("#login-form").on("submit", function (event) {
+            event.preventDefault();
+            let userData = {
+                username: usernameInput.val().trim(),
+                password: passwordInput.val().trim()
             }
-        })
-    })
+            console.log(usernameInput.name);
+
+            loginUser(userData.username, userData.password);
+
+            usernameInput.val("");
+            passwordInput.val("");
+
+            });
+
+            // loginUser does a post to our "api/login" route and if successful, redirects us the the members page
+            function loginUser(username, password) {
+                $.post("/api/login", {
+                    username: username,
+                    password: password
+                }).then(function (data) {
+                    //window.location.replace(data);
+                    // If there's an error, log the error
+                    window.location = "http://localhost:8080/events";
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+    });
 
 </script>

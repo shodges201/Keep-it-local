@@ -17,10 +17,9 @@
             <input type="text" name="username" placeholder="username">
             <input type="password" name="password" placeholder="password">
             <button type="submit" id="signup-btn">sign up</button>
-            
         </form>
+        <button id="login-btn">login</button>
     </div>
-
 </div>
 
 
@@ -35,7 +34,7 @@
 
     $(document).ready(function () {
         $("#signup-form").on("submit", function (event) {
-            event.preventDefault()
+            event.preventDefault();
             let newUser = {
                 username: $("#signup-form [name=username]").val().trim(),
                 password: $("#signup-form [name=password]").val().trim()
@@ -45,7 +44,13 @@
                 data: newUser
             }).then(function(result){
                 console.log("new user added")
+                window.location = "http://localhost:8080/events"
             })
+        });
+
+        $("#login-btn").on("click", function(event){
+            event.preventDefault();
+            window.location = "http://localhost:8080/login";
         })
     })
     

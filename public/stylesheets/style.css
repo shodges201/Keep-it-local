@@ -12,6 +12,11 @@ body {
   background-color: rgb(105, 151, 128);
 }
 
+img {
+  height: 400px;
+  width: 600px;
+}
+
 #bubble {
   float: left;
 }

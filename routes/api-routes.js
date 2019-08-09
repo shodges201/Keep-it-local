@@ -56,6 +56,7 @@ module.exports = function(app) {
     }
   });
 
+  // Route for posting an event into the database.
   app.post("/api/event", function(req, res){
     db.Events.create({
       name: req.body.name,
@@ -75,14 +76,15 @@ module.exports = function(app) {
 
 
 
-
+// Route for getting data from events by specific users.
   app.get("/api/events", function(req, res){
     db.Events.findAll({
-      where: {creatorID: "manager"}}).then(function(events){
+      where: {creatorID: req.user.id}}).then(function(events){
        console.table(events)
       res.json(events)
       })
 
     })
   }
+
 

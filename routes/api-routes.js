@@ -1,6 +1,7 @@
 // Requiring our models and passport as we've configured it
 var db = require("../models");
 var passport = require("../config/passport");
+var isAuthenticated = require("../config/middleware/isAuthenticated");
 
 module.exports = function(app) {
   // Using the passport.authenticate middleware with our local strategy.
@@ -55,12 +56,19 @@ module.exports = function(app) {
     }
   });
 
-  app.post("api/event", isAuthenticated ,function(req, res){
+  app.post("/api/event", function(req, res){
     db.Events.create({
       name: req.body.name,
       category: req.body.category,
       location: req.body.location,
       upVotes: 0
+    }).then(function() {
+      console.log("event created");
+      res.end();
+    }).catch(function(err) {
+      console.log(err);
+      res.json(err);
+      // res.status(422).json(err.errors[0].message);
     });
   });
 

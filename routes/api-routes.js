@@ -12,18 +12,16 @@ module.exports = function(app) {
   });
   
   app.get("/events", function (req, res) {
-    let all
+    console.log("events");
+    let all;
     db.Events.findAll().then(function (dbEvents) {
-      all = dbEvents;
-    }).then(
-      function (dbEvents) {
         all = dbEvents;
-    })
-    
-    res.render("index", {
-      all_events: all
-    })
-  });
+        console.log(all);
+        console.table(all);
+        //res.render("index", {
+          //all_events: all
+    });
+    });
 
   
   // Using the passport.authenticate middleware with our local strategy.

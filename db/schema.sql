@@ -1,4 +1,5 @@
 CREATE DATABASE events_db;
+
 USE events_db;
 
 -- CREATE TABLE events

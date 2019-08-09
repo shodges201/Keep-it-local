@@ -4,9 +4,43 @@ var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 
 module.exports = function(app) {
+  
+  // If the user already has an account send them to the members page
+  app.get("/", function (req, res) {
+    if (req.user) {
+      res.redirect("/events");
+    }
+  });
+  
+  // app.get("/events", isAuthenticated, function (req, res) {
+  //   let rsvp, user, all;
+  //   db.Events.findAll().then(function (dbEvents) {
+  //     all = dbEvents;
+  //   }).then(
+  //     function (dbEvents) {
+  //       all = dbEvents;
+  //   })
+
+  //   db.Events.findAll({
+  //     where: {
+  //       creatorId: 'lightningbolt117'
+  //     }
+  //   }).then(
+  //     function (dbEvents) {
+  //       user = dbEvents;
+  //   })
+
+  //   res.render("index", {
+  //     user_events: user,
+  //     all_events: all
+  //   })
+  // });
+
+  
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
   // Otherwise the user will be sent an error
+
   app.post("/api/login", passport.authenticate("local"), function(req, res) {
     console.log('tried to login');
     // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
@@ -56,14 +90,18 @@ module.exports = function(app) {
     }
   });
 
+<<<<<<< HEAD
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function(req, res){
+=======
+  app.post("/api/event", isAuthenticated, function (req, res) {
+>>>>>>> edc5b8eda391c57949c3238bdb7a99af1d546c63
     db.Events.create({
       name: req.body.name,
       category: req.body.category,
       location: req.body.location,
-      creatorID: req.user.id,
+      creatorID: req.body.id,
       upVotes: 0
     }).then(function() {
       console.log("event created");
@@ -78,11 +116,12 @@ module.exports = function(app) {
 
 
   app.get("/api/events", function(req, res){
-    db.Events.findAll({
-      where: {creatorID: "manager"}}).then(function(events){
+    db.Events.findAll({}).then(
+      function(events){
        console.table(events)
       res.json(events)
-      })
+      // res.render("index", {all_events:events})
+    })
 
     })
   }

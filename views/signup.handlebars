@@ -11,12 +11,12 @@
         <h1 style="color: white;">Find out about<br> events near you.</h1>
     </div>
     <br><br><br><br><br><br><br><br><br><br>
-    <h4>but first log in...</h4>
-    <div class="login">
-        <form id="login-form">
+    <h4>but first sign up...</h4>
+    <div class="signup">
+        <form id="signup-form">
             <input type="text" name="username" placeholder="username">
             <input type="password" name="password" placeholder="password">
-            <button type="submit" id="login-btn">login</button>
+            <button type="submit" id="signup-btn">sign up</button>
             
         </form>
     </div>
@@ -33,11 +33,13 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#login-form").on("submit",function(event){
-            event.preventDefault()
-            let newUser = {
-                username: $("#login")
-            }
+        $(document).ready(function () {
+            $("#login-form").on("submit", function (event) {
+                event.preventDefault()
+                let newUser = {
+                    username: $("#login")
+                }
+            })
         })
     })
 

@@ -73,4 +73,16 @@ module.exports = function(app) {
     });
   });
 
-};
+
+
+
+  app.get("/api/events", function(req, res){
+    db.Events.findAll({
+      where: {creatorID: "manager"}}).then(function(events){
+       console.table(events)
+      res.json(events)
+      })
+
+    })
+  }
+

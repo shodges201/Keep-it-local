@@ -32,15 +32,22 @@
 
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $(document).ready(function () {
-            $("#login-form").on("submit", function (event) {
-                event.preventDefault()
-                let newUser = {
-                    username: $("#login")
-                }
+
+    $(document).ready(function () {
+        $("#signup-form").on("submit", function (event) {
+            event.preventDefault()
+            let newUser = {
+                username: $("#signup-form [name=username]").val().trim(),
+                password: $("#signup-form [name=password]").val().trim()
+            }
+            $.ajax("/api/signup", {
+                method: "POST",
+                data: newUser
+            }).then(function(result){
+                console.log("new user added")
             })
         })
     })
+    
 
 </script>

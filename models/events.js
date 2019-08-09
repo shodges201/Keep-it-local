@@ -18,6 +18,10 @@ module.exports = function(sequelize, DataTypes) {
       upVotes: {
         type: DataTypes.INTEGER,
         allowNull: false
+      }, 
+      creatorID:{
+        type: DataTypes.STRING,
+        allowNull: false
       }
     });
     return Events;

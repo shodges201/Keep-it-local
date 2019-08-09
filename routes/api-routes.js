@@ -61,6 +61,7 @@ module.exports = function(app) {
       name: req.body.name,
       category: req.body.category,
       location: req.body.location,
+      creatorID: req.user.id,
       upVotes: 0
     }).then(function() {
       console.log("event created");

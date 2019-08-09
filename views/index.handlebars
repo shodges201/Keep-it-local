@@ -1,0 +1,61 @@
+<div id="bubble">
+    <hgroup class="speech-bubble" style="text-align:center;">
+        <h1>WHAT'S<br>HAPPENIN'</h1>
+    </hgroup>
+</div>
+
+
+<div id="dark-panel">
+    <div class="listings">
+        {{!-- <div class="list-group rsvp-listings">
+            <h3>
+                RSVP'D EVENTS
+            </h3>
+            <ul>
+                {{#each rsvp_events}}
+                <li>
+                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
+                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
+                </li>
+                {{/each}}
+            </ul>
+        </div> --}}
+
+
+        <div class="list-group personal-listings">
+            <h3>
+                YOUR EVENTS
+            </h3>
+            <ul>
+                {{#each user_events}}
+                <li>
+                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
+                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="list-group all-listings">
+            <h3>
+                ALL EVENTS
+            </h3>
+            <ul>
+                {{#each all_events}}
+                <li>
+                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
+                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<footer class="footer">
+    <p>KEEP IT LOCAL ©</p>
+</footer>

@@ -1,0 +1,29 @@
+body {
+    background-color: rgb(105, 151, 128);
+  }
+
+  #login {
+    /* float: right;
+    margin: 20px 40px 30px; */
+    /* position: absolute;
+    left: 50%; */
+    height: 94vh;
+    width: 45%;
+    background-color: rgba(96, 96, 96, 0.705);
+    border-radius: 25px;
+  }
+
+  #quote {
+    text-align: center;
+  }
+
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    background-color: rgb(202, 204, 206);
+    color: black;
+    text-align: center;
+  }
+

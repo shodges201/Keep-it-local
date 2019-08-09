@@ -46,6 +46,18 @@ img {
   margin-bottom: -20px;
 }
 
+#login {
+  float: right;
+  margin: 20px 40px 30px;
+  /* position: absolute;
+  left: 50%; */
+  height: 94vh;
+  width: 45%;
+  background-color: rgba(96, 96, 96, 0.705);
+  color: white;
+  border-radius: 25px;
+}
+
 #dark-panel {
   float: right;
   margin: 20px 40px 30px;
@@ -54,6 +66,7 @@ img {
   background-color: rgba(96, 96, 96, 0.705);
   border-radius: 25px;
   padding: 40px;
+  position: relative;
   
 }
 
@@ -112,4 +125,25 @@ li {
 
 .list-group {
   margin-bottom: 30px;
+}
+
+
+input {
+  border: none;
+  background: rgb(2,2,2,0.4);
+  border-bottom: lightgray 1px solid;
+  border-radius:5px;
+  color: white;
+  margin: 5px;
+  font-size:20px;
+  width: 80%;
+}
+
+#login-btn {
+  font-size:20px;
+  border:none;
+  background: none;
+  color: rgba(79, 188, 255, 0.692);
+  position: absolute;
+  right: 165px;
 }

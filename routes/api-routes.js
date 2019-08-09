@@ -1,8 +1,42 @@
 // Requiring our models and passport as we've configured it
 var db = require("../models");
 var passport = require("../config/passport");
+var isAuthenticated = require("../config/middleware/isAuthenticated");
 
 module.exports = function(app) {
+  
+  // If the user already has an account send them to the members page
+  app.get("/", function (req, res) {
+    if (req.user) {
+      res.redirect("/events");
+    }
+  });
+  
+  app.get("/events", isAuthenticated, function (req, res) {
+    let rsvp, user, all;
+    db.Events.findAll().then(function (dbEvents) {
+      all = dbEvents;
+    }).then(
+      function (dbEvents) {
+        all = dbEvents;
+    })
+
+    db.Events.findAll({
+      where: {
+        creatorId: 'lightningbolt117'
+      }
+    }).then(
+      function (dbEvents) {
+        user = dbEvents;
+    })
+
+    res.render("index", {
+      user_events: user,
+      all_events: all
+    })
+  });
+
+  
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
   // Otherwise the user will be sent an error
@@ -55,7 +89,7 @@ module.exports = function(app) {
     }
   });
 
-  app.post("api/event", isAuthenticated ,function(req, res){
+  app.post("api/event/", isAuthenticated ,function(req, res){
     db.Events.create({
       name: req.body.name,
       category: req.body.category,
@@ -63,5 +97,7 @@ module.exports = function(app) {
       upVotes: 0
     });
   });
+
+  
 
 };

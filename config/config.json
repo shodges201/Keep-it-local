@@ -2,33 +2,21 @@
   "development": {
     "username": "root",
     "password": "",
-<<<<<<< HEAD
-    "database": "passport_demo",
-=======
     "database": "events_db",
->>>>>>> e4861a0c8dd5826b3683f6453329d0b260f441e5
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
     "password": "",
-<<<<<<< HEAD
-    "database": "database_test",
-=======
     "database": "events_db",
->>>>>>> e4861a0c8dd5826b3683f6453329d0b260f441e5
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": "",
-<<<<<<< HEAD
-    "database": "database_production",
-=======
     "database": "events_db",
->>>>>>> e4861a0c8dd5826b3683f6453329d0b260f441e5
     "host": "127.0.0.1",
     "dialect": "mysql"
   }

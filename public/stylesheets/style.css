@@ -10,6 +10,8 @@ form.login {
 
 body {
   background-color: rgb(105, 151, 128);
+  font-family: Helvetica, sans-serif;
+  color:white;
 }
 
 #bubble {
@@ -110,6 +112,9 @@ li {
   margin-bottom: 30px;
 }
 
+form {
+  position: relative;
+}
 
 input {
   border: none;
@@ -122,11 +127,17 @@ input {
   width: 80%;
 }
 
-#login-btn {
+#login-btn,
+#signup-btn {
   font-size:20px;
   border:none;
   background: none;
   color: rgba(79, 188, 255, 0.692);
   position: absolute;
-  right: 165px;
+  right: 135px;
+  bottom: -30px;
+}
+
+h4{
+  margin-left:5px;
 }

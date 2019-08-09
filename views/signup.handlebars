@@ -1,0 +1,58 @@
+<div id="bubble">
+    <hgroup class="speech-bubble" style="text-align:center;">
+        <h1>WHAT'S<br>HAPPENIN'</h1>
+    </hgroup>
+</div>
+
+
+<div id="dark-panel">
+    <br><br><br><br><br><br><br><br><br><br>
+    <div id="quote">
+        <h1 style="color: white;">Find out about<br> events near you.</h1>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br>
+    <h4>but first sign up...</h4>
+    <div class="signup">
+        <form id="signup-form">
+            <input type="text" name="username" placeholder="username">
+            <input type="password" name="password" placeholder="password">
+            <button type="submit" id="signup-btn">sign up</button>
+        </form>
+        <button id="login-btn">login</button>
+    </div>
+</div>
+
+
+
+
+<footer class="footer">
+    <p>KEEP IT LOCAL ©</p>
+</footer>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#signup-form").on("submit", function (event) {
+            event.preventDefault();
+            let newUser = {
+                username: $("#signup-form [name=username]").val().trim(),
+                password: $("#signup-form [name=password]").val().trim()
+            }
+            $.ajax("/api/signup", {
+                method: "POST",
+                data: newUser
+            }).then(function(result){
+                console.log("new user added")
+                window.location = "http://localhost:8080/events"
+            })
+        });
+
+        $("#login-btn").on("click", function(event){
+            event.preventDefault();
+            window.location = "http://localhost:8080/login";
+        })
+    })
+    
+
+</script>

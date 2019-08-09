@@ -3,45 +3,89 @@ var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 
-module.exports = function(app) {
+module.exports = function (app) {
+
+  // If the user already has an account send them to the members page
+  app.get("/", function (req, res) {
+    console.log("signup");
+    res.render("signup")
+  });
+
+  app.get("/events", function (req, res) {
+    console.log(req.user);
+    if (req.user) {
+      let all = [];
+      let user = [];
+      db.Events.findAll({
+        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+      })
+        .then(function (dbEvents) {
+          dbEvents.forEach(function (element) {
+            all.push(element.dataValues);
+          });
+          // all.push(dbEvents[0].dataValues);
+          // console.log(all);
+        }).then(function () {
+          db.Events.findAll({ where: { creatorID: req.user.userName } })
+          .then(function (dbUserEvents) {
+            // console.log("---------------user events----------------");
+            // console.log(dbUserEvents);
+            dbUserEvents.forEach(function (item) {
+              user.push(item.dataValues);
+            });
+            res.render('index', { all_events: all, user_events: user });
+          });
+        });
+    }
+    else{
+      res.redirect('/');
+    }
+  });
+
+
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
   // Otherwise the user will be sent an error
-  app.post("/api/login", passport.authenticate("local"), function(req, res) {
+
+  app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
     // So we're sending the user back the route to the members page because the redirect will happen on the front end
     // They won't get this or even be able to access this page if they aren't authed
-    res.json("/members");
+    res.end();
   });
 
   // Route for signing up a user. The user's password is automatically hashed and stored securely thanks to
   // how we configured our Sequelize User Model. If the user is created successfully, proceed to log the user in,
   // otherwise send back an error
-  app.post("/api/signup", function(req, res) {
+  app.post("/api/signup", function (req, res) {
     console.log(req.body);
     db.User.create({
-      userName: req.body.email,
+      userName: req.body.username,
       password: req.body.password
-    }).then(function() {
+    }).then(function () {
       res.redirect(307, "/api/login");
-    }).catch(function(err) {
+
+    }).catch(function (err) {
       console.log(err);
       res.json(err);
       // res.status(422).json(err.errors[0].message);
     });
   });
 
+  app.get("/login", function(req, res){
+    res.render("login");
+  });
 
 
   // Route for logging user out
-  app.get("/logout", function(req, res) {
+  app.get("/logout", function (req, res) {
     req.logout();
     res.redirect("/");
   });
 
   // Route for getting some data about our user to be used client side
-  app.get("/api/user_data", function(req, res) {
+  app.get("/api/user_data", function (req, res) {
     console.log(req.user);
     if (!req.user) {
       // The user is not logged in, send back an empty object
@@ -56,33 +100,36 @@ module.exports = function(app) {
     }
   });
 
-  app.post("/api/event", function(req, res){
+
+  //create new event with a name, category, and location passed in
+  //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
+  app.post("/api/event", function (req, res) {
     db.Events.create({
       name: req.body.name,
       category: req.body.category,
       location: req.body.location,
-      creatorID: req.user.id,
+      creatorID: req.body.id,
       upVotes: 0
-    }).then(function() {
+    }).then(function () {
       console.log("event created");
       res.end();
-    }).catch(function(err) {
+    }).catch(function (err) {
       console.log(err);
       res.json(err);
-      // res.status(422).json(err.errors[0].message);
     });
   });
 
 
 
 
-  app.get("/api/events", function(req, res){
-    db.Events.findAll({
-      where: {creatorID: "manager"}}).then(function(events){
-       console.table(events)
-      res.json(events)
+  app.get("/api/events", function (req, res) {
+    db.Events.findAll({}).then(
+      function (events) {
+        console.table(events)
+        res.json(events)
+        // res.render("index", {all_events:events})
       })
 
-    })
-  }
+  })
+}
 

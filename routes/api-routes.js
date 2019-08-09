@@ -13,29 +13,19 @@ module.exports = function(app) {
     res.render("signup")
   });
   
-  // app.get("/events", isAuthenticated, function (req, res) {
-  //   let rsvp, user, all;
-  //   db.Events.findAll().then(function (dbEvents) {
-  //     all = dbEvents;
-  //   }).then(
-  //     function (dbEvents) {
-  //       all = dbEvents;
-  //   })
-
-  //   db.Events.findAll({
-  //     where: {
-  //       creatorId: 'lightningbolt117'
-  //     }
-  //   }).then(
-  //     function (dbEvents) {
-  //       user = dbEvents;
-  //   })
-
-  //   res.render("index", {
-  //     user_events: user,
-  //     all_events: all
-  //   })
-  // });
+  app.get("/events", function (req, res) {
+    let all
+    db.Events.findAll().then(function (dbEvents) {
+      all = dbEvents;
+    }).then(
+      function (dbEvents) {
+        all = dbEvents;
+    })
+    
+    res.render("index", {
+      all_events: all
+    })
+  });
 
   
   // Using the passport.authenticate middleware with our local strategy.
@@ -47,7 +37,7 @@ module.exports = function(app) {
     // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
     // So we're sending the user back the route to the members page because the redirect will happen on the front end
     // They won't get this or even be able to access this page if they aren't authed
-    res.json("/events");
+    res.redirect("/events");
   });
 
   // Route for signing up a user. The user's password is automatically hashed and stored securely thanks to

@@ -1,4 +1,94 @@
-form.signup,
+/* form.signup,
 form.login {
   margin-top: 50px;
+} */
+
+/* .container-full {
+  margin: 0 auto;
+  width: 100%;
+} */
+
+body {
+  background-color: #4BFFA5;
 }
+
+#bubble {
+  float: left;
+}
+
+.speech-bubble {
+  position: relative;
+  background: #ffffff;
+  border-radius: .4em;
+  margin-top: 45%;
+  margin-left: 250px;
+  width: 200px;
+}
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-top-color: #ffffff;
+  border-bottom: 0;
+  border-left: 0;
+  margin-left: -10px;
+  margin-bottom: -20px;
+}
+
+#login {
+  float: right;
+  margin: 20px 40px 30px;
+  height: 94vh;
+  width: 45%;
+  background-color: #040F3D;
+  border-radius: 25px;
+}
+
+#Username {
+  float: left;
+  padding-top: 20px;
+  /* padding-left: 80px; */
+  margin-left: 150px;
+  border-radius: 25px;
+
+
+}
+
+#password {
+  float: right;
+  padding-top: 20px;
+  /* padding-right: 100px; */
+  margin-right: 150px;
+  border-radius: 25px;
+}
+
+#btn-login {
+  margin-top: 10px;
+  width: 200px;
+}
+
+#btn-signup {
+  margin-top: 10px;
+  width: 200px;
+}
+
+#quote {
+  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  background-color: rgb(202, 204, 206);
+  color: black;
+  text-align: center;
+}
+
+;

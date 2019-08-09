@@ -1,7 +1,11 @@
 {
   "development": {
     "username": "root",
+<<<<<<< HEAD
     "password": "",
+=======
+    "password": "DJ10ssless",
+>>>>>>> edc5b8eda391c57949c3238bdb7a99af1d546c63
     "database": "events_db",
     "host": "127.0.0.1",
     "dialect": "mysql"

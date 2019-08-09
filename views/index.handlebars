@@ -22,7 +22,7 @@
         </div> --}}
 
 
-        <div class="list-group personal-listings">
+        {{!-- <div class="list-group personal-listings">
             <h3>
                 YOUR EVENTS
             </h3>
@@ -34,7 +34,7 @@
                 </li>
                 {{/each}}
             </ul>
-        </div>
+        </div> --}}
 
         <div class="list-group all-listings">
             <h3>
@@ -44,7 +44,7 @@
                 {{#each all_events}}
                 <li>
                     <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
+                            class="listing-item">{{this.upvotes}}</span> <span class="listing-item">{{this.creatorID}}</span></h4>
                 </li>
                 {{/each}}
             </ul>

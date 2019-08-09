@@ -14,17 +14,16 @@ module.exports = function(app) {
   });
   
   app.get("/events", function (req, res) {
-    let all
-    db.Events.findAll().then(function (dbEvents) {
-      all = dbEvents;
-    }).then(
-      function (dbEvents) {
-        all = dbEvents;
+    db.Events.findAll({
+      attributes: ['name', 'category', 'location','upVotes','creatorID']
     })
-    
-    res.render("index", {
-      all_events: all
+    .then(function (dbEvents) {
+      let all=[];
+      all.push(dbEvents[0].dataValues)
+      console.log(all)
+      res.render("index",{all_events:all})
     })
+
   });
 
   
@@ -37,7 +36,7 @@ module.exports = function(app) {
     // Since we're doing a POST with javascript, we can't actually redirect that post into a GET request
     // So we're sending the user back the route to the members page because the redirect will happen on the front end
     // They won't get this or even be able to access this page if they aren't authed
-    res.redirect("/events");
+    res.end();
   });
 
   // Route for signing up a user. The user's password is automatically hashed and stored securely thanks to

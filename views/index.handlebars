@@ -22,43 +22,68 @@
         </div> --}}
 
 
-        {{!-- <div class="list-group personal-listings">
+        
+
+        <div class="list-group user-listings">
             <h3>
                 YOUR EVENTS
             </h3>
-            <ul>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+                
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
                 {{#each user_events}}
-                <li>
-                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
-                </li>
+                <tr class="listing-row">
+                
+                    <td><span class="listing-item listing-item-name">{{this.name}}</span></td> 
+                    <td><span class="listing-item listing-item-local">{{this.location}}</span></td> 
+                    <td><span class="listing-item listing-item-cat">{{this.category}}</span></td> 
+                    <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td> 
+                    <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                
+                </tr>
                 {{/each}}
-            </ul>
-        </div> --}}
-
+                </table>
+                <br><br><br><br>
+            </div>
+        </div>
+        <br>
         <div class="list-group all-listings">
             <h3>
                 ALL EVENTS
             </h3>
-            <ul>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
                 {{#each all_events}}
-                <li>
-                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.upVotes}}</span> <span class="listing-item">{{this.creatorID}}</span></h4>
-                </li>
+                <tr class="listing-row">
+                
+                    <td><span class="listing-item listing-item-name">{{this.name}}</span></td> 
+                    <td><span class="listing-item listing-item-local">{{this.location}}</span></td> 
+                    <td><span class="listing-item listing-item-cat">{{this.category}}</span></td> 
+                    <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td> 
+                    <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                
+                </tr>
                 {{/each}}
-            </ul>
-             <h3>
-                YOUR EVENTS
-            </h3>
-            <ul>
-                {{#each user_events}}
-                <li>
-                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.upVotes}}</span> <span class="listing-item">{{this.creatorID}}</span></h4>
-                </li>
-                {{/each}}
-            </ul>
+                </table>
+                <br><br><br><br>
+            </div>
         </div>
     </div>
 

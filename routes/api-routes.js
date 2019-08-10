@@ -2,35 +2,45 @@
 var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
-var currentUser = "";
+var Messages = require('../models/messages');
 
-module.exports = function(app) {
-  
+module.exports = function (app) {
+
+  // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
-    if (req.user) {
-      res.redirect("/events");
-    }
+    console.log("signup");
     res.render("signup")
   });
-  
-  
-  app.get("/events", function (req, res) {
-    db.Events.findAll({
-      attributes: ['name', 'category', 'location','upVotes','creatorID']
-    })
-    .then(function (all) {
-      console.log(all)
-      db.Events.findAll({
-        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
-        where: {
-          creatorID: currentUser
-        }
-      }).then(function(user){
-        console.log(user)
-        res.render("index",{all_events:all,user_events:user})
-      })
-    })
 
+  app.get("/events", function (req, res) {
+    console.log(req.user);
+    if (req.user) {
+      let all = [];
+      let user = [];
+      db.Events.findAll({
+        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+      })
+        .then(function (dbEvents) {
+          dbEvents.forEach(function (element) {
+            all.push(element.dataValues);
+          });
+          // all.push(dbEvents[0].dataValues);
+          // console.log(all);
+        }).then(function () {
+          db.Events.findAll({ where: { creatorID: req.user.userName } })
+          .then(function (dbUserEvents) {
+            // console.log("---------------user events----------------");
+            // console.log(dbUserEvents);
+            dbUserEvents.forEach(function (item) {
+              user.push(item.dataValues);
+            });
+            res.render('index', { all_events: all, user_events: user });
+          });
+        });
+    }
+    else{
+      res.redirect('/');
+    }
   });
 
   app.get("/login", function(req,res){
@@ -42,7 +52,7 @@ module.exports = function(app) {
   })
 
 
-  app.post("/api/login", passport.authenticate("local"), function(req, res) {
+  app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
   });
@@ -54,7 +64,7 @@ module.exports = function(app) {
     db.User.create({
       userName: req.body.username,
       password: req.body.password
-    }).then(function() {
+    }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {
       console.log(err);
@@ -62,6 +72,9 @@ module.exports = function(app) {
     });
   });
 
+  app.get("/login", function(req, res){
+    res.render("login");
+  });
 
   app.get("/logout", function(req, res) {
     req.logout();
@@ -84,7 +97,9 @@ module.exports = function(app) {
     }
   });
 
-  // create new event
+
+  //create new event with a name, category, and location passed in
+  //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
     db.Events.create({
       name: req.body.name,
@@ -92,27 +107,35 @@ module.exports = function(app) {
       location: req.body.location,
       creatorID: req.body.id,
       upVotes: 0
-    }).then(function() {
+    }).then(function () {
       console.log("event created");
       res.end();
-    }).catch(function(err) {
+    }).then(function(){
+      var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
+      db[model.name] = model;
+      if(db[model.name].associate){
+        db[model.name].associate(db);
+      }
+      console.log(db.Messages_m);
+      console.log(db.Events);
+      db['Messages_' + req.body.name].sync();
+    }).catch(function (err) {
       console.log(err);
       res.json(err);
-      // res.status(422).json(err.errors[0].message);
-    });
+    })
   });
 
 
 
 
-  app.get("/api/events", function(req, res){
+  app.get("/api/events", function (req, res) {
     db.Events.findAll({}).then(
-      function(events){
-       console.table(events)
-      res.json(events)
-      // res.render("index", {all_events:events})
-    })
+      function (events) {
+        console.table(events)
+        res.json(events)
+        // res.render("index", {all_events:events})
+      })
 
-    })
-  }
+  })
+}
 

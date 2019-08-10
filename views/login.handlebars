@@ -11,13 +11,15 @@
         <h1 style="color: white;">Find out about<br> events near you.</h1>
     </div>
     <br><br><br><br><br><br><br><br><br><br>
-    <h4>but first log in...</h4>
+    
     <div class="login">
         <form id="login-form">
+            <label>welcome back,</label><br>
             <input type="text" name="username" placeholder="username">
             <input type="password" name="password" placeholder="password">
             <button type="submit" id="login-btn">login</button>
             
+        <span class="switch-link">not a member? <a href="/signup">sign up</a></span>
         </form>
     </div>
 
@@ -32,13 +34,21 @@
 
 
 <script type="text/javascript">
-    $(document).ready(function(){
-        $("#login-form").on("submit",function(event){
-            event.preventDefault()
-            let newUser = {
-                username: $("#login")
-            }
+    $(document).ready(function () {
+            $("#login-form").on("submit", function (event) {
+                event.preventDefault()
+                let newUser = {
+                    username: $("#login-form [name=username]").val().trim(),
+                    password: $("#login-form [name=password]").val().trim()
+                }
+                $.ajax("/api/login", {
+                    method: "POST",
+                    data: newUser
+                }).then(function (result) {
+                    console.log("user logged in")
+                    window.location = "http://localhost:8080/events"
+                })
+            })
         })
-    })
 
 </script>

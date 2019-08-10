@@ -3,6 +3,9 @@ var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 
+let r = Math.random().toString(36).substring(7);
+
+
 module.exports = function(app) {
   
   // If the user already has an account send them to the members page
@@ -112,6 +115,21 @@ module.exports = function(app) {
     })
 
     })
-  }
+  
+
+  app.post("/api/referral", function(req,res){
+    db.Referralcodes.create({
+      code: r
+    }).then(function() {
+      console.log("event created");
+      res.end();
+    }).catch(function(err) {
+      console.log(err);
+      res.json(err);
+      // res.status(422).json(err.errors[0].message);
+    });
+  })
+
+}
 
 

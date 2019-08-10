@@ -109,7 +109,6 @@ module.exports = function (app) {
       upVotes: 0
     }).then(function () {
       console.log("event created");
-      res.end();
     }).then(function(){
       var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
       db[model.name] = model;
@@ -119,6 +118,7 @@ module.exports = function (app) {
       console.log(db.Messages_m);
       console.log(db.Events);
       db['Messages_' + req.body.name].sync();
+      res.end();
     }).catch(function (err) {
       console.log(err);
       res.json(err);

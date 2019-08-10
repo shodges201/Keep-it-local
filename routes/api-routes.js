@@ -6,6 +6,7 @@ var Messages = require('../models/messages');
 
 module.exports = function (app) {
 
+  console.log(db);
   // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
     console.log("signup");
@@ -111,13 +112,13 @@ module.exports = function (app) {
       console.log("event created");
     }).then(function(){
       var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
+      model.sync();
       db[model.name] = model;
       if(db[model.name].associate){
         db[model.name].associate(db);
       }
-      console.log(db.Messages_m);
-      console.log(db.Events);
-      db['Messages_' + req.body.name].sync();
+      //db['Messages_' + req.body.name].sync();
+      console.log(db);
       res.end();
     }).catch(function (err) {
       console.log(err);
@@ -125,6 +126,15 @@ module.exports = function (app) {
     })
   });
 
+  app.post("/api/message", function(req, res){
+    console.log(db);
+    db['Messages_gears'].create({
+      content: req.body.content,
+      creatorID: req.body.id,
+      upVotes: 0
+    })
+    res.end();
+  })
 
 
 

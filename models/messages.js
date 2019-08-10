@@ -12,10 +12,6 @@
         type: DataTypes.STRING,
         allowNull: false
       },
-      timeStamp: {
-        type: DataTypes.DATE,
-        allowNull: false
-      },
       upVotes: {
         type: DataTypes.INTEGER,
         allowNull: true,

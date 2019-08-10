@@ -2,6 +2,7 @@
 var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
+var Messages = require('../models/messages');
 
 module.exports = function (app) {
 
@@ -113,10 +114,19 @@ module.exports = function (app) {
     }).then(function () {
       console.log("event created");
       res.end();
+    }).then(function(){
+      var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
+      db[model.name] = model;
+      if(db[model.name].associate){
+        db[model.name].associate(db);
+      }
+      console.log(db.Messages_m);
+      console.log(db.Events);
+      db['Messages_' + req.body.name].sync();
     }).catch(function (err) {
       console.log(err);
       res.json(err);
-    });
+    })
   });
 
 

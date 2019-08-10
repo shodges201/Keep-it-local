@@ -2,6 +2,11 @@ body {
   background-color: rgb(105, 151, 128);
   font-family: Helvetica, sans-serif;
   color:white;
+  
+  font-family: 'Roboto Condensed', monospace;
+  /* font-family: 'Muli', sans-serif; */
+  /* font-family: 'Arimo', sans-serif; */
+  /* font-family: 'Work Sans', sans-serif; */
 }
 
 #bubble {
@@ -16,6 +21,7 @@ body {
   margin-left: 250px;
   width: 200px;
   color:black;
+  font-family: 'Oswald', sans-serif;
 }
 
 .speech-bubble:after {
@@ -42,7 +48,7 @@ body {
   border-radius: 25px;
   padding: 40px;
   position: relative;
-  
+  font-size:19px;
 }
 
 #Username {
@@ -106,19 +112,23 @@ li {
 }
 
 .listing-item-name {
-  margin-right:50px;
+  margin-right:40px;
 }
 .listing-item-local {
-  margin-right:70px;
+  margin-right:65px;
 }
 .listing-item-cat {
-  margin-right:70px;
+  margin-right:50px;
 }
 .listing-item-votes {
   margin-right:70px;
 }
 .listing-item-id {
   margin-right:10px;
+}
+
+.listing-row:hover {
+  color:rgb(149, 225, 250);
 }
 
 
@@ -143,6 +153,7 @@ input {
   margin: 5px;
   font-size:20px;
   width: 80%;
+  font-family: 'Roboto Condensed', monospace;
 }
 
 input:focus {
@@ -192,4 +203,8 @@ label {
   margin:0px 0px 0px 5px;
   font-style: italic;
   color:rgba(233, 233, 233, 0.897)
+}
+
+button {
+  font-family: 'Roboto Condensed',monospace;
 }

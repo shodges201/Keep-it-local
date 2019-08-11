@@ -177,11 +177,7 @@ module.exports = function (app) {
       console.table(result);
       res.json(result);
     });
-  })
-
-  app.get("/newevent", function(req, res){
-    res.render('new-event');
-  })
+  });
 
 
   //get event of specific name 

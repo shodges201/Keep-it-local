@@ -1,24 +1,28 @@
 <div id="bubble">
-    <img src="images/header.gif" id="header-logo">
-    <hgroup class="speech-bubble" style="text-align:center;">
+    {{!-- url to make new logo >> https://engfto.com/index/animated_neon_text_maker/0-27 --}}
+    <a href="/events">
+        <img src="/images/header.gif" id="header-logo" >  
+    </a>
+    {{!-- <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
     </hgroup>
     <hgroup class="speech-bubble-2" style="text-align:center;">
         <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
-    </hgroup>
+    </hgroup> --}}
     
 </div>
 <div id="event-main">
 
-    <h1>{{name}}</h1>
-
+    <h1><span class="event-name">{{select_event.name}}</span></h1>
+    <br>
+    <br>
     <p>description description descriptiondescription description description descridescription description ption.</p>
     <br>
-    <p>votes: {{upVotes}}</p>
+    <p><span class="event-votes">{{select_event.upVotes}}</span> rsvps for this event.</p>
     <br>
-    <p>{{location}}</p>
+    <p>located at <span class="event-location">{{select_event.location}}</span></p>
     <br>
-    <p>{{creatorID}}</p>
+    <p>started by <span class="event-creator">{{select_event.creatorID}}</span></p>
 </div>
 
 <div id="dark-panel">
@@ -57,7 +61,7 @@
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/event/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -86,7 +90,7 @@
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/event/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>

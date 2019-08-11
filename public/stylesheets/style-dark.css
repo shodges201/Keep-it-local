@@ -11,6 +11,12 @@ body {
   float: left;
 }
 
+#event-main {
+  position: absolute;
+  left: 5%;
+  top: 20%;
+}
+
 #header-logo {
   margin-bottom:0px;
 }
@@ -279,4 +285,18 @@ button {
 }
 .event-link:hover {
   color:rgb(250, 149, 159);
+}
+
+
+
+.event-votes {
+  color: rgb(250, 149, 159)
+}
+
+.event-location {
+  color: rgb(154, 194, 255)
+}
+
+.event-creator {
+  color: rgb(121, 255, 199)
 }

@@ -18,17 +18,17 @@ module.exports = function (app) {
       let all = [];
       let user = [];
       db.Events.findAll({
-        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
-      })
-        .then(function (dbEvents) {
+        // attributes: ['id','name', 'category', 'location', 'upVotes', 'creatorID']
+      }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
             all.push(element.dataValues);
           });
           // all.push(dbEvents[0].dataValues);
           // console.log(all);
         }).then(function () {
-          db.Events.findAll({ where: { creatorID: req.user.userName } })
-          .then(function (dbUserEvents) {
+          db.Events.findAll({ 
+            where: { creatorID: req.user.userName } 
+          }).then(function (dbUserEvents) {
             // console.log("---------------user events----------------");
             // console.log(dbUserEvents);
             dbUserEvents.forEach(function (item) {
@@ -51,14 +51,14 @@ module.exports = function (app) {
     res.render("signup")
   })
 
-  app.get("/event/:id", function(req,res){
+  app.get("/:id", function(req,res){
     console.log(req.user);
     if (req.user) {
       let all = [];
       let user = [];
       let focus;
       db.Events.findAll({
-          attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+          // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
         })
         .then(function (dbEvents) {
           dbEvents.forEach(function (element) {
@@ -83,16 +83,19 @@ module.exports = function (app) {
                       id: req.params.id
                     }
                 }).then(function (dbUserEvents) {
-                  // console.log("Event Selected")
-                    dbUserEvents.forEach(function (item) {
-                      focus = item.dataValues;
-                    })
+                  console.log("Event Selected")
+                  
+                  dbUserEvents.forEach(function (item) {
+                    console.log(item.dataValues)
+                    focus = item.dataValues 
+                  })
+                  res.render('focus', {
+                    all_events: all,
+                    user_events: user,
+                    select_event: focus
+                  });
                 })
-                res.render('focus', {
-                  all_events: all,
-                  user_events: user,
-                  select_event: focus
-                });
+                
             });
         });
     } 

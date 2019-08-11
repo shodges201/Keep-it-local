@@ -20,8 +20,9 @@ module.exports = function (app) {
       let all = [];
       let user = [];
       db.Events.findAll({
-        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
-        where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
+        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+        //uncomment this line to only get events that are not created by the user
+        //,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
       })
         .then(function (dbEvents) {
           dbEvents.forEach(function (element) {
@@ -47,11 +48,11 @@ module.exports = function (app) {
   });
 
   app.get("/login", function(req,res){
-    res.render("login")
+    res.render("login");
   })
   
   app.get("/signup", function(req,res){
-    res.render("signup")
+    res.render("signup");
   })
 
 
@@ -113,6 +114,8 @@ module.exports = function (app) {
     }).then(function () {
       console.log("event created");
     }).then(function(){
+      //====================== using sequelize to create new Messages table ======================
+
       // var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
       // model.sync();
       // db[model.name] = model;
@@ -121,6 +124,8 @@ module.exports = function (app) {
       // }
       //db['Messages_' + req.body.name].sync();
 
+      //====================== using mysql directly to create new Messages table ======================
+      //create a new table with name Messages_<eventname>
       connection.query(`CREATE TABLE Messages_${req.body.name}
       (
         id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
@@ -138,6 +143,7 @@ module.exports = function (app) {
     })
   });
 
+  // create new message 
   app.post("/api/message", function(req, res){
     let eventName = req.body.eventname;
     // db['Messages_'+req.body.eventName].create({
@@ -162,27 +168,35 @@ module.exports = function (app) {
     // db['Messages_'+req.params.eventname].findAll({})
     // .then(function(messages){
     //   console.log(messages);
-    //   res.end();
+    //   res.json(messages);
     // });
 
     // ============= mysql method =======================
     connection.query(`SELECT * FROM events_db.Messages_${eventName}`, function(err, result){
       if(err) throw err;
-      console.log('got everything');
       console.table(result);
-      console.log(result);
+      res.json(result);
     });
   })
 
 
-  //get all events
-  app.get("/api/event", function (req, res) {
-    db.Events.findAll({}).then(
-      function (events) {
-        console.table(events)
-        res.json(events)
-        // res.render("index", {all_events:events})
-      })
+  //get event of specific name 
+  app.get("/api/event/:eventname", function (req, res) {
+    db.Events.findAll({
+      attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
+      where:{name: req.params.eventname}}).then(
+      function (event) {
+        //checks if user created the event
+        let owner = event[0].dataValues.ownerID === req.user.username;
+        // returns a json object that has two keys
+        // eventDetails are is the table row object for that event
+        // ownedByUser is a boolean value denoting if the user created the event - used for front-end admin privileges
+        let result = {
+          eventDetails: event[0].dataValues,
+          ownedByUser: owner
+        };
+        res.json(result);
+      });
 
   })
 }

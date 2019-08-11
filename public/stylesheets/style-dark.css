@@ -47,6 +47,8 @@ body {
   color:rgb(196, 255, 219);
 }
 
+
+
 .speech-bubble-2:after {
   content: '';
   position: absolute;
@@ -246,4 +248,16 @@ label {
 
 button {
   font-family: 'Roboto Condensed',monospace;
+}
+
+#home {
+  text-decoration: none;
+  /* color: rgba(233, 130, 254, 0.692); */
+  color:rgb(196, 255, 219, 0.7);
+}
+
+#home:hover {
+  text-decoration: none;
+  /* color: rgb(244, 190, 255); */
+  color:rgb(177, 255, 207);
 }

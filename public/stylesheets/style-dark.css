@@ -273,3 +273,10 @@ button {
   /* color:rgb(177, 255, 207); */
   color:rgb(255, 140, 152);
 }
+
+.event-link {
+  color:white;
+}
+.event-link:hover {
+  color:rgb(250, 149, 159);
+}

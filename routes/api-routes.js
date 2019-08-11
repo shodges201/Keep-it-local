@@ -51,6 +51,56 @@ module.exports = function (app) {
     res.render("signup")
   })
 
+  app.get("/event/:id", function(req,res){
+    console.log(req.user);
+    if (req.user) {
+      let all = [];
+      let user = [];
+      let focus;
+      db.Events.findAll({
+          attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+        })
+        .then(function (dbEvents) {
+          dbEvents.forEach(function (element) {
+            all.push(element.dataValues);
+          });
+          // all.push(dbEvents[0].dataValues);
+          // console.log(all);
+        }).then(function () {
+          db.Events.findAll({
+              where: {
+                creatorID: req.user.userName
+              }
+          }).then(function (dbUserEvents) {
+            // console.log("---------------user events----------------");
+            // console.log(dbUserEvents);
+            dbUserEvents.forEach(function (item) {
+              user.push(item.dataValues);
+            })
+            }).then(function () {
+                db.Events.findAll({
+                    where: {
+                      id: req.params.id
+                    }
+                }).then(function (dbUserEvents) {
+                  // console.log("Event Selected")
+                    dbUserEvents.forEach(function (item) {
+                      focus = item.dataValues;
+                    })
+                })
+                res.render('focus', {
+                  all_events: all,
+                  user_events: user,
+                  select_event: focus
+                });
+            });
+        });
+    } 
+    else {
+      res.redirect('/events');
+    }
+  })
+
 
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');

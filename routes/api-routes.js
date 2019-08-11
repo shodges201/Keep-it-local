@@ -3,6 +3,7 @@ var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 var Messages = require('../models/messages');
+var connection = require('../config/connection');
 
 module.exports = function (app) {
 
@@ -19,7 +20,8 @@ module.exports = function (app) {
       let all = [];
       let user = [];
       db.Events.findAll({
-        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
+        attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
+        where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
       })
         .then(function (dbEvents) {
           dbEvents.forEach(function (element) {
@@ -111,15 +113,25 @@ module.exports = function (app) {
     }).then(function () {
       console.log("event created");
     }).then(function(){
-      var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
-      model.sync();
-      db[model.name] = model;
-      if(db[model.name].associate){
-        db[model.name].associate(db);
-      }
+      // var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
+      // model.sync();
+      // db[model.name] = model;
+      // if(db[model.name].associate){
+      //   db[model.name].associate(db);
+      // }
       //db['Messages_' + req.body.name].sync();
-      console.log(db);
-      res.end();
+
+      connection.query(`CREATE TABLE Messages_${req.body.name}
+      (
+        id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
+        content VARCHAR(255) NOT NULL,
+        creatorID VARCHAR(255) NOT NULL,
+        upVotes INTEGER(10) NOT NULL, 
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`, function(err, resp){
+          res.end();
+        });
+
     }).catch(function (err) {
       console.log(err);
       res.json(err);
@@ -127,18 +139,44 @@ module.exports = function (app) {
   });
 
   app.post("/api/message", function(req, res){
-    console.log(db);
-    db['Messages_gears'].create({
-      content: req.body.content,
-      creatorID: req.body.id,
-      upVotes: 0
-    })
-    res.end();
+    let eventName = req.body.eventname;
+    // db['Messages_'+req.body.eventName].create({
+    //   content: req.body.content,
+    //   creatorID: req.body.id,
+    //   upVotes: 0
+    // });
+    // res.end();
+
+    connection.query(`INSERT INTO Messages_${eventName}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.body.id}', 0);`, function(err, result){
+      console.log('got everything');
+      console.table(result);
+      res.end();
+    });
+  });
+
+  //get all messages from a certain event
+  app.get("/api/message/:eventname", function(req, res){
+    let eventName = req.params.eventname;
+
+    // ============= sequelize method ================= 
+    // db['Messages_'+req.params.eventname].findAll({})
+    // .then(function(messages){
+    //   console.log(messages);
+    //   res.end();
+    // });
+
+    // ============= mysql method =======================
+    connection.query(`SELECT * FROM events_db.Messages_${eventName}`, function(err, result){
+      if(err) throw err;
+      console.log('got everything');
+      console.table(result);
+      console.log(result);
+    });
   })
 
 
-
-  app.get("/api/events", function (req, res) {
+  //get all events
+  app.get("/api/event", function (req, res) {
     db.Events.findAll({}).then(
       function (events) {
         console.table(events)

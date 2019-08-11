@@ -6,18 +6,19 @@
 
 <script>
 $(document).ready(function(){
+    //list used to populate state selector
     let stateAbrev = ["AK", "AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-
     let trigger = $("<select>").attr("id", "stateVal").append($('<option value="" disabled selected>State</option>'));
     for (var i = 0; i < stateAbrev.length; i++) {
         var item = $("<option>").attr("value", i).text(stateAbrev[i]);
         trigger.append(item);
     }
     $("#location-form").append(trigger);
+    //initializes state selector trigger
     $('select').formSelect();
     $(document).on("click", ".dropdown-trigger", function () {
         setTimeout(1500, null);
-        $(this).css("color", "black");
+        $(this).css("color", "white");
     });
 });
 </script>

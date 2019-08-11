@@ -179,6 +179,10 @@ module.exports = function (app) {
     });
   })
 
+  app.get("/newevent", function(req, res){
+    res.render('new-event');
+  })
+
 
   //get event of specific name 
   app.get("/api/event/:eventname", function (req, res) {

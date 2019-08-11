@@ -17,8 +17,9 @@ $(document).ready(function(){
     //initializes state selector trigger
     $('select').formSelect();
     $(document).on("click", ".dropdown-trigger", function () {
-        setTimeout(1500, null);
-        $(this).css("color", "white");
+        let stateIndex = $("#stateVal").val();
+        let stateName = stateAbrev[stateIndex];
+        console.log(stateName);
     });
 });
 </script>

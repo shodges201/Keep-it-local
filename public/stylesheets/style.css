@@ -53,14 +53,17 @@ body {
   
 }
 
+#dark-panel h1 {
+  color: white;
+  text-align: center;
+}
+
 #Username {
   float: left;
   padding-top: 20px;
   /* padding-left: 80px; */
   margin-left: 150px;
   border-radius: 25px;
-
-
 }
 
 #password {
@@ -79,6 +82,19 @@ body {
 #btn-signup {
   margin-top: 10px;
   width: 200px;
+}
+
+#create-form {
+  text-align: center;
+}
+
+.create input[type = "location"], .create input[name = "eventName"], .create input[type = "date"], input[type = "time"]{
+  text-align: center;
+}
+
+.create textarea {
+  height: 200px;
+  width: 500px;
 }
 
 #create-btn  {

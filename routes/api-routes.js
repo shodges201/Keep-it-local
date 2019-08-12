@@ -94,8 +94,6 @@ module.exports = function (app) {
                     connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY createdAt DESC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.table(result);
-                      console.log("focus")
-                      console.log(focus)
                       res.render('focus', {
                         all_events: all,
                         user_events: user,
@@ -147,13 +145,14 @@ module.exports = function (app) {
   app.put("/api/rsvp", function(req,res){
     let event_id = req.body.event_id;
     db.Events.update({
-      upVotes: sequelize.literal('upVotes + 1')
+      upVotes: db.sequelize.literal('upVotes + 1')
     }, 
     {
       where: {
         id: event_id
       }
     }).then(function(){
+      // res.redirect(`/${event_id}`)
       res.end()
     }).catch(function (err) {
       console.log(err);

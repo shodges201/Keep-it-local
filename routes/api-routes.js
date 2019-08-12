@@ -143,6 +143,24 @@ module.exports = function (app) {
   });
 
 
+  app.put("/api/rsvp", function(req,res){
+    let event_id = req.body.event_id;
+    db.Events.update({
+      upVotes: sequelize.literal('upVotes + 1')
+    }, 
+    {
+      where: {
+        id: event_id
+      }
+    }).then(function(){
+      res.end()
+    }).catch(function (err) {
+      console.log(err);
+      res.json(err);
+    });
+  })
+
+
   app.get("/api/user_data", function(req, res) {
     console.log(req.user);
     if (!req.user) {

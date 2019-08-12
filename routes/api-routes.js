@@ -237,6 +237,9 @@ module.exports = function (app) {
 
 
   //get event of specific name 
+  // returns a json object that has two keys
+  // eventDetails are is the table row object for that event
+  // ownedByUser is a boolean value denoting if the user created the event - used for front-end admin privileges
   app.get("/api/event/:eventname", function (req, res) {
     db.Events.findAll({
       attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
@@ -244,9 +247,6 @@ module.exports = function (app) {
       function (event) {
         //checks if user created the event
         let owner = event[0].dataValues.ownerID === req.user.username;
-        // returns a json object that has two keys
-        // eventDetails are is the table row object for that event
-        // ownedByUser is a boolean value denoting if the user created the event - used for front-end admin privileges
         let result = {
           eventDetails: event[0].dataValues,
           ownedByUser: owner

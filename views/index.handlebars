@@ -56,6 +56,7 @@
                     </tr>
                 {{/each}}
                 </table>
+                <button type="button" class="new-event-btn">make new event</button>
                 <br><br><br><br>
             </div>
         </div>
@@ -77,11 +78,13 @@
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}" data-creator="{{this.creatorID}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                        
                     </tr>
                 {{/each}}
                 </table>
@@ -102,46 +105,26 @@
 
 
 <footer class="footer">
-    <p>KEEP IT LOCAL ©</p>
+    KEEP IT LOCAL®
 </footer>
 
 <script>
-    $(document.body).on("click", ".listing-item-name", function (event) {
-        event.preventDefault();
-        let eventName = $(this).text();
-        console.log(eventName);
-        let messagesList = $("#messages-list");
-        messagesList.empty();
-
-        $.ajax("/api/event/"+eventName, {
-            method: "GET"
-        }).then(function (result) {
-            // Input: 
-            // {eventDetails: {name: ,
-            //                 category: ,                              
-            //                 location: ,
-            //                 upVotes: ,
-            //                 creatorID: }
-            //  ownedByUser: true/false}                                                                 
-            if(result.ownedByUser){
-                console.log("user owns event");
-            }
-            else{
-                console.log("user does not own event");
-            }
-        }).then(function(){
-            $.ajax("/api/message/"+eventName, {
-            method: "GET"
-        }).then(function (result) {
-            console.log('messages on this message board: ');
-            console.log(result);
-            for(let i = 0; i < result.length; i++){
-                let item = result[i];
-                let message = $("<li>").text(`${item.id} ${item.content} ${item.creatorID} ${item.upVotes} ${item.createdAt}`);
-                messagesList.append(message);
-            }
-        });
-        });
-
-    });
+    $(document).ready(function () {
+        $(".event-link").click(function () {
+            let event_id = $(this).attr("data-id").val()
+            let creator_id = $(this).attr("data-creator").val()
+            $.ajax(`/${event_id}`, {
+                method: "GET",
+                data: { 
+                    id: event_id
+                }
+            }).then(function (result) {
+                console.log(result);
+                window.location.replace(result);
+                //window.location = `/event/${id}`
+            })
+        })
+        
+        
+    })
 </script>

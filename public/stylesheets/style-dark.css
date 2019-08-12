@@ -1,10 +1,10 @@
 body {
   /* background-color: rgb(105, 151, 128); */
   /* background:linear-gradient(to top right, rgb(105, 151, 128), rgb(105, 130, 151)); */
-  background:linear-gradient(to top right, rgb(61, 35, 35), rgb(53, 77, 70));
+  /* background:linear-gradient(to top right, rgb(78, 45, 45), rgb(53, 77, 70)); */
+  background:linear-gradient(to top right, rgb(102, 42, 42), rgb(53, 77, 70));
   color:white;
   font-family: 'Roboto Condensed', Helvetica, monospace;
-  
 }
 
 #bubble {
@@ -15,11 +15,20 @@ body {
   position: absolute;
   left: 5%;
   top: 20%;
+  font-size:18px;
+  width: 40%;
 }
 
 #header-logo {
   margin-bottom:0px;
+ 
 }
+
+h1 {
+  font-size: 30px;
+  letter-spacing: .2px;
+}
+
 
 .speech-bubble,.speech-bubble-2 {
   position: relative;
@@ -29,11 +38,11 @@ body {
   margin-left: 170px;
   width: 200px;
   font-family: 'Oswald', sans-serif;
-  letter-spacing: .2px;
   /* color:rgba(0, 0, 0); */
   color:rgb(218, 218, 218);
   /* -webkit-text-stroke: .01px rgb(218, 255, 232); */
   /* border: 1px solid rgb(218, 255, 232); */
+  padding:1px 2px 1px 2px;
 }
 
 .speech-bubble:after {
@@ -89,8 +98,9 @@ body {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-
+  overflow: scroll;
 }
+
 
 #Username {
   float: left;
@@ -110,15 +120,11 @@ body {
   border-radius: 25px;
 }
 
-#btn-login {
+#btn-login,#btn-signup {
   margin-top: 10px;
   width: 200px;
 }
 
-#btn-signup {
-  margin-top: 10px;
-  width: 200px;
-}
 
 #quote {
   text-align: center;
@@ -131,10 +137,10 @@ body {
   bottom: 0;
   width: 100vw;
   height:1vw;
-  background-color: rgba(202, 204, 206, 0.253);
+  background-color: rgb(142, 142, 142);
   color: black;
   text-align: center;
-  
+  padding-bottom:21px;
 }
 
 li {
@@ -147,8 +153,12 @@ li {
 }
 
 .listings-section {
-  color:rgb(0,0,0,0);
-  -webkit-text-stroke: .01px rgb(182, 255, 210);
+  /* color:rgb(182, 255, 210,0); */
+  color:rgb(182, 255, 210,0);
+  -webkit-text-stroke: 1px rgb(182, 255, 210);
+  -moz-text-stroke:1px rgb(182, 255, 210);
+  
+  /* text-stroke:.01px rgb(182, 255, 210); */
   font-size:30px;
   margin-bottom:5px;
   letter-spacing: .2px;
@@ -178,10 +188,7 @@ li {
   margin-right:10px;
 }
 
-.listing-row:hover {
-  /* color:rgb(149, 225, 250); */
-  color:rgb(250, 149, 159);
-}
+
 
 
 #listing-row{
@@ -212,14 +219,13 @@ input:focus {
   outline:none;
 }
 
-#login-btn,
-#signup-btn {
+#login-btn,#signup-btn {
   font-size:20px;
   border:none;
   background: none;
   color: rgba(79, 188, 255, 0.692);
   position: absolute;
-  right: 155px;
+  right: 0px;
   bottom: -28px;
   transition-property: color;
   transition-duration: .5s;
@@ -228,7 +234,6 @@ input:focus {
 #login-btn:hover,
 #signup-btn:hover {
   color: rgb(151, 215, 255);
-
 }
 
 h4{
@@ -246,8 +251,8 @@ h4{
 a {
   text-decoration: none;
   color: rgba(233, 130, 254, 0.692);
-  transition-property: color;
-  transition-duration: .1s;
+  /* transition-property: color;
+  transition-duration: .1s; */
 }
 
 a:hover {
@@ -280,13 +285,26 @@ button {
   color:rgb(255, 140, 152);
 }
 
+
+
 .event-link {
   color:white;
 }
+.listing-row:hover  {
+  color:rgb(250, 149, 159);
+}
+
 .event-link:hover {
   color:rgb(250, 149, 159);
 }
 
+.event-link:hover .listing-row{
+  color:rgb(250, 149, 159);
+}
+
+.listing-row:hover .event-link {
+  color:rgb(250, 149, 159);
+}
 
 
 .event-votes {
@@ -297,6 +315,45 @@ button {
   color: rgb(154, 194, 255)
 }
 
+.msg-date {
+  color: rgb(250, 149, 159);
+  margin-right: 5px;
+}
+
+.msg-user {
+  color: rgb(154, 194, 255);
+  margin-right: 10px;
+}
+
+.msg-op {
+  color: rgb(121, 255, 199);
+  margin-right: 10px;
+}
+
 .event-creator {
   color: rgb(121, 255, 199)
+}
+
+.rsvp-btn,
+.msg-btn,
+.new-event-btn,
+.edit-btn {
+  float:right;
+  border:none;
+  background:none;
+  font-size: 20px;
+  padding:0px;
+  color:rgba(226, 169, 255, 0.7);
+}
+
+.rsvp-btn:hover,
+.msg-btn:hover,
+.new-event-btn:hover {
+  color:rgba(226, 169, 255);
+  /* color:rgba(121, 255, 199); */
+
+}
+
+#messages {
+  overflow:scroll;
 }

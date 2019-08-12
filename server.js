@@ -1,7 +1,8 @@
 // Requiring necessary npm packages
 var express = require("express");
 var session = require("express-session");
-var exphbs = require("express-handlebars")
+var exphbs = require("express-handlebars");
+var Handlebars = require("handlebars");
 // Requiring passport as we've configured it
 var passport = require("./config/passport");
 
@@ -14,13 +15,25 @@ var app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+
+Handlebars.registerHelper('moment', require('helper-moment'));
+Handlebars.registerHelper('if_eq', function (a, op, b, opts) {
+  if (a == b) {
+    return opts.fn(this);
+  } else {
+    return opts.inverse(this);
+  }
+});
+
 // We need to use sessions to keep track of our user's login status
 app.use(session({ secret: "keyboard cat", resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 app.engine("handlebars", exphbs({defaultLayout:"main"}));
 app.set("view engine","handlebars")
+
 
 // Requiring our routes
 // require("./routes/html-routes.js")(app);

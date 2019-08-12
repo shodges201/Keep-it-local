@@ -13,16 +13,40 @@
 </div>
 <div id="event-main">
 
-    <h1><span class="event-name">{{select_event.name}}</span></h1>
+    <h1><span class="event-name">{{select_event.data.name}}</span></h1>
     <br>
     <br>
     <p>description description descriptiondescription description description descridescription description ption.</p>
     <br>
-    <p><span class="event-votes">{{select_event.upVotes}}</span> rsvps for this event.</p>
+    <p><span class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
     <br>
-    <p>located at <span class="event-location">{{select_event.location}}</span></p>
+    <p>located at <span class="event-location">{{select_event.data.location}}</span></p>
     <br>
-    <p>started by <span class="event-creator">{{select_event.creatorID}}</span></p>
+    <p>started by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
+    {{#if select_event.ownedByUser}}
+        <button type="button" class="edit-btn" data-id="{{select_event.data.id}}">Edit this event</button>
+    {{else}}
+        <button type="button" class="rsvp-btn" data-id="{{select_event.data.id}}">RSVP to this event</button>
+    {{/if}}
+    <br>
+    <br>
+
+    <div id="messages">
+        <br>
+        <h4>Messages</h4>
+        <ul id="messages-list">
+            {{#each messages}}
+                {{#if_eq select_event.data.creatorID '==' this.creatorID }}
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
+                {{else}}
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
+                {{/if_eq}}
+            {{/each}}
+            <br><br>
+        </ul>
+        <input type="text" id="new-msg" placeholder="new message">
+        <button type="button" class="msg-btn" data-id="{{select_event.data.id}}">post</button>
+    </div>
 </div>
 
 <div id="dark-panel">
@@ -55,7 +79,7 @@
                     <th><span class="listing-header">name</span></th> 
                     <th><span class="listing-header">location</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
@@ -69,6 +93,7 @@
                     </tr>
                 {{/each}}
                 </table>
+                <button type="button" class="new-event-btn">make new event</button>
                 <br><br><br><br>
             </div>
         </div>
@@ -109,5 +134,72 @@
 
 
 <footer class="footer">
-    <p>KEEP IT LOCAL ©</p>
+    KEEP IT LOCAL®
 </footer>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".event-link").click(function () {
+            let event_id = $(this).attr("data-id").val()
+            $.ajax(`/${event_id}`, {
+                method: "GET",
+                data: {
+                    id: event_id
+                }
+            }).then(function (result) {
+                window.location.replace(result);
+            })
+        })
+
+        $(".rsvp-btn").click(function(){
+            let rsvp = {
+                event_id:$(this).attr("data-id")
+            }
+            $.ajax("/api/rsvp/",{
+                method:"PUT",
+                data:rsvp
+            }).then(function(result){
+                console.log(result)
+                $.ajax("/")
+                window.location = `http://localhost:8080/${rsvp.event_id}`
+                //window.location.replace(result)
+            })
+        })
+
+        $(".msg-btn").click(function(event){
+            event.preventDefault();
+            let this_id = $(this).attr("data-id");
+            let this_content = $("#new-msg").val().trim();
+            console.log(this_id + this_content);
+            $.ajax("/api/message", {
+                method: "POST",
+                data: {id: this_id,
+                       content: this_content}
+            }).then(function(result){
+                console.log("new message posted");
+                $("#new-msg").val("");
+                 $.ajax("/api/message/"+this_id, {
+                    method: "GET"
+                }).then(function(result){
+                    console.log('result');
+                    console.log(result);
+                    $('#messages-list').empty();
+                    result.forEach(function(item){
+                        let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
+                        let creator = $('<span>').addClass('msg-op').text(item.creatorID);
+                        let listItem = $('<li>').append(date).append(creator);
+                        listItem.append($('<span>').addClass('msg-content').text(item.content));
+                        $("#messages-list").append(listItem);
+                    })
+            })
+        })
+    })
+
+    function formatDate(date){
+        let months =  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let dateItems = (date.split('-' && 'T')[0]).split('-');
+        return months[parseInt(dateItems[1])-1] + " " + dateItems[2] + ", " + dateItems[0];
+    }
+    })
+
+</script>

@@ -1,0 +1,113 @@
+<div id="bubble">
+    {{!-- url to make new logo >> https://engfto.com/index/animated_neon_text_maker/0-27 --}}
+    <a href="/events">
+        <img src="/images/header.gif" id="header-logo" >  
+    </a>
+    {{!-- <hgroup class="speech-bubble" style="text-align:center;">
+        <h1>WHAT'S<br>HAPPENIN' TN?</h1>
+    </hgroup>
+    <hgroup class="speech-bubble-2" style="text-align:center;">
+        <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
+    </hgroup> --}}
+    
+</div>
+<div id="event-main">
+
+    <h1><span class="event-name">{{select_event.name}}</span></h1>
+    <br>
+    <br>
+    <p>description description descriptiondescription description description descridescription description ption.</p>
+    <br>
+    <p><span class="event-votes">{{select_event.upVotes}}</span> rsvps for this event.</p>
+    <br>
+    <p>located at <span class="event-location">{{select_event.location}}</span></p>
+    <br>
+    <p>started by <span class="event-creator">{{select_event.creatorID}}</span></p>
+</div>
+
+<div id="dark-panel">
+    <div class="listings">
+        {{!-- <div class="list-group rsvp-listings">
+            <h3>
+                RSVP'D EVENTS
+            </h3>
+            <ul>
+                {{#each rsvp_events}}
+                <li>
+                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
+                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
+                </li>
+                {{/each}}
+            </ul>
+        </div> --}}
+
+
+        
+
+        <div class="list-group user-listings">
+            <h3 class="listings-section">
+                YOUR EVENTS
+            </h3>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+                
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
+                {{#each user_events}}
+                    <tr class="listing-row">
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
+                        <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                    </tr>
+                {{/each}}
+                </table>
+                <br><br><br><br>
+            </div>
+        </div>
+        <br>
+        <div class="list-group all-listings">
+            <h3 class="listings-section">
+                ALL EVENTS
+            </h3>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
+                {{#each all_events}}
+                    <tr class="listing-row">
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
+                        <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                    </tr>
+                {{/each}}
+                </table>
+                <br><br><br><br>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<footer class="footer">
+    <p>KEEP IT LOCAL ©</p>
+</footer>

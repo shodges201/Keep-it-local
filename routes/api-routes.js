@@ -58,6 +58,26 @@ module.exports = function (app) {
     res.render("signup");
   })
 
+  app.get("/getcode", function(req,res){
+    res.render("generatecode");
+  })
+
+  app.get("/yourcode", function(req,res){
+    res.render("yourcode")
+  })
+  app.post("/api/getcode", function(req, res) {
+    console.log(req.body);
+    db.ReferralCodes.create({
+      code: voucher_codes.generate({
+        length: 8,
+        count: 5
+    })[0]
+    }).then(function(){
+      console.log("code created");
+      res.end();
+    })
+  });
+
   app.get("/:id", function(req,res){
     console.log(req.user);
     if (req.user) {

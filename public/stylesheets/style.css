@@ -1,5 +1,7 @@
 body {
-  background-color: rgb(105, 151, 128);
+  /* background-color: rgb(105, 151, 128); */
+  /* background:linear-gradient(to top right, rgb(105, 151, 128), rgb(105, 130, 151)); */
+  background:linear-gradient(to top right, rgb(151, 105, 110), rgb(105, 151, 151));
   font-family: Helvetica, sans-serif;
   color:white;
   
@@ -11,6 +13,10 @@ body {
 
 #bubble {
   float: left;
+}
+
+.listing-item-name{
+  cursor: pointer;
 }
 
 .speech-bubble {
@@ -44,11 +50,15 @@ body {
   margin: 20px 40px 30px;
   height: 94vh;
   width: 45%;
-  background-color: rgba(96, 96, 96, 0.705);
+  /* background-color: rgba(28, 23, 74, 0.413); */
+  /* background-color: rgba(28, 23, 74, 0.0); */
+  background:linear-gradient(to bottom, rgba(94, 57, 94, 0.404), rgba(105, 144, 151, 0.144));
   border-radius: 25px;
   padding: 40px;
   position: relative;
   font-size:19px;
+  /* border: 2px solid rgba(0, 0, 0, 0.356); */
+
 }
 
 #Username {
@@ -108,7 +118,9 @@ li {
 .listing-header {
   float: left;
   margin-bottom: 20px;
-  color:rgb(105, 151, 128);
+  /* color:rgb(105, 151, 128); */
+  color:rgba(147, 206, 190, 0.9);
+  
 }
 
 .listing-item-name {

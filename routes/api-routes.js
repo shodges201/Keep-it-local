@@ -94,7 +94,8 @@ module.exports = function (app) {
                     connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY createdAt DESC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.table(result);
-                      
+                      console.log("focus")
+                      console.log(focus)
                       res.render('focus', {
                         all_events: all,
                         user_events: user,

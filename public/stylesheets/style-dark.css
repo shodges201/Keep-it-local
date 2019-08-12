@@ -343,7 +343,8 @@ button {
 
 .rsvp-btn,
 .msg-btn,
-.new-event-btn {
+.new-event-btn,
+.edit-btn {
   float:right;
   border:none;
   background:none;

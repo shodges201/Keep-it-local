@@ -92,6 +92,12 @@
             </div>
         </div>
     </div>
+    <div id="messages">
+            <br>
+            <h2>Messages</h2>
+            <ul id="messages-list">
+            </ul>
+        </div>
 
 </div>
 
@@ -112,8 +118,9 @@
                     id: event_id
                 }
             }).then(function (result) {
-                window.location.replace(result)
-                // window.location = `/event/${id}`
+                console.log(result);
+                window.location.replace(result);
+                //window.location = `/event/${id}`
             })
         })
         

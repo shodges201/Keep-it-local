@@ -7,7 +7,6 @@ var connection = require('../config/connection');
 
 module.exports = function (app) {
 
-  console.log(db);
   // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
     console.log("login");

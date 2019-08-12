@@ -3,6 +3,9 @@ var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 var Messages = require('../models/messages');
+var voucher_codes = require('voucher-code-generator');
+
+var referralcode =function getCode(){Math.random().toString(36).substring(7);}
 
 module.exports = function (app) {
 
@@ -63,7 +66,11 @@ module.exports = function (app) {
     currentUser = req.body.username;
     db.User.create({
       userName: req.body.username,
-      password: req.body.password
+      password: req.body.password,
+      code: voucher_codes.generate({
+        length: 8,
+        count: 5
+    })[0]
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {
@@ -75,6 +82,15 @@ module.exports = function (app) {
   app.get("/login", function(req, res){
     res.render("login");
   });
+
+  app.post("/api/referral", function(req, res){
+    db.ReferralCodes.create({
+      code: req.body.code
+    }).then(function(){
+      console.log("event created");
+      res.end();
+    })
+  })
 
   app.get("/logout", function(req, res) {
     req.logout();

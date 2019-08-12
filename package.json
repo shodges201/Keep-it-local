@@ -709,6 +709,7 @@
       "resolved": "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz",
       "version": "1.1.2"
     },
+    "voucher-code-generator": "^1.1.1",
     "wkx": {
       "integrity": "sha512-ikPXMM9IR/gy/LwiOSqWlSL3X/J5uk9EO2hHNRXS41eTLXaUFEVw9fn/593jW/tE5tedNg8YjT5HkCa4FqQZyQ==",
       "requires": {

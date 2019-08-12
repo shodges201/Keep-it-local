@@ -21,5 +21,47 @@ $(document).ready(function(){
         let stateName = stateAbrev[stateIndex];
         console.log(stateName);
     });
+<<<<<<< HEAD
+=======
+
+    $(document.body).on("click", ".listing-item-name", function (event) {
+        event.preventDefault();
+        let eventName = $(this).text();
+        console.log(eventName);
+        let messagesList = $("#messages-list");
+        messagesList.empty();
+
+        $.ajax("/api/event/" + eventName, {
+            method: "GET"
+        }).then(function (result) {
+            // Input: 
+            // {eventDetails: {name: ,
+            //                 category: ,                              
+            //                 location: ,
+            //                 upVotes: ,
+            //                 creatorID: }
+            //  ownedByUser: true/false}                                                                 
+            if (result.ownedByUser) {
+                console.log("user owns event");
+            }
+            else {
+                console.log("user does not own event");
+            }
+        }).then(function () {
+            $.ajax("/api/message/" + eventName, {
+                method: "GET"
+            }).then(function (result) {
+                console.log('messages on this message board: ');
+                console.log(result);
+                for (let i = 0; i < result.length; i++) {
+                    let item = result[i];
+                    let message = $("<li>").text(`${item.id} ${item.content} ${item.creatorID} ${item.upVotes} ${item.createdAt}`);
+                    messagesList.append(message);
+                }
+            });
+        });
+
+    });
+>>>>>>> ccf0a02cab9163a38c41db4349ecdffbbbce62cd
 });
 </script>

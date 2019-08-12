@@ -23,8 +23,26 @@
     <p>located at <span class="event-location">{{select_event.location}}</span></p>
     <br>
     <p>started by <span class="event-creator">{{select_event.creatorID}}</span></p>
-    <br><br>
     <button type="button" class="rsvp-btn" data-id="{{select_event.id}}">rsvp to this event</button>
+    <br>
+    <br>
+
+    <div id="messages">
+        <br>
+        <h4>Messages</h4>
+        <ul id="messages-list">
+            {{#each messages}}
+                {{#if_eq select_event.creatorID '==' this.creatorID }}
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
+                {{else}}
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
+                {{/if_eq}}
+            {{/each}}
+            <br><br>
+            <input type="text" id="new-msg" placeholder="new message">
+            <button type="button" class="msg-btn" data-id="{{select_event.id}}">post</button>
+        </ul>
+    </div>
 </div>
 
 <div id="dark-panel">
@@ -113,3 +131,24 @@
 <footer class="footer">
     KEEP IT LOCAL®
 </footer>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".msg-btn").click(function(){
+            let new_msg = {
+                id:$(this).attr("data-id"),
+                content: $("#new-msg").val().trim()
+            }
+            console.log(new_msg)
+            $.ajax("/api/message", {
+                method: "POST",
+                data: new_msg
+            }).then(function(result){
+                console.log("new message posted")
+                $("#new-msg").val("")
+                location.reload()
+            })
+        })
+    })
+
+</script>

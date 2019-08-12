@@ -29,7 +29,7 @@
         </div> --}}
 
 
-        
+
 
         <div class="list-group user-listings">
             <h3 class="listings-section">
@@ -77,11 +77,13 @@
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}" data-creator="{{this.creatorID}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                        
                     </tr>
                 {{/each}}
                 </table>
@@ -99,17 +101,23 @@
     KEEP IT LOCAL®
 </footer>
 
-<script type="text/javascript">
-    $(document).ready(function(){
-        $(".event-link").click(function(){
-            let id = $(this).attr("data-id").val()
-            $.ajax(`/${id}`, {
-                method:"GET",
-                data: {id:id}
-            }).then(function(result){
+<script>
+    $(document).ready(function () {
+        $(".event-link").click(function () {
+            let event_id = $(this).attr("data-id").val()
+            let creator_id = $(this).attr("data-creator").val()
+            $.ajax(`/${event_id}`, {
+                method: "GET",
+                data: { 
+                    id: event_id,
+                    creator: creator_id
+                }
+            }).then(function (result) {
                 window.location.replace(result)
                 // window.location = `/event/${id}`
             })
         })
+        
+        
     })
 </script>

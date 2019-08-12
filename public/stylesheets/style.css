@@ -15,6 +15,10 @@ body {
   float: left;
 }
 
+.listing-item-name{
+  cursor: pointer;
+}
+
 .speech-bubble {
   position: relative;
   background: #bdbdbd;

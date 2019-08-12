@@ -93,7 +93,7 @@ module.exports = function (app) {
                   focus = {data: dbUserEvents[0].dataValues,
                            ownedByUser: owner}
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY createdAt DESC;`, function (err, result) {
+                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.table(result);
                       res.render('focus', {
@@ -200,7 +200,6 @@ module.exports = function (app) {
         id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
         content VARCHAR(255) NOT NULL,
         creatorID VARCHAR(255) NOT NULL,
-        upVotes INTEGER(10) NOT NULL, 
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, function(err, resp){
           res.end();
@@ -213,47 +212,18 @@ module.exports = function (app) {
   });
 
   //get all messages from a certain event
-  app.get("/api/message/:eventname", function(req, res){
-    let eventName = req.params.eventname;
-      db.Events.findOne({
-          where: {
-            name: req.body.name
-          }
-        }).then(function (dbNewEvent) {
-            let event_id;
-            dbNewEvent.forEach(function (item) {
-              console.log(item.dataValues)
-              event_id = item.dataValues.id
-            })
-          //create a new table with name Messages_<eventname>
-          connection.query(`CREATE TABLE Messages_${event_id} (
-            id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-            content VARCHAR(255) NOT NULL,
-            creatorID VARCHAR(255) NOT NULL,
-            upVotes INTEGER(10) NOT NULL, 
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY(id)
-          )`, function(err, resp){
-                res.end();
-          })
-        }).catch(function (err) {
-          console.log(err);
-          res.json(err);
-        })
-    });
 
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
     console.log('body: ');
     console.log(req.body.id);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.user.userName}, 0');`, 
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.user.userName}', 0);`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');
         console.table(result);
-        res.end()
+        res.end();
     });
   });
 
@@ -262,7 +232,7 @@ module.exports = function (app) {
     let event_id = req.params.event_id;
 
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id}`, function(err, result){
+    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
       res.send(result);

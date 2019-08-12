@@ -361,6 +361,7 @@ button {
 
 }
 
-#messages {
+#messages-list{
   overflow:scroll;
+  height: 150px;
 }

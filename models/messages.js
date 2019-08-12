@@ -1,5 +1,6 @@
-module.exports = function(sequelize, DataTypes, eventID) {
-    var Messages = sequelize.define("Messages-" + eventID, {
+
+  var createTable = function(sequelize, DataTypes, name) {
+    var Messages = sequelize.define("Messages_"+name, {
       // The email cannot be null, and must be a proper email before creation
       content: {
         type: DataTypes.STRING,
@@ -11,10 +12,6 @@ module.exports = function(sequelize, DataTypes, eventID) {
         type: DataTypes.STRING,
         allowNull: false
       },
-      timeStamp: {
-        type: DataTypes.DATE,
-        allowNull: false
-      },
       upVotes: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -23,3 +20,5 @@ module.exports = function(sequelize, DataTypes, eventID) {
     });
     return Messages;
   };
+
+  module.exports = {createTable: createTable}

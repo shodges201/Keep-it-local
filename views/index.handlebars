@@ -1,7 +1,14 @@
 <div id="bubble">
+    <a href="/events">
+        <img src="/images/header.gif" id="header-logo">
+    </a>
     <hgroup class="speech-bubble" style="text-align:center;">
-        <h1>WHAT'S<br>HAPPENIN'</h1>
+        <h1>WHAT'S<br>HAPPENIN' TN?</h1>
     </hgroup>
+    <hgroup class="speech-bubble-2" style="text-align:center;">
+        <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
+    </hgroup>
+    
 </div>
 
 
@@ -22,34 +29,72 @@
         </div> --}}
 
 
-        {{!-- <div class="list-group personal-listings">
-            <h3>
+
+
+        <div class="list-group user-listings">
+            <h3 class="listings-section">
                 YOUR EVENTS
             </h3>
-            <ul>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+                
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
                 {{#each user_events}}
-                <li>
-                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.votes}}</span> <span class="listing-item">{{this.creatorId}}</span></h4>
-                </li>
+                    <tr class="listing-row">
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
+                        <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                    </tr>
                 {{/each}}
-            </ul>
-        </div> --}}
-
+                </table>
+                <br><br><br><br>
+            </div>
+        </div>
+        <br>
         <div class="list-group all-listings">
-            <h3>
+            <h3 class="listings-section">
                 ALL EVENTS
             </h3>
-            <ul>
+            <div>
+                <table align="left" id="listings-table">
+                <tr>
+
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
                 {{#each all_events}}
-                <li>
-                    <h4><span class="listing-item">{{this.name}}</span> <span class="listing-item">{{this.location}}</span> <span
-                            class="listing-item">{{this.upvotes}}</span> <span class="listing-item">{{this.creatorID}}</span></h4>
-                </li>
+                    <tr class="listing-row">
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
+                        <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
+                    </tr>
                 {{/each}}
-            </ul>
+                </table>
+                <br><br><br><br>
+            </div>
         </div>
     </div>
+    <div id="messages">
+            <br>
+            <h2>Messages</h2>
+            <ul id="messages-list">
+            </ul>
+        </div>
 
 </div>
 
@@ -59,3 +104,44 @@
 <footer class="footer">
     <p>KEEP IT LOCAL ©</p>
 </footer>
+
+<script>
+    $(document.body).on("click", ".listing-item-name", function (event) {
+        event.preventDefault();
+        let eventName = $(this).text();
+        console.log(eventName);
+        let messagesList = $("#messages-list");
+        messagesList.empty();
+
+        $.ajax("/api/event/"+eventName, {
+            method: "GET"
+        }).then(function (result) {
+            // Input: 
+            // {eventDetails: {name: ,
+            //                 category: ,                              
+            //                 location: ,
+            //                 upVotes: ,
+            //                 creatorID: }
+            //  ownedByUser: true/false}                                                                 
+            if(result.ownedByUser){
+                console.log("user owns event");
+            }
+            else{
+                console.log("user does not own event");
+            }
+        }).then(function(){
+            $.ajax("/api/message/"+eventName, {
+            method: "GET"
+        }).then(function (result) {
+            console.log('messages on this message board: ');
+            console.log(result);
+            for(let i = 0; i < result.length; i++){
+                let item = result[i];
+                let message = $("<li>").text(`${item.id} ${item.content} ${item.creatorID} ${item.upVotes} ${item.createdAt}`);
+                messagesList.append(message);
+            }
+        });
+        });
+
+    });
+</script>

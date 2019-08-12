@@ -7,7 +7,7 @@ var connection = require('../config/connection');
 
 module.exports = function (app) {
 
-  console.log(db);
+  // console.log(db);
   // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
     console.log("login");
@@ -57,6 +57,10 @@ module.exports = function (app) {
   
   app.get("/signup", function(req,res){
     res.render("signup");
+  })
+
+  app.get("/create", function (req, res) {
+    res.render("create");
   })
 
   app.get("/:id", function(req,res){
@@ -114,6 +118,8 @@ module.exports = function (app) {
   });
 
 
+  
+
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
@@ -154,8 +160,8 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function(){
-      // res.redirect(`/${event_id}`)
-      res.end()
+      res.redirect(`/${event_id}`)
+      //res.end()
     }).catch(function (err) {
       console.log(err);
       res.json(err);
@@ -219,40 +225,11 @@ module.exports = function (app) {
     connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES('${req.body.content}', '${req.user.userName}');`, function (err, result) {
       console.log('got everything');
       console.table(result);
-      // res.redirect(`/${event_id}`)
+      res.redirect(`/${event_id}`);
+      // res.end()
     });
   });
 
-  //get all messages from a certain event
-  app.get("/api/message/:eventname", function(req, res){
-    let eventName = req.params.eventname;
-      db.Events.findOne({
-          where: {
-            name: req.body.name
-          }
-        }).then(function (dbNewEvent) {
-            let event_id;
-            dbNewEvent.forEach(function (item) {
-              console.log(item.dataValues)
-              event_id = item.dataValues.id
-            })
-          //create a new table with name Messages_<eventname>
-          connection.query(`CREATE TABLE Messages_${event_id} (
-            id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-            content VARCHAR(255) NOT NULL,
-            creatorID VARCHAR(255) NOT NULL,
-            upVotes INTEGER(10) NOT NULL, 
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY(id)
-          )`, function(err, resp){
-                res.end();
-          })
-        }).catch(function (err) {
-          console.log(err);
-          res.json(err);
-        })
-    });
 
   
 

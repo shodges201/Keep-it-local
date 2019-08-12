@@ -26,7 +26,7 @@
     {{#if select_event.ownedByUser}}
         <button type="button" class="edit-btn" data-id="{{select_event.data.id}}">Edit this event</button>
     {{else}}
-        <button type="button" class="rsvp-btn" data-id="{{select_event.data.id}}">RSVP to this event</button>
+        <button type="button" class="rsvp-btn" data-id="{{select_event.data.id}}">rsvp to this event</button>
     {{/if}}
     <br>
     <br>
@@ -43,9 +43,9 @@
                 {{/if_eq}}
             {{/each}}
             <br><br>
-            <input type="text" id="new-msg" placeholder="new message">
-            <button type="button" class="msg-btn" data-id="{{select_event.data.id}}">post</button>
         </ul>
+        <input type="text" id="new-msg" placeholder="new message">
+        <button type="button" class="msg-btn" data-id="{{select_event.data.id}}">post</button>
     </div>
 </div>
 
@@ -93,7 +93,8 @@
                     </tr>
                 {{/each}}
                 </table>
-                <button type="button" class="new-event-btn">make new event</button>
+                {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
+                <a href="/create" class="new-event-btn">make new event</a>
                 <br><br><br><br>
             </div>
         </div>
@@ -139,13 +140,20 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $(".new-event-btn").click(function () {
+            $.ajax(`/create`, {
+                method: "GET"
+            }).then(function (result) {
+                console.log(result);
+                window.location.replace(result);
+                //window.location = `/event/${id}`
+            })
+        })
+
         $(".event-link").click(function () {
             let event_id = $(this).attr("data-id").val()
             $.ajax(`/${event_id}`, {
-                method: "GET",
-                data: {
-                    id: event_id
-                }
+                method: "GET" 
             }).then(function (result) {
                 window.location.replace(result)
                 // window.location = `/event/${id}`
@@ -161,29 +169,52 @@
                 data:rsvp
             }).then(function(result){
                 console.log(result)
-                $.ajax("/")
-                window.location = `http://localhost:8080/${rsvp.event_id}`
+                //$.ajax("/")
+                //window.location = `http://localhost:8080/${rsvp.event_id}`
                 //window.location.replace(result)
             })
         })
 
-        $(".msg-btn").click(function(){
-            let new_msg = {
-                id:$(this).attr("data-id"),
-                content: $("#new-msg").val().trim()
-            }
-            console.log(new_msg)
+        $(".msg-btn").click(function (event) {
+            event.preventDefault();
+            let this_id = $(this).attr("data-id");
+            let this_content = $("#new-msg").val().trim();
+            console.log(this_id + this_content);
             $.ajax("/api/message", {
                 method: "POST",
-                data: new_msg
-            }).then(function(result){
-                console.log("new message posted")
-                $("#new-msg").val("")
-                //location.reload()
+                data: {
+                    id: this_id,
+                    content: this_content
+                }
+            }).then(function (result) {
+                console.log("new message posted");
+                $("#new-msg").val("");
+                $.ajax("/api/message/" + this_id, {
+                    method: "GET"
+                }).then(function (result) {
+                    console.log('result');
+                    console.log(result);
+                    $('#messages-list').empty();
+                    result.forEach(function (item) {
+                        let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
+                        let creator = $('<span>').addClass('msg-op').text(item.creatorID);
+                        let listItem = $('<li>').append(date).append(creator);
+                        listItem.append($('<span>').addClass('msg-content').text(item.content));
+                        $("#messages-list").append(listItem);
+                        //$("#messages-list").animate({ scrollTop: 1000 }, 3000)
+
+                    })
+                })
             })
         })
+        function formatDate(date) {
+            let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            let dateItems = (date.split('-' && 'T')[0]).split('-');
+            return months[parseInt(dateItems[1]) - 1] + " " + dateItems[2] + ", " + dateItems[0];
+        }
+    })
 
         
-    })
+    
 
 </script>

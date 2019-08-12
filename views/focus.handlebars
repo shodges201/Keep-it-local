@@ -79,7 +79,7 @@
                     <th><span class="listing-header">name</span></th> 
                     <th><span class="listing-header">location</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
@@ -139,6 +139,20 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $(".rsvp-btn").click(function(){
+            let rsvp = {
+                event_id:$(this).attr("data-id")
+            }
+            $.ajax("/api/rsvp/",{
+                method:"PUT",
+                data:rsvp
+            }).then(function(result){
+                location.reload()
+            })
+        })
+
+
+
         $(".msg-btn").click(function(){
             let new_msg = {
                 id:$(this).attr("data-id"),
@@ -146,7 +160,7 @@
             }
             console.log(new_msg)
             $.ajax("/api/message", {
-                method: "POST",
+                method: "PUT",
                 data: new_msg
             }).then(function(result){
                 console.log("new message posted")

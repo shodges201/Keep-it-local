@@ -83,7 +83,7 @@ h1 {
   margin-bottom: -20px;
 }
 
-
+/* .element::-webkit-scrollbar { width: 0 !important } */
 
 #dark-panel {
   float: right;
@@ -98,7 +98,7 @@ h1 {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-  overflow: scroll;
+  overflow: hidden;
 }
 
 
@@ -338,8 +338,11 @@ button {
 .msg-btn,
 .new-event-btn {
   float:right;
-  border:none;
+  /* border:none; */
   background:none;
+  border: 2px solid rgba(226, 169, 255, 0.7);
+  border-radius: 24px;
+  padding:10px 40px;
   font-size: 20px;
   padding:0px;
   color:rgba(226, 169, 255, 0.7);
@@ -347,12 +350,57 @@ button {
 
 .rsvp-btn:hover,
 .msg-btn:hover,
-.new-event-btn:hover {
-  color:rgba(226, 169, 255);
+.new-event-btn:hover, #create-btn:hover {
+  /* color:rgba(226, 169, 255); */
   /* color:rgba(121, 255, 199); */
+  color: white;
+  background: rgba(226, 169, 255, 0.7);
 
 }
 
 #messages {
-  overflow:scroll;
+  overflow: hidden;
 }
+
+/* Create Event Box */
+
+
+
+#create-btn  {
+  border: 0;
+  background: none;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid rgba(226, 169, 255, 0.7);
+  padding: 14px 40px;
+  outline: none;
+  color: white;
+  border-radius: 24px;
+  transition: 0.25s;
+}
+
+#create-btn:hover {
+  background:rgba(226, 169, 255, 0.7);
+}
+
+.create textarea {
+   /* margin:0px 0px; this is redundant anyways since its specified below*/
+   padding-top:10px;
+   padding-bottom:25px; /* increased! */
+   /* height:16px; */
+   /* line-height:16px; */
+   height: 325px;
+   width:100%; /* changed from 96 to 100% */
+   display:block;
+}
+
+#location {
+  width: 60%
+}
+
+#city {
+  width:39%;
+}
+
+

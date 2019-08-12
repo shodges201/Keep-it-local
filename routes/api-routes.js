@@ -59,6 +59,10 @@ module.exports = function (app) {
     res.render("signup");
   })
 
+  app.get("/create-event", function(req,res){
+    res.render("create-event");
+  })
+
   app.get("/:id", function(req,res){
     console.log(req.user);
     if (req.user) {
@@ -194,6 +198,7 @@ module.exports = function (app) {
           }
         }).then(function (dbNewEvent) {
             let event_id;
+            console.log(dbNewEvent);
             dbNewEvent.forEach(function (item) {
               console.log(item.dataValues)
               event_id = item.dataValues.id

@@ -1,6 +1,6 @@
 
-  var createTable = function(sequelize, DataTypes, name) {
-    var Messages = sequelize.define("Messages_"+name, {
+  var createTable = function(sequelize, DataTypes, id) {
+    var Messages = sequelize.define("Messages_"+id, {
       // The email cannot be null, and must be a proper email before creation
       content: {
         type: DataTypes.STRING,

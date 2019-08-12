@@ -110,15 +110,11 @@ body {
   border-radius: 25px;
 }
 
-#btn-login {
+#btn-login,#btn-signup {
   margin-top: 10px;
   width: 200px;
 }
 
-#btn-signup {
-  margin-top: 10px;
-  width: 200px;
-}
 
 #quote {
   text-align: center;
@@ -212,8 +208,7 @@ input:focus {
   outline:none;
 }
 
-#login-btn,
-#signup-btn {
+#login-btn,#signup-btn {
   font-size:20px;
   border:none;
   background: none;
@@ -299,4 +294,17 @@ button {
 
 .event-creator {
   color: rgb(121, 255, 199)
+}
+
+.rsvp-btn {
+  border:none;
+  background:none;
+  font-size: 20px;
+  padding:0px;
+  color:rgb(216, 149, 250, 0.7);
+}
+.rsvp-btn:hover {
+  color:rgb(216, 149, 250);
+  /* color:rgba(121, 255, 199); */
+
 }

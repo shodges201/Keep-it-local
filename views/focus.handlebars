@@ -139,6 +139,18 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $(".event-link").click(function () {
+            let event_id = $(this).attr("data-id").val()
+            $.ajax(`/${event_id}`, {
+                method: "GET",
+                data: {
+                    id: event_id
+                }
+            }).then(function (result) {
+                window.location.replace(result);
+            })
+        })
+
         $(".rsvp-btn").click(function(){
             let rsvp = {
                 event_id:$(this).attr("data-id")
@@ -147,42 +159,28 @@
                 method:"PUT",
                 data:rsvp
             }).then(function(result){
-                location.reload()
+                console.log(result)
+                $.ajax("/")
+                window.location = `http://localhost:8080/${rsvp.event_id}`
+                //window.location.replace(result)
             })
         })
 
-
-
-        $(".msg-btn").click(function(){
-            let new_msg = {
-                id:$(this).attr("data-id"),
-                content: $("#new-msg").val().trim()
-            }
-            console.log(new_msg)
+        $(".msg-btn").click(function(event){
+            event.preventDefault();
+            let this_id = $(this).attr("data-id");
+            let this_content = $("#new-msg").val().trim();
+            console.log(this_id + this_content);
             $.ajax("/api/message", {
-                method: "PUT",
-                data: new_msg
+                method: "POST",
+                data: {id: this_id,
+                       content: this_content}
             }).then(function(result){
-                console.log("new message posted")
-                $("#new-msg").val("")
-
-                location.reload()
+                console.log("new message posted");
+                $("#new-msg").val("");
+                //location.reload();
             })
         })
-
-        $(".event-link").click(function () {
-            let event_id = $(this).attr("data-id").val()
-            let creator_id = $(this).attr("data-creator").val()
-            $.ajax(`/${event_id}`, {
-                method: "GET",
-                data: { 
-                    id: event_id
-                }
-            }).then(function (result) {
-                window.location.replace(result);
-                //window.location = `/event/${id}`
-            })
-        });
     })
 
 </script>

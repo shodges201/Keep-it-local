@@ -96,8 +96,6 @@ module.exports = function (app) {
                     connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY createdAt DESC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.table(result);
-                      console.log("focus")
-                      console.log(focus)
                       res.render('focus', {
                         all_events: all,
                         user_events: user,
@@ -149,13 +147,14 @@ module.exports = function (app) {
   app.put("/api/rsvp", function(req,res){
     let event_id = req.body.event_id;
     db.Events.update({
-      upVotes: sequelize.literal('upVotes + 1')
+      upVotes: db.sequelize.literal('upVotes + 1')
     }, 
     {
       where: {
         id: event_id
       }
     }).then(function(){
+      // res.redirect(`/${event_id}`)
       res.end()
     }).catch(function (err) {
       console.log(err);
@@ -213,16 +212,6 @@ module.exports = function (app) {
     })
   });
 
-  // create new message 
-  app.post("/api/message", function(req, res){
-    let eventName = req.body.eventname;
-    connection.query(`INSERT INTO Messages_${eventName}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.body.id}', 0);`, function(err, result){
-      console.log('got everything');
-      console.table(result);
-      res.end();
-    });
-  });
-
   //get all messages from a certain event
   app.get("/api/message/:eventname", function(req, res){
     let eventName = req.params.eventname;
@@ -257,8 +246,9 @@ module.exports = function (app) {
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
-
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES('${req.body.content}', '${req.user.userName}');`, 
+    console.log('body: ');
+    console.log(req.body.id);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.user.userName}, 0');`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');

@@ -1,7 +1,7 @@
 body {
   /* background-color: rgb(105, 151, 128); */
   /* background:linear-gradient(to top right, rgb(105, 151, 128), rgb(105, 130, 151)); */
-  background:linear-gradient(to top right, rgb(61, 35, 35), rgb(53, 77, 70));
+  background:linear-gradient(to top right, rgb(78, 45, 45), rgb(53, 77, 70));
   color:white;
   font-family: 'Roboto Condensed', Helvetica, monospace;
 }
@@ -20,6 +20,7 @@ body {
 
 #header-logo {
   margin-bottom:0px;
+ 
 }
 
 h1 {
@@ -133,10 +134,10 @@ h1 {
   bottom: 0;
   width: 100vw;
   height:1vw;
-  background-color: rgba(202, 204, 206, 0.253);
+  background-color: rgb(142, 142, 142);
   color: black;
   text-align: center;
-  
+  padding-bottom:21px;
 }
 
 li {
@@ -150,8 +151,10 @@ li {
 
 .listings-section {
   /* color:rgb(182, 255, 210,0); */
-  color:rgb(182, 255, 210);
-  /* -webkit-text-stroke: .01px rgb(182, 255, 210); */
+  color:rgb(182, 255, 210,0);
+  -webkit-text-stroke: 1px rgb(182, 255, 210);
+  -moz-text-stroke:1px rgb(182, 255, 210);
+  
   /* text-stroke:.01px rgb(182, 255, 210); */
   font-size:30px;
   margin-bottom:5px;

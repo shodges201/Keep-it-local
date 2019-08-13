@@ -102,7 +102,7 @@
 
 <div id="refer-box">
     <p>here's your referral code</p>
-    <span id="refer-code">e3R6tHg8v</span>
+    <span id="refer-code"></span>
 </div>
 
 
@@ -112,62 +112,34 @@
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
-<script>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    $(document).ready(function () {
-        $(".event-link").click(function () {
-            let event_id = $(this).attr("data-id").val()
-            $.ajax(`/${event_id}`, {
-                method: "GET",
-                data: { 
-                    id: event_id
-                }
-            }).then(function (result) {
-                window.location.replace(result)
-                // window.location = `/event/${id}`
-            })
-        })
-        
-        
-    })
-=======
-    //$(document).ready(function () {
-=======
+<script type="text/javascript">
+
     $(document).ready(function () {
         $("#refer-box").hide()
 
-        $("#refer-link").click(function () {
-            console.log("fading in")
-            $("#refer-box").fadeIn(1000)
+        $("#refer-link").click(function () {            
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function(res){
+                if(res.eligible){
+                    $.ajax("/api/code", {
+                        method: "POST"
+                    }).then(function(resp){
+                        console.log(resp.code);
+                        $("#refer-code").text(resp.code)
+                        $("#refer-box").fadeIn(1000)
+                    })
+                }
+                else{
+                    $("#refer-code").text("You're not eligible code for a new code")
+                    $("#refer-box").fadeIn(1000)
+                }
+            })
         })
 
         $(document.body).on("dblclick", function (event) {
-            $("#refer-box").fadeOut(1000)
+            $("#refer-box").hide()
         })
 
-
-
->>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae
-       // $(".event-link").click(function () {
-            //let event_id = $(this).attr("data-id").val()
-            //$.ajax(`/events/${event_id}`, {
-               // method: "GET",
-               // data: { 
-                //    id: event_id
-               // }
-           // }).then(function (result) {
-              //  console.log(result);
-              //  window.location.replace(result);
-                //window.location = `/event/${id}`
-           // })
-       //})
-        
-        
-<<<<<<< HEAD
-    //})
->>>>>>> f1dd93188028012612caf393fe3b97478c101e24
-=======
     })
->>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae
 </script>

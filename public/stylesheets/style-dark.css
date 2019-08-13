@@ -376,23 +376,20 @@ button {
 
 }
 
-<<<<<<< HEAD
+
 #messages {
   overflow:hidden;
-=======
+}
+
 #messages-list {
   /* text-align: bottom; */
   overflow: scroll;
   height: 150px;
   /* scroll-behavior: smooth; */
 }
-/*   
-#messages-list{
-  overflow:scroll;
-  height: 150px;
-} */
 
-a#logout-link,
+
+#logout-link,
 #refer-link {
   color: black;
 }
@@ -409,7 +406,7 @@ a#logout-link,
   border:none;
 }
 
-a#logout-link:hover,
+#logout-link:hover,
 #refer-link:hover {
   color: rgb(255, 255, 255);
 }
@@ -443,11 +440,3 @@ input#create-form {
   color: red;
   margin:0px;
 }
-
-<<<<<<< HEAD
-#details {
-  color:white;
->>>>>>> f1dd93188028012612caf393fe3b97478c101e24
-}
-=======
->>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae

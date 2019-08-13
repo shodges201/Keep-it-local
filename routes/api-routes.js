@@ -181,13 +181,14 @@ module.exports = function (app) {
   });
 
   // This generates a code for the user when the button is checked.
-  app.get("/api/codes", function (req, res) {
+  app.get("/api/code", function (req, res) {
     db.User.findOne({
       where: {
         userName: req.user.userName
       }
     }).then(function (result) {
     // Gets the current time in a moment object
+      
       let currentTime = moment().format();
       console.log(currentTime);
     // Calls our helper function to format the current time to match format of the time on the database
@@ -195,20 +196,29 @@ module.exports = function (app) {
       currentTime = moment(currentTime);
       let eligible = false;
 
-      let str = new Date(result.lastReferral).toISOString();
-      str = moment(str);
+      let lastRef = new Date(result.lastReferral).toISOString();
+      lastRef = moment(lastRef);
+    
+      if(lastRef.diff(currentTime, 'days') <= 3){
+        console.log("You're not eligible for a new code")
+        eligible = false;
+        res.json({eligible: eligible})
+      }
+      else {
+        console.log("You're eligible for a new code")
+        eligible = true;
+        res.json({eligible: eligible})
+      }
+
+      
     // Checks the lastReferral with current time. Edit the int to set the amount of days
-      if(str.diff(currentTime, 'days') >= 0){
-          console.log("You're eligible for a new code")
-         eligible = true;
-        }
-      res.json({eligible: eligible})
+    
     })
   
   });
 
   // Route used to post a referral code on click
-  app.post("/api/getcode", function (req, res) {
+  app.post("/api/code", function (req, res) {
     db.ReferralCodes.create({
       creatorID: req.user.userName,
       // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
@@ -218,6 +228,7 @@ module.exports = function (app) {
       })[0]
     }).then(function (resp) {
       console.log("code created");
+      console.log(resp);
       res.json(resp);
     })
   })

@@ -156,12 +156,30 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function(){
-      res.redirect(`/${event_id}`)
-      //res.end()
+      res.end();
     }).catch(function (err) {
       console.log(err);
       res.json(err);
     });
+  })
+
+  app.get("/api/rsvp/:id", function(req,res){
+    console.log("GET /api/rsvp")
+    let event_id = req.params.id;
+    console.log("event_id received "+event_id)
+    db.Events.findOne({
+      where: {
+        id: event_id
+      }
+    }).then(function(dbEvents){
+      console.log("looking for rsvp")
+      console.log(dbEvents)
+      let event = {
+        upVotes: dbEvents.dataValues.upVotes
+      }
+      console.log("rsvp count "+event.upVotes)
+      res.send(event)
+    })
   })
 
   //change name and/or description of event

@@ -161,7 +161,7 @@
             })
         })
 
-        $(".rsvp-btn").click(function(){
+        $(document.body).on("click", ".rsvp-btn", function (event) {
             let rsvp = {
                 event_id:$(this).attr("data-id")
             }
@@ -169,10 +169,18 @@
                 method:"PUT",
                 data:rsvp
             }).then(function(result){
+                console.log("PUT result")
                 console.log(result)
-                //$.ajax("/")
-                //window.location = `http://localhost:8080/${rsvp.event_id}`
                 //window.location.replace(result)
+                //$("#rsvp-count").empty()
+                $.ajax(`/api/rsvp/${rsvp.event_id}`, {
+                    method: "GET"
+                }).then(function (result) {
+                    console.log('GET result');
+                    console.log(result.upVotes);
+                    $('#rsvp-count').html(result.upVotes);
+                    //$("#side-btn").removeClass("rsvp-btn").val("you rsvp'd to this event")
+                })
             })
         })
 

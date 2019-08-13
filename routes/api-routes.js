@@ -69,7 +69,7 @@ module.exports = function (app) {
     }
   });
 
-  app.get("/events/:id", isAuthenticated,function(req,res){
+  app.get("/events/:id", isAuthenticated, function(req,res){
     console.log(req.user);
     if (req.user) {
       let all = [];

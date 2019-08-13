@@ -247,6 +247,7 @@
                 })
         })
     })
+    
     $(document.body).on("click", ".edit-btn", function(event){
         console.log('edit item');
         let headerText = $('.event-name').text();
@@ -259,7 +260,7 @@
         let descriptionText = $("#description").text();
         $("#description").remove();
         let descriptionContainer = $('<div>').addClass('input-field col s6');
-        let descriptionInput = $('<input>').attr('id', 'edit-event-description').attr('type', 'text').addClass('validate').val(descriptionText);
+        let descriptionInput = $('<textarea>').attr('id', 'edit-event-description').addClass('validate details-edit').val(descriptionText);
         descriptionContainer.append(descriptionInput);
         $("#message-description").append(descriptionContainer);
         $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');

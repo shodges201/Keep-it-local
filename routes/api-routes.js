@@ -7,6 +7,7 @@ var connection = require('../config/connection');
 
 module.exports = function (app) {
 
+  // console.log(db);
   // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
     console.log("login");
@@ -58,7 +59,11 @@ module.exports = function (app) {
     res.render("signup");
   })
 
-  //
+  app.get("/create", function (req, res) {
+    res.render("create");
+  })
+
+  //app.get("/:id", function(req,res){
   app.get("/events/:id", function(req,res){
     console.log(req.user);
     if (req.user) {
@@ -90,11 +95,22 @@ module.exports = function (app) {
                   console.log('dbUserEvents');
                   console.log(dbUserEvents[0].dataValues);
                   let owner = req.user.userName === dbUserEvents[0].dataValues.creatorID;
-                  focus = {data: dbUserEvents[0].dataValues,
-                           ownedByUser: owner}
+                  focus = {
+                    data: dbUserEvents[0].dataValues,
+                    ownedByUser: owner
+                    // equals: function(userID) {
+                    //   if(this.data.creatorID == userID) {
+                    //     return true
+                    //   }
+                    //   else {
+                    //     return false
+                    //   }
+                    // }
+                  }
                   }).then(function() {
                     connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
+                      console.log("Messages_"+req.params.id);
                       console.table(result);
                       res.render('focus', {
                         all_events: all,
@@ -113,12 +129,10 @@ module.exports = function (app) {
     }
   });
 
-
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
   });
-
 
   app.post("/api/signup", function(req, res) {
     console.log(req.body);
@@ -143,8 +157,27 @@ module.exports = function (app) {
     res.redirect("/");
   });
 
+  app.get("/api/rsvp/:id", function(req,res){
+    console.log("GET /api/rsvp")
+    let event_id = req.params.id;
+    console.log("event_id received "+event_id)
+    db.Events.findOne({
+      where: {
+        id: event_id
+      }
+    }).then(function(dbEvents){
+      console.log("looking for rsvp")
+      console.log(dbEvents)
+      let event = {
+        upVotes: dbEvents.dataValues.upVotes
+      }
+      console.log("rsvp count "+event.upVotes)
+      res.send(event)
+    })
+  })
 
   app.put("/api/rsvp", function(req,res){
+    console.log("PUT /api/rsvp")
     let event_id = req.body.event_id;
     db.Events.update({
       upVotes: db.sequelize.literal('upVotes + 1')
@@ -160,6 +193,14 @@ module.exports = function (app) {
       console.log(err);
       res.json(err);
     });
+  })
+  
+  app.get('/api/event/:id', function(req, res){
+    db.Events.findOne({where:{id: req.params.id}, plain:true})
+    .then(function(data){
+      console.log(data);
+      res.json(data);
+    })
   })
 
   //change name and/or description of event
@@ -183,16 +224,6 @@ module.exports = function (app) {
     });
   });
 
-  //get the details of one single event
-  app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id: req.params.id}, plain:true})
-    .then(function(data){
-      console.log(data);
-      res.json(data);
-    })
-  })
-
-
   app.get("/api/user_data", function(req, res) {
     console.log(req.user);
     if (!req.user) {
@@ -207,7 +238,6 @@ module.exports = function (app) {
       });
     }
   });
-
 
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
@@ -250,17 +280,16 @@ module.exports = function (app) {
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
-    //console.log('content: ');
-    let content = escapeString(req.body.content);
-    console.log(content);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
-      function(err, result){
-        if (err) throw err.stack;
-        console.log('got everything');
-        console.table(result);
-        res.end();
+    console.log("req.body")
+    console.log(req.body)
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES('${req.body.content}', '${req.user.userName}');`, function (err, result) {
+      console.log('got everything');
+      console.table(result);
+      // res.redirect(`/${event_id}`);
+      res.end()
     });
   });
+
 
   //get all messages from a certain event
   app.get("/api/message/:event_id", function(req, res){

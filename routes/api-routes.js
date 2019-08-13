@@ -6,13 +6,14 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
+
+// Helper function to manipulate the ISO86 timestamp to become an easier format to check
 var momentToString = function(currentTime){
   let x = currentTime.split('-');
   currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
   return currentTime;
 }
 
-// var referralcode =function getCode(){Math.random().toString(36).substring(7);}
 
 module.exports = function (app) {
 
@@ -22,50 +23,12 @@ module.exports = function (app) {
     res.render("generatecode");
   })
 
-  // Loads a page that should display codes the user generated
+  // Loads a page that displays code the user generated
   app.get("/yourcode", function (req, res) {
     res.render("yourcode")
   })
 
-  // This generates a code for the user when the button is checked.
-  app.get("/api/codes", function (req, res) {
-    db.User.findOne({
-      where: {
-        userName: req.user.userName
-      }
-    }).then(function (result) {
-
-      let currentTime = moment().format();
-      console.log(currentTime);
-      currentTime = momentToString(currentTime);
-      currentTime = moment(currentTime);
-      let eligible = false;
-
-      let str = new Date(result.lastReferral).toISOString();
-      str = moment(str);
-        
-      if(str.diff(currentTime, 'days') >= 0){
-          console.log("You're eligible for a new code")
-         eligible = true;
-        }
-      res.json({eligible: eligible})
-    })
-  
-  });
-
-  app.post("/api/getcode", function (req, res) {
-    db.ReferralCodes.create({
-      creatorID: req.user.userName,
-      code: voucher_codes.generate({
-        length: 8,
-        count: 5
-      })[0]
-    }).then(function (resp) {
-      console.log("code created");
-      res.json(resp);
-    })
-  })
-    
+  // A route that renders the generatecode.hdbs html page
   app.get("/code", function (req, res) {
     res.render('generatecode');
   })
@@ -215,6 +178,49 @@ module.exports = function (app) {
       res.json(err);
     });
   });
+
+  // This generates a code for the user when the button is checked.
+  app.get("/api/codes", function (req, res) {
+    db.User.findOne({
+      where: {
+        userName: req.user.userName
+      }
+    }).then(function (result) {
+    // Gets the current time in a moment object
+      let currentTime = moment().format();
+      console.log(currentTime);
+    // Calls our helper function to format the current time to match format of the time on the database
+      currentTime = momentToString(currentTime);
+      currentTime = moment(currentTime);
+      let eligible = false;
+
+      let str = new Date(result.lastReferral).toISOString();
+      str = moment(str);
+    // Checks the lastReferral with current time. Edit the int to set the amount of days
+      if(str.diff(currentTime, 'days') >= 0){
+          console.log("You're eligible for a new code")
+         eligible = true;
+        }
+      res.json({eligible: eligible})
+    })
+  
+  });
+
+  // Route used to post a referral code on click
+  app.post("/api/getcode", function (req, res) {
+    db.ReferralCodes.create({
+      creatorID: req.user.userName,
+      // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
+      code: voucher_codes.generate({
+        length: 8,
+        count: 5
+      })[0]
+    }).then(function (resp) {
+      console.log("code created");
+      res.json(resp);
+    })
+  })
+
 
   // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){

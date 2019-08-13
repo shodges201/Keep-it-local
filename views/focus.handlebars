@@ -1,7 +1,7 @@
 <div id="bubble">
     {{!-- url to make new logo >> https://engfto.com/index/animated_neon_text_maker/0-27 --}}
-    <a href="/events">
-        <img src="/images/header.gif" id="header-logo" >  
+    <a href="/">
+        <img src="/images/header2.gif" id="header-logo" >  
     </a>
     {{!-- <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
@@ -13,20 +13,22 @@
 </div>
 <div id="event-main">
 
-    <h1><span class="event-name">{{select_event.data.name}}</span></h1>
+    <h1 id="message-header"><span class="event-name">{{select_event.data.name}}</span></h1>
     <br>
     <br>
-    <p>description description descriptiondescription description description descridescription description ption.</p>
+    <div id="message-description">
+        <p id="description">{{select_event.data.description}}</p>
+    </div>
     <br>
-    <p><span class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
+    <p><span id="rsvp-count" class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
     <br>
     <p>located at <span class="event-location">{{select_event.data.location}}</span></p>
     <br>
     <p>started by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
     {{#if select_event.ownedByUser}}
-        <button type="button" class="edit-btn" data-id="{{select_event.data.id}}">Edit this event</button>
+        <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">edit this event</button>
     {{else}}
-        <button type="button" class="rsvp-btn" data-id="{{select_event.data.id}}">rsvp to this event</button>
+        <button type="button" id="side-btn" class="rsvp-btn" data-id="{{select_event.data.id}}">rsvp to this event</button>
     {{/if}}
     <br>
     <br>
@@ -36,11 +38,11 @@
         <h4>Messages</h4>
         <ul id="messages-list">
             {{#each messages}}
-                {{#if_eq select_event.data.creatorID '==' this.creatorID }}
+                {{#if select_event.ownedByUser}}
                     <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
                 {{else}}
                     <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
-                {{/if_eq}}
+                {{/if}}
             {{/each}}
             <br><br>
         </ul>
@@ -85,7 +87,7 @@
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -116,7 +118,7 @@
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -136,6 +138,7 @@
 
 <footer class="footer">
     KEEP IT LOCAL®
+    <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script type="text/javascript">
@@ -150,17 +153,16 @@
             })
         })
 
-        $(".event-link").click(function () {
-            let event_id = $(this).attr("data-id").val()
-            $.ajax(`/${event_id}`, {
-                method: "GET" 
-            }).then(function (result) {
-                window.location.replace(result)
-                // window.location = `/event/${id}`
-            })
-        })
+        //$(".event-link").click(function () {
+          //  let event_id = $(this).attr("data-id").val()
+            //$.ajax(`/${event_id}`, {
+              //  method: "GET" 
+            //}).then(function (result) {
+             //   window.location.replace(result);
+            //})
+        //})
 
-        $(".rsvp-btn").click(function(){
+        $(document.body).on("click", ".rsvp-btn", function (event) {
             let rsvp = {
                 event_id:$(this).attr("data-id")
             }
@@ -168,53 +170,95 @@
                 method:"PUT",
                 data:rsvp
             }).then(function(result){
+                console.log("PUT result")
                 console.log(result)
-                //$.ajax("/")
-                //window.location = `http://localhost:8080/${rsvp.event_id}`
                 //window.location.replace(result)
+                //$("#rsvp-count").empty()
+                $.ajax(`/api/rsvp/${rsvp.event_id}`, {
+                    method: "GET"
+                }).then(function (result) {
+                    console.log('GET result');
+                    console.log(result.upVotes);
+                    $('#rsvp-count').html(result.upVotes);
+                    //$("#side-btn").removeClass("rsvp-btn").val("you rsvp'd to this event")
+                })
             })
         })
 
-        $(".msg-btn").click(function (event) {
+        $(".msg-btn").click(function(event){
             event.preventDefault();
             let this_id = $(this).attr("data-id");
             let this_content = $("#new-msg").val().trim();
             console.log(this_id + this_content);
             $.ajax("/api/message", {
                 method: "POST",
-                data: {
-                    id: this_id,
-                    content: this_content
-                }
-            }).then(function (result) {
+                data: {id: this_id,
+                       content: this_content}
+            }).then(function(result){
                 console.log("new message posted");
                 $("#new-msg").val("");
-                $.ajax("/api/message/" + this_id, {
+                $.ajax("/api/message/"+this_id, {
                     method: "GET"
-                }).then(function (result) {
+                }).then(function(result){
                     console.log('result');
                     console.log(result);
                     $('#messages-list').empty();
-                    result.forEach(function (item) {
+                    result.forEach(function(item){
                         let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
                         let creator = $('<span>').addClass('msg-op').text(item.creatorID);
                         let listItem = $('<li>').append(date).append(creator);
                         listItem.append($('<span>').addClass('msg-content').text(item.content));
                         $("#messages-list").append(listItem);
-                        //$("#messages-list").animate({ scrollTop: 1000 }, 3000)
-
                     })
+                    $("#messages-list").scrollTop = $("#messages-list").scrollHeight;
                 })
+        })
+    })
+    $(document.body).on("click", ".edit-btn", function(event){
+        console.log('edit item');
+        let headerText = $('.event-name').text();
+        $('.event-name').remove();
+        let headerContainer = $('<div>').addClass('input-field col s6');
+        let headerInput = $('<input>').attr('id', 'edit-event-name').attr('type', 'text').addClass('validate').val(headerText);
+        headerContainer.append(headerInput);
+        $("#message-header").append(headerContainer);
+
+        let descriptionText = $("#description").text();
+        $("#description").remove();
+        let descriptionContainer = $('<div>').addClass('input-field col s6');
+        let descriptionInput = $('<input>').attr('id', 'edit-event-description').attr('type', 'text').addClass('validate').val(descriptionText);
+        descriptionContainer.append(descriptionInput);
+        $("#message-description").append(descriptionContainer);
+        $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');
+    });
+
+    $(document.body).on('click', '.confirm-btn', function(event){
+        let newName = $("#edit-event-name").val().trim();
+        let newDescription = $('#edit-event-description').val().trim();
+        let eventID = $(this).data('id');
+        let queryURL = '/api/event/' + eventID;
+        $.ajax(queryURL, {
+            method: 'PUT',
+            data: {name: newName,
+                   description: newDescription}
+        }).then(function(){
+            $.ajax(queryURL, {
+                method: 'GET'
+            }).then(function(resp){
+                $("#message-description").empty();
+                $("#message-description").append($("<p>").attr("id", "description").text(resp.description));
+                $('#message-header').empty();
+                $('#message-header').append($('<span>').addClass('event-name').text(resp.name));
+                $('#side-btn').removeClass('confirm-btn').addClass('edit-btn').text('Edit this event');
             })
         })
-        function formatDate(date) {
-            let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            let dateItems = (date.split('-' && 'T')[0]).split('-');
-            return months[parseInt(dateItems[1]) - 1] + " " + dateItems[2] + ", " + dateItems[0];
-        }
-    })
+    });
 
-        
-    
+    function formatDate(date){
+        let months =  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let dateItems = (date.split('-' && 'T')[0]).split('-');
+        return months[parseInt(dateItems[1])-1] + " " + dateItems[2] + ", " + dateItems[0];
+    }
+    })
 
 </script>

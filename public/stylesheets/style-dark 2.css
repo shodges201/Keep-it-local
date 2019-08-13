@@ -1,0 +1,367 @@
+body {
+  /* background-color: rgb(105, 151, 128); */
+  /* background:linear-gradient(to top right, rgb(105, 151, 128), rgb(105, 130, 151)); */
+  /* background:linear-gradient(to top right, rgb(78, 45, 45), rgb(53, 77, 70)); */
+  background:linear-gradient(to top right, rgb(102, 42, 42), rgb(53, 77, 70));
+  color:white;
+  font-family: 'Roboto Condensed', Helvetica, monospace;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  background: rgb(0,0,0,0);
+}
+
+#bubble {
+  float: left;
+}
+
+#event-main {
+  position: absolute;
+  left: 5%;
+  top: 20%;
+  font-size:18px;
+  width: 40%;
+}
+
+#header-logo {
+  margin-bottom:0px;
+ 
+}
+
+h1 {
+  font-size: 30px;
+  letter-spacing: .2px;
+}
+
+
+.speech-bubble,.speech-bubble-2 {
+  position: relative;
+  background: rgba(189, 189, 189,0.3);
+  border-radius: .4em;
+  margin-top: 9%;
+  margin-left: 170px;
+  width: 200px;
+  font-family: 'Oswald', sans-serif;
+  /* color:rgba(0, 0, 0); */
+  color:rgb(218, 218, 218);
+  /* -webkit-text-stroke: .01px rgb(218, 255, 232); */
+  /* border: 1px solid rgb(218, 255, 232); */
+  padding:1px 2px 1px 2px;
+}
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-top-color: rgba(189, 189, 189,0.3);
+  border-bottom: 0;
+  border-left: 0;
+  margin-left: -10px;
+  margin-bottom: -20px;
+}
+
+.speech-bubble-2 {
+  margin-top: 24%;
+  margin-left: 290px;
+  color:rgb(196, 255, 219);
+}
+
+
+
+.speech-bubble-2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 25%;
+  width: 0;
+  height: 0;
+  border: 20px solid transparent;
+  border-top-color: rgba(189, 189, 189,0.3);
+  border-bottom: 0;
+  border-right: 0;
+  margin-left: -10px;
+  margin-bottom: -20px;
+}
+
+
+
+#dark-panel {
+  float: right;
+  margin: 20px 40px 30px;
+  height: 94vh;
+  width: 45%;
+  /* background-color: rgba(28, 23, 74, 0.413); */
+  /* background-color: rgba(28, 23, 74, 0.0); */
+  background:linear-gradient(to bottom, rgba(150, 150, 150, 0.15), rgba(105, 144, 151, 0.0));
+  border-radius: 25px;
+  padding: 40px;
+  position: relative;
+  font-size:19px;
+  /* border: 2px solid rgba(0, 0, 0, 0.356); */
+  overflow: scroll;
+}
+
+
+#Username {
+  float: left;
+  padding-top: 20px;
+  /* padding-left: 80px; */
+  margin-left: 150px;
+  border-radius: 25px;
+
+
+}
+
+#password {
+  float: right;
+  padding-top: 20px;
+  /* padding-right: 100px; */
+  margin-right: 150px;
+  border-radius: 25px;
+}
+
+#btn-login,#btn-signup {
+  margin-top: 10px;
+  width: 200px;
+}
+
+
+#quote {
+  text-align: center;
+  color:rgba(218, 218, 218, 0.9);
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height:1vw;
+  background-color: rgb(142, 142, 142);
+  color: black;
+  text-align: center;
+  padding-bottom:21px;
+}
+
+li {
+  list-style: none;
+  color: white;
+}
+
+#listings-table {
+  margin:10px;
+}
+
+.listings-section {
+  /* color:rgb(182, 255, 210,0); */
+  color:rgb(182, 255, 210,0);
+  -webkit-text-stroke: 1px rgb(182, 255, 210);
+  -moz-text-stroke:1px rgb(182, 255, 210);
+  
+  /* text-stroke:.01px rgb(182, 255, 210); */
+  font-size:30px;
+  margin-bottom:5px;
+  letter-spacing: .2px;
+}
+
+.listing-header {
+  float: left;
+  margin-bottom: 20px;
+  /* color:rgb(105, 151, 128); */
+  color:rgba(186, 243, 208, 0.6);
+  letter-spacing: .5px;
+}
+
+.listing-item-name {
+  margin-right:40px;
+}
+.listing-item-local {
+  margin-right:65px;
+}
+.listing-item-cat {
+  margin-right:50px;
+}
+.listing-item-votes {
+  margin-right:70px;
+}
+.listing-item-id {
+  margin-right:10px;
+}
+
+
+
+
+#listing-row{
+  margin-bottom: 50px;
+}
+
+.list-group {
+  margin-bottom: 30px;
+}
+
+form {
+  position: relative;
+}
+
+input {
+  border: none;
+  background: rgb(2,2,2,0.4);
+  border-bottom: lightgray 1px solid;
+  border-radius:5px;
+  color: white;
+  margin: 5px;
+  font-size:20px;
+  width: 80%;
+  font-family: 'Roboto Condensed', monospace;
+}
+
+input:focus {
+  outline:none;
+}
+
+#login-btn,#signup-btn {
+  font-size:20px;
+  border:none;
+  background: none;
+  color: rgba(79, 188, 255, 0.692);
+  position: absolute;
+  right: 0px;
+  bottom: -28px;
+  transition-property: color;
+  transition-duration: .5s;
+}
+
+#login-btn:hover,
+#signup-btn:hover {
+  color: rgb(151, 215, 255);
+}
+
+h4{
+  margin-left:5px;
+}
+
+.switch-link {
+  position: absolute;
+  bottom:-25px;
+  left:5px;
+  font-size:20px;
+  color:rgba(198, 198, 198, 0.829);
+}
+
+a {
+  text-decoration: none;
+  color: rgba(233, 130, 254, 0.692);
+  /* transition-property: color;
+  transition-duration: .1s; */
+}
+
+a:hover {
+  text-decoration: none;
+  color: rgb(244, 190, 255);
+}
+
+label {
+  margin:0px 0px 0px 5px;
+  font-style: italic;
+  color:rgba(218, 218, 218, 0.9);
+}
+
+button {
+  font-family: 'Roboto Condensed',monospace;
+}
+
+#home {
+  text-decoration: none;
+  /* color: rgba(233, 130, 254, 0.692); */
+  color:rgb(196, 255, 219, 0.7);
+  transition-property: color;
+  transition-duration: .1s;
+}
+
+#home:hover {
+  text-decoration: none;
+  /* color: rgb(244, 190, 255); */
+  /* color:rgb(177, 255, 207); */
+  color:rgb(255, 140, 152);
+}
+
+
+
+.event-link {
+  color:white;
+}
+.listing-row:hover  {
+  color:rgb(250, 149, 159);
+}
+
+.event-link:hover {
+  color:rgb(250, 149, 159);
+}
+
+.event-link:hover .listing-row{
+  color:rgb(250, 149, 159);
+}
+
+.listing-row:hover .event-link {
+  color:rgb(250, 149, 159);
+}
+
+
+.event-votes {
+  color: rgb(250, 149, 159)
+}
+
+.event-location {
+  color: rgb(154, 194, 255)
+}
+
+.msg-date {
+  color: rgb(250, 149, 159);
+  margin-right: 5px;
+}
+
+.msg-user {
+  color: rgb(154, 194, 255);
+  margin-right: 10px;
+}
+
+.msg-op {
+  color: rgb(121, 255, 199);
+  margin-right: 10px;
+}
+
+.event-creator {
+  color: rgb(121, 255, 199)
+}
+
+.rsvp-btn,
+.msg-btn,
+.new-event-btn,
+.edit-btn {
+  float:right;
+  border:none;
+  background:none;
+  font-size: 20px;
+  padding:0px;
+  color:rgba(226, 169, 255, 0.7);
+}
+
+.rsvp-btn:hover,
+.msg-btn:hover,
+.new-event-btn:hover {
+  color:rgba(226, 169, 255);
+  /* color:rgba(121, 255, 199); */
+
+}
+
+#messages-list{
+  overflow:scroll;
+  height: 150px;
+}

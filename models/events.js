@@ -6,7 +6,10 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         unique: true
       },
-      // The password cannot be null
+      description: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       category: {
         type: DataTypes.STRING,
         allowNull: false

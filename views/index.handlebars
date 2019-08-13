@@ -1,6 +1,6 @@
 <div id="bubble">
-    <a href="/events">
-        <img src="/images/header.gif" id="header-logo">
+    <a href="/">
+        <img src="/images/header2.gif" id="header-logo">
     </a>
     <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
@@ -48,7 +48,7 @@
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -56,7 +56,8 @@
                     </tr>
                 {{/each}}
                 </table>
-                <button type="button" class="new-event-btn">make new event</button>
+                {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
+                <a href="/create" class="new-event-btn">make new event</a>
                 <br><br><br><br>
             </div>
         </div>
@@ -79,7 +80,7 @@
                 {{#each all_events}}
                     <tr class="listing-row">
                         
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -92,12 +93,7 @@
             </div>
         </div>
     </div>
-    <div id="messages">
-            <br>
-            <h2>Messages</h2>
-            <ul id="messages-list">
-            </ul>
-        </div>
+    
 
 </div>
 
@@ -106,9 +102,11 @@
 
 <footer class="footer">
     KEEP IT LOCAL®
+    <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script>
+<<<<<<< HEAD
     $(document).ready(function () {
         $(".event-link").click(function () {
             let event_id = $(this).attr("data-id").val()
@@ -125,4 +123,23 @@
         
         
     })
+=======
+    //$(document).ready(function () {
+       // $(".event-link").click(function () {
+            //let event_id = $(this).attr("data-id").val()
+            //$.ajax(`/events/${event_id}`, {
+               // method: "GET",
+               // data: { 
+                //    id: event_id
+               // }
+           // }).then(function (result) {
+              //  console.log(result);
+              //  window.location.replace(result);
+                //window.location = `/event/${id}`
+           // })
+       //})
+        
+        
+    //})
+>>>>>>> f1dd93188028012612caf393fe3b97478c101e24
 </script>

@@ -162,7 +162,23 @@ module.exports = function (app) {
     res.end();
   });
 
+  app.put("/api/login", passport.authenticate("local"), function (req, res) {
+    console.log('tried to login');
+    console.log(req.body.location);
+    db.User.update({
+      currentLocation: req.body.location
+    },{
+      where: {
+        userName: req.body.username
+      }
+    }).then(function(resp){
+      console.log(resp);
+      res.end();
+     });
+  });
+
   app.post("/api/signup", function(req, res) {
+    console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
     let now = moment().format();
@@ -170,7 +186,8 @@ module.exports = function (app) {
     db.User.create({
       userName: req.body.username,
       password: req.body.password,
-      lastReferral: now
+      lastReferral: now,
+      currentLocation: req.body.location
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {
@@ -282,11 +299,8 @@ module.exports = function (app) {
       }
     }
     ).then(function(data){
-      console.log('data: ');
-      console.log(data);
       res.json(data);
     }).catch(function (err) {
-      console.log(err);
       res.json(err);
     });
   });

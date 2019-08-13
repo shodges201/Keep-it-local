@@ -1,7 +1,7 @@
 <div id="bubble">
     {{!-- url to make new logo >> https://engfto.com/index/animated_neon_text_maker/0-27 --}}
     <a href="/events">
-        <img src="/images/header.gif" id="header-logo" >  
+        <img src="/images/header.gif" id="header-logo" >
     </a>
     {{!-- <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
@@ -9,7 +9,7 @@
     <hgroup class="speech-bubble-2" style="text-align:center;">
         <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
     </hgroup> --}}
-    
+
 </div>
 <div id="event-main">
 
@@ -23,26 +23,8 @@
     <p>located at <span class="event-location">{{select_event.location}}</span></p>
     <br>
     <p>started by <span class="event-creator">{{select_event.creatorID}}</span></p>
+    <br><br>
     <button type="button" class="rsvp-btn" data-id="{{select_event.id}}">rsvp to this event</button>
-    <br>
-    <br>
-
-    <div id="messages">
-        <br>
-        <h4>Messages</h4>
-        <ul id="messages-list">
-            {{#each messages}}
-                {{#if_eq select_event.creatorID '==' this.creatorID }}
-                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
-                {{else}}
-                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
-                {{/if_eq}}
-            {{/each}}
-            <br><br>
-            <input type="text" id="new-msg" placeholder="new message">
-            <button type="button" class="msg-btn" data-id="{{select_event.id}}">post</button>
-        </ul>
-    </div>
 </div>
 
 <div id="dark-panel">
@@ -62,7 +44,7 @@
         </div> --}}
 
 
-        
+
 
         <div class="list-group user-listings">
             <h3 class="listings-section">
@@ -70,26 +52,27 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                <tr>
-                
-                    <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
-                    <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">rsvps</span></th> 
-                    <th><span class="listing-header">creator</span></th>
-                
-                </tr>
-                {{#each user_events}}
+                    <tr>
+
+                        <th><span class="listing-header">name</span></th>
+                        <th><span class="listing-header">location</span></th>
+                        <th><span class="listing-header">category</span></th>
+                        <th><span class="listing-header">votes</span></th>
+                        <th><span class="listing-header">creator</span></th>
+
+                    </tr>
+                    {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}"
+                                    class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
-                <button type="button" class="new-event-btn">make new event</button>
+                <a href="/create-event"></a>
                 <br><br><br><br>
             </div>
         </div>
@@ -100,24 +83,25 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                <tr>
+                    <tr>
 
-                    <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
-                    <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
-                    <th><span class="listing-header">creator</span></th>
-                
-                </tr>
-                {{#each all_events}}
+                        <th><span class="listing-header">name</span></th>
+                        <th><span class="listing-header">location</span></th>
+                        <th><span class="listing-header">category</span></th>
+                        <th><span class="listing-header">votes</span></th>
+                        <th><span class="listing-header">creator</span></th>
+
+                    </tr>
+                    {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}"
+                                    class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
                 <br><br><br><br>
             </div>
@@ -132,38 +116,3 @@
 <footer class="footer">
     KEEP IT LOCAL®
 </footer>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $(".rsvp-btn").click(function(){
-            let rsvp = {
-                event_id:$(this).attr("data-id")
-            }
-            $.ajax("/api/rsvp/",{
-                method:"PUT",
-                data:rsvp
-            }).then(function(result){
-                location.reload()
-            })
-        })
-
-
-
-        $(".msg-btn").click(function(){
-            let new_msg = {
-                id:$(this).attr("data-id"),
-                content: $("#new-msg").val().trim()
-            }
-            console.log(new_msg)
-            $.ajax("/api/message", {
-                method: "PUT",
-                data: new_msg
-            }).then(function(result){
-                console.log("new message posted")
-                $("#new-msg").val("")
-                location.reload()
-            })
-        })
-    })
-
-</script>

@@ -2,19 +2,37 @@
 var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
+var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var connection = require('../config/connection');
 
 module.exports = function (app) {
 
-  // console.log(db);
+//====================== render/html routes ========================================
   // If the user already has an account send them to the members page
-  app.get("/", function (req, res) {
+  app.get("/", notAuthenticated, function (req, res) {
     console.log("login");
     res.render("login")
   });
 
-  app.get("/events", function (req, res) {
+  app.get("/login", notAuthenticated, function(req,res){
+    res.render("login");
+  });
+  
+  app.get("/signup", notAuthenticated, function(req,res){
+    res.render("signup");
+  });
+
+  app.get("/logout", isAuthenticated, function(req, res) {
+    req.logout();
+    res.redirect("/");
+  });
+
+  app.get("/create", isAuthenticated, function (req, res) {
+    res.render("create");
+  });
+
+  app.get("/events", isAuthenticated, function (req, res) {
     console.log(req.user);
     if (req.user) {
       let all = [];
@@ -51,20 +69,7 @@ module.exports = function (app) {
     }
   });
 
-  app.get("/login", function(req,res){
-    res.render("login");
-  })
-  
-  app.get("/signup", function(req,res){
-    res.render("signup");
-  })
-
-  app.get("/create", function (req, res) {
-    res.render("create");
-  })
-
-  //app.get("/:id", function(req,res){
-  app.get("/events/:id", function(req,res){
+  app.get("/events/:id", isAuthenticated, function(req,res){
     console.log(req.user);
     if (req.user) {
       let all = [];
@@ -72,7 +77,6 @@ module.exports = function (app) {
       let msgs = [];
       let focus;
       db.Events.findAll({
-          // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
             all.push(element.dataValues);
@@ -129,6 +133,7 @@ module.exports = function (app) {
     }
   });
 
+  //====================== api routes ========================================
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
@@ -146,15 +151,6 @@ module.exports = function (app) {
       console.log(err);
       res.json(err);
     });
-  });
-
-  app.get("/login", function(req, res){
-    res.render("login");
-  });
-
-  app.get("/logout", function(req, res) {
-    req.logout();
-    res.redirect("/");
   });
 
   app.get("/api/rsvp/:id", function(req,res){
@@ -187,8 +183,7 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function(){
-      // res.redirect(`/${event_id}`)
-      res.end()
+      res.end();
     }).catch(function (err) {
       console.log(err);
       res.json(err);
@@ -196,10 +191,29 @@ module.exports = function (app) {
   })
   
   app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id: req.params.id}, plain:true})
+    db.Events.findOne({where:{id:req.params.id}, plain:true})
     .then(function(data){
       console.log(data);
       res.json(data);
+    })
+  })
+
+  app.get("/api/rsvp/:id", function(req,res){
+    console.log("GET /api/rsvp")
+    let event_id = req.params.id;
+    console.log("event_id received "+event_id)
+    db.Events.findOne({
+      where: {
+        id: event_id
+      }
+    }).then(function(dbEvents){
+      console.log("looking for rsvp")
+      console.log(dbEvents)
+      let event = {
+        upVotes: dbEvents.dataValues.upVotes
+      }
+      console.log("rsvp count "+event.upVotes)
+      res.send(event)
     })
   })
 
@@ -223,6 +237,16 @@ module.exports = function (app) {
       res.json(err);
     });
   });
+
+  //get the details of one single event
+  app.get('/api/event/:id', function(req, res){
+    db.Events.findOne({where:{id: req.params.id}, plain:true})
+    .then(function(data){
+      console.log(data);
+      res.json(data);
+    })
+  })
+
 
   app.get("/api/user_data", function(req, res) {
     console.log(req.user);
@@ -280,16 +304,17 @@ module.exports = function (app) {
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
-    console.log("req.body")
-    console.log(req.body)
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES('${req.body.content}', '${req.user.userName}');`, function (err, result) {
-      console.log('got everything');
-      console.table(result);
-      // res.redirect(`/${event_id}`);
-      res.end()
+    //console.log('content: ');
+    let content = escapeString(req.body.content);
+    console.log(content);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
+      function(err, result){
+        if (err) throw err.stack;
+        console.log('got everything');
+        console.table(result);
+        res.end();
     });
   });
-
 
   //get all messages from a certain event
   app.get("/api/message/:event_id", function(req, res){

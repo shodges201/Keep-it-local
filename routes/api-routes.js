@@ -162,6 +162,7 @@ module.exports = function (app) {
     });
   })
 
+  //change name and/or description of event
   app.put("/api/event/:id", function(req, res){
     db.Events.update({
       name: req.body.name,
@@ -182,6 +183,7 @@ module.exports = function (app) {
     });
   });
 
+  //get the details of one single event
   app.get('/api/event/:id', function(req, res){
     db.Events.findOne({where:{id: req.params.id}, plain:true})
     .then(function(data){
@@ -248,9 +250,10 @@ module.exports = function (app) {
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
-    console.log('body: ');
-    console.log(req.body.id);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, upVotes) VALUES('${req.body.content}', '${req.user.userName}', 0);`, 
+    //console.log('content: ');
+    let content = escapeString(req.body.content);
+    console.log(content);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');
@@ -271,6 +274,31 @@ module.exports = function (app) {
     });
   });
 
+  //used for making mysql queries with strings including special characters
+  function escapeString (str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\"+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
+}
   //get event of specific name 
   // app.get("/api/event/:eventname", function (req, res) {
   //   db.Events.findAll({

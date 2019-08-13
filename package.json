@@ -229,6 +229,7 @@
       "resolved": "https://registry.npmjs.org/generate-function/-/generate-function-2.3.1.tgz",
       "version": "2.3.1"
     },
+    "geocoder": "^0.2.3",
     "glob": {
       "integrity": "sha512-hkLPepehmnKk41pUGm3sYxoFs/umurYfYJCerbXEyFIWcAzvpipAgVkBqqT9RBKMGjnq6kMuyYwha6csxbiM1A==",
       "requires": {

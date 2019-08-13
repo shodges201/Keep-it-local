@@ -6,6 +6,7 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var connection = require('../config/connection');
 
+
 module.exports = function (app) {
 
 //====================== render/html routes ========================================
@@ -153,7 +154,7 @@ module.exports = function (app) {
     });
   });
 
-  // RSVP create and get
+  // rsvp get & put requests
   app.get("/api/rsvp/:id", function(req,res){
     // console.log("GET /api/rsvp")
     let event_id = req.params.id;
@@ -192,7 +193,7 @@ module.exports = function (app) {
   })
   
 
-  //get a single event
+  // get a single event
   app.get('/api/event/:id', function(req, res){
     db.Events.findOne({where:{id:req.params.id}, plain:true})
     .then(function(data){
@@ -225,16 +226,26 @@ module.exports = function (app) {
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
-    let description = "";
+    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
+    // geocoder.geocode(fullAddr, function (err, data) {
+    //   if(err) throw err.stack;
+    //   console.log(data)
+    // });
+    let description = ""
     if(req.body.description){
-      description = req.body.description;
+      description = req.body.description
     }
+
     db.Events.create({
       name: req.body.name,
       description: description,
+      // date:req.body.date,
       category: req.body.category,
+      // streetAddress: req.body.address,
       location: req.body.location,
-      creatorID: req.body.id,
+      creatorID: req.user.userName,
+      // startTime: req.body.startTime,
+      // endTime: req.body.endTime,
       upVotes: 0
     }).then(function (resp) {
       console.log("event created");

@@ -388,15 +388,25 @@ button {
   height: 150px;
 } */
 
+a#logout-link,
+#refer-link {
+  color: black;
+}
+
 #logout {
   position: absolute;
   right: 10px;
 }
-a#logout-link {
-  color: black;
+
+#refer-link {
+  position: absolute;
+  left: 1px;
+  background:none;
+  border:none;
 }
 
-a#logout-link:hover {
+a#logout-link:hover,
+#refer-link:hover {
   color: rgb(255, 255, 255);
 }
 
@@ -404,23 +414,29 @@ input#create-form {
   height:18px;
 }
 
-#startTime,
-#endTime {
-  width:49%;
-  float:left;
-  margin-right: 1%;
-}
-
-#from-label {
-  margin-right:45%;
-}
-
-/* #location-form {
-  position: absolute;
-  bottom:200px;
-  right:100px;
-} */
 
 #details {
   color:white;
+  height: 150px;
 }
+
+#refer-box {
+  /* visibility: hidden; */
+  position: fixed;
+  z-index: 3;
+  left: 43%;
+  top: 40%;
+  width: 360px;
+  height: 140px;
+  background: rgb(0, 0, 0, 0.8);
+  color:white;
+  text-align: center;
+  padding:30px;
+  font-size:20px;
+}
+
+#refer-code {
+  color: red;
+  margin:0px;
+}
+

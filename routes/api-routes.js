@@ -6,6 +6,23 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
+var Distance = require('geo-distance');
+var NodeGeocoder = require('node-geocoder');
+var connection = require('../config/connection');
+var options = {
+  provider: 'mapquest',
+  // Optional depending on the providers
+  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw' // for Mapquest, OpenCage, Google Premier
+};
+var geocoder = NodeGeocoder(options);
+
+/*
+geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
+        console.log("-------------------------");
+        console.log(data);
+      });
+*/
+
 var momentToString = function(currentTime){
   let x = currentTime.split('-');
   currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
@@ -202,6 +219,7 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
+    console.log(convertLatLong(req.body.location));
     db.User.update({
       currentLocation: req.body.location
     },{
@@ -388,5 +406,13 @@ module.exports = function (app) {
     });
   }
 
+  function convertLatLong(str){
+    str = str.split(', ');
+    let obj = {
+      latitude: parseFloat(str[0]),
+      longitude: parseFloat(str[1])
+    }
+    return obj;
+  }
 }
 

@@ -229,6 +229,8 @@
       "resolved": "https://registry.npmjs.org/generate-function/-/generate-function-2.3.1.tgz",
       "version": "2.3.1"
     },
+    "geo-distance": "^0.2.0",
+    "geocoder": "^0.2.3",
     "glob": {
       "integrity": "sha512-hkLPepehmnKk41pUGm3sYxoFs/umurYfYJCerbXEyFIWcAzvpipAgVkBqqT9RBKMGjnq6kMuyYwha6csxbiM1A==",
       "requires": {
@@ -411,6 +413,7 @@
       "resolved": "https://registry.npmjs.org/neo-async/-/neo-async-2.6.1.tgz",
       "version": "2.6.1"
     },
+    "node-geocoder": "^3.23.0",
     "object-keys": {
       "integrity": "sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==",
       "resolved": "https://registry.npmjs.org/object-keys/-/object-keys-1.1.1.tgz",

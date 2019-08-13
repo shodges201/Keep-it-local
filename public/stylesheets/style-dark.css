@@ -1,3 +1,4 @@
+
 body {
   /* background-color: rgb(105, 151, 128); */
   /* background:linear-gradient(to top right, rgb(105, 151, 128), rgb(105, 130, 151)); */
@@ -5,6 +6,7 @@ body {
   background:linear-gradient(to top right, rgb(102, 42, 42), rgb(53, 77, 70));
   color:white;
   font-family: 'Roboto Condensed', Helvetica, monospace;
+  /* zoom:90%; */
 }
 
 input:-webkit-autofill,
@@ -28,7 +30,9 @@ input:-webkit-autofill:active {
 
 #header-logo {
   margin-bottom:0px;
- 
+  position: fixed;
+  left:-1px;
+  /* visibility: hidden; */
 }
 
 h1 {
@@ -41,7 +45,7 @@ h1 {
   position: relative;
   background: rgba(189, 189, 189,0.3);
   border-radius: .4em;
-  margin-top: 9%;
+  margin-top: 49%;
   margin-left: 170px;
   width: 200px;
   font-family: 'Oswald', sans-serif;
@@ -68,7 +72,7 @@ h1 {
 }
 
 .speech-bubble-2 {
-  margin-top: 24%;
+  margin-top: 34%;
   margin-left: 290px;
   color:rgb(196, 255, 219);
 }
@@ -150,6 +154,12 @@ h1 {
   padding-bottom:21px;
 }
 
+#logout {
+  position: absolute;
+  right:10px;
+  color:black;
+}
+
 li {
   list-style: none;
   color: white;
@@ -226,7 +236,8 @@ input:focus {
   outline:none;
 }
 
-#login-btn,#signup-btn {
+#login-btn,
+#signup-btn {
   font-size:20px;
   border:none;
   background: none;
@@ -268,9 +279,10 @@ a:hover {
 }
 
 label {
-  margin:0px 0px 0px 5px;
+  font-size: 20px;
+  margin:0px;
   font-style: italic;
-  color:rgba(218, 218, 218, 0.9);
+  color:rgba(184, 204, 255, 0.9);
 }
 
 button {
@@ -344,7 +356,9 @@ button {
 .rsvp-btn,
 .msg-btn,
 .new-event-btn,
-.edit-btn, .confirm-btn{
+.edit-btn, 
+.confirm-btn,
+#create-btn {
   float:right;
   border:none;
   background:none;
@@ -356,15 +370,57 @@ button {
 .rsvp-btn:hover,
 .msg-btn:hover,
 .new-event-btn:hover,
-.confirm-btn:hover {
+.confirm-btn:hover,
+#create-btn:hover {
   color:rgba(226, 169, 255);
 
 }
 
 #messages-list {
-  text-align: bottom;
-  overflow:scroll;
-  /* overflow: hidden; */
+  /* text-align: bottom; */
+  overflow: scroll;
   height: 150px;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
+}
+/*   
+#messages-list{
+  overflow:scroll;
+  height: 150px;
+} */
+
+#logout {
+  position: absolute;
+  right: 10px;
+}
+a#logout-link {
+  color: black;
+}
+
+a#logout-link:hover {
+  color: rgb(255, 255, 255);
+}
+
+input#create-form {
+  height:18px;
+}
+
+#startTime,
+#endTime {
+  width:49%;
+  float:left;
+  margin-right: 1%;
+}
+
+#from-label {
+  margin-right:45%;
+}
+
+/* #location-form {
+  position: absolute;
+  bottom:200px;
+  right:100px;
+} */
+
+#details {
+  color:white;
 }

@@ -6,6 +6,7 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
+var connection = require("../config/connection.js")
 
 // Helper function to manipulate the ISO86 timestamp to become an easier format to check
 var momentToString = function(currentTime){
@@ -163,7 +164,23 @@ module.exports = function (app) {
     res.end();
   });
 
+  app.put("/api/login", passport.authenticate("local"), function (req, res) {
+    console.log('tried to login');
+    console.log(req.body.location);
+    db.User.update({
+      currentLocation: req.body.location
+    },{
+      where: {
+        userName: req.body.username
+      }
+    }).then(function(resp){
+      console.log(resp);
+      res.end();
+     });
+  });
+
   app.post("/api/signup", function(req, res) {
+    console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
     let now = moment().format();
@@ -171,7 +188,8 @@ module.exports = function (app) {
     db.User.create({
       userName: req.body.username,
       password: req.body.password,
-      lastReferral: now
+      lastReferral: now,
+      currentLocation: req.body.location
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {
@@ -233,7 +251,6 @@ module.exports = function (app) {
     })
   })
 
-
   // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){
     // console.log("GET /api/rsvp")
@@ -272,11 +289,13 @@ module.exports = function (app) {
     });
   })
   
-
   // get a single event
   app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id:req.params.id}, plain:true})
-    .then(function(data){
+    db.Events.findOne({
+      where: {
+        id:req.params.id}, 
+        plain:true
+    }).then(function(data){
       console.log(data);
       res.json(data);
     })
@@ -294,11 +313,8 @@ module.exports = function (app) {
       }
     }
     ).then(function(data){
-      console.log('data: ');
-      console.log(data);
       res.json(data);
     }).catch(function (err) {
-      console.log(err);
       res.json(err);
     });
   });
@@ -311,15 +327,17 @@ module.exports = function (app) {
     //   if(err) throw err.stack;
     //   console.log(data)
     // });
-    let description = ""
+    let description = "";
     if(req.body.description){
       description = req.body.description
     }
 
+
+
     db.Events.create({
       name: req.body.name,
       description: description,
-      // date:req.body.date,
+      //date:req.body.date,
       category: req.body.category,
       // streetAddress: req.body.address,
       location: req.body.location,

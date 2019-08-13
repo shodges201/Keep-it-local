@@ -419,6 +419,7 @@ input#create-form {
 #details {
   color:white;
   height: 150px;
+  white-space: pre-wrap;
 }
 
 #refer-box {
@@ -432,8 +433,8 @@ input#create-form {
   background: rgb(0, 0, 0, 0.8);
   color:white;
   text-align: center;
-  padding:30px;
-  font-size:20px;
+  padding:50px;
+  font-size:18px;
 }
 
 #refer-code {

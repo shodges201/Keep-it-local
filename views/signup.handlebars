@@ -44,10 +44,27 @@
     $(document).ready(function () {
         $("#signup-form").on("submit", function (event) {
             event.preventDefault();
-            let newUser = {
-                username: $("#signup-form [name=username]").val().trim(),
-                password: $("#signup-form [name=password]").val().trim()
+            console.log('submitted');
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(success, error, {timeout: 10000});
             }
+            else{
+                console.log('not supported');
+            }
+        });
+
+        $("#login-btn").on("click", function(event){
+            event.preventDefault();
+            window.location = "http://localhost:8080/login";
+        });
+
+        function success(position) {
+            let loc = position.coords.toString();
+            let newUser = {
+                    username: $("#signup-form [name=username]").val().trim(),
+                    password: $("#signup-form [name=password]").val().trim(),
+                    location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString()
+                }
             $.ajax("/api/signup", {
                 method: "POST",
                 data: newUser
@@ -55,13 +72,15 @@
                 console.log("new user added")
                 window.location = "http://localhost:8080/events"
             })
-        });
+        }
 
-        $("#login-btn").on("click", function(event){
-            event.preventDefault();
-            window.location = "http://localhost:8080/login";
-        })
-    })
-    
+        function error() {
+            console.log("failed");
+            M.toast({
+                html: 'Location failed! Try turning on location services, we need your location to validate your local status!'
+            })
+        }
+
+    });
 
 </script>

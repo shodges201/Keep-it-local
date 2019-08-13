@@ -7,7 +7,6 @@ var connection = require('../config/connection');
 
 module.exports = function (app) {
 
-  console.log(db);
   // If the user already has an account send them to the members page
   app.get("/", function (req, res) {
     console.log("login");
@@ -59,11 +58,8 @@ module.exports = function (app) {
     res.render("signup");
   })
 
-  app.get("/create-event", function(req,res){
-    res.render("create-event");
-  })
-
-  app.get("/:id", function(req,res){
+  //
+  app.get("/events/:id", function(req,res){
     console.log(req.user);
     if (req.user) {
       let all = [];
@@ -91,14 +87,15 @@ module.exports = function (app) {
                       id: req.params.id
                     }
                 }).then(function (dbUserEvents) {
-                  dbUserEvents.forEach(function (item) {
-                    focus = item.dataValues 
-                  })
+                  console.log('dbUserEvents');
+                  console.log(dbUserEvents[0].dataValues);
+                  let owner = req.user.userName === dbUserEvents[0].dataValues.creatorID;
+                  focus = {data: dbUserEvents[0].dataValues,
+                           ownedByUser: owner}
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY createdAt DESC;`, function (err, result) {
+                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.table(result);
-                      
                       res.render('focus', {
                         all_events: all,
                         user_events: user,
@@ -110,11 +107,11 @@ module.exports = function (app) {
                   
             });
         });
-    } 
-    else {
-      res.redirect('/events');
     }
-  })
+    else{
+      res.redirect("/");
+    }
+  });
 
 
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
@@ -150,18 +147,49 @@ module.exports = function (app) {
   app.put("/api/rsvp", function(req,res){
     let event_id = req.body.event_id;
     db.Events.update({
-      upVotes: sequelize.literal('upVotes + 1')
+      upVotes: db.sequelize.literal('upVotes + 1')
     }, 
     {
       where: {
         id: event_id
       }
     }).then(function(){
+      // res.redirect(`/${event_id}`)
       res.end()
     }).catch(function (err) {
       console.log(err);
       res.json(err);
     });
+  })
+
+  //change name and/or description of event
+  app.put("/api/event/:id", function(req, res){
+    db.Events.update({
+      name: req.body.name,
+      description: req.body.description
+    },
+    {
+      where:{
+        id: req.params.id
+      }
+    }
+    ).then(function(data){
+      console.log('data: ');
+      console.log(data);
+      res.json(data);
+    }).catch(function (err) {
+      console.log(err);
+      res.json(err);
+    });
+  });
+
+  //get the details of one single event
+  app.get('/api/event/:id', function(req, res){
+    db.Events.findOne({where:{id: req.params.id}, plain:true})
+    .then(function(data){
+      console.log(data);
+      res.json(data);
+    })
   })
 
 
@@ -184,72 +212,53 @@ module.exports = function (app) {
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
+    let description = "";
+    if(req.body.description){
+      description = req.body.description;
+    }
     db.Events.create({
       name: req.body.name,
+      description: description,
       category: req.body.category,
       location: req.body.location,
       creatorID: req.body.id,
       upVotes: 0
-    }).then(function () {
+    }).then(function (resp) {
       console.log("event created");
-      db.Events.findOne({
-          where: {
-            name: req.body.name
-          }
-        }).then(function (dbNewEvent) {
-            let event_id;
-            console.log(dbNewEvent);
-            dbNewEvent.forEach(function (item) {
-              console.log(item.dataValues)
-              event_id = item.dataValues.id
-            })
-          //====================== using sequelize to create new Messages table ======================
+      console.log(resp.dataValues.id);
+      eventID = resp.dataValues.id;
+    }).then(function(){
+      //create a new table with name Messages_<eventname>
+      connection.query(`CREATE TABLE Messages_${eventID}
+      (
+        id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
+        content VARCHAR(255) NOT NULL,
+        creatorID VARCHAR(255) NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`, function(err, resp){
+          res.end();
+        });
 
-          // var model = Messages.createTable(db.sequelize, db.Sequelize.DataTypes, req.body.name);
-          // model.sync();
-          // db[model.name] = model;
-          // if(db[model.name].associate){
-          //   db[model.name].associate(db);
-          // }
-          //db['Messages_' + req.body.name].sync();
+    }).catch(function (err) {
+      console.log(err);
+      res.json(err);
+    })
+  });
 
-          //====================== using mysql directly to create new Messages table ======================
-          //create a new table with name Messages_<eventname>
-          connection.query(`CREATE TABLE Messages_${event_id} (
-            id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-            content VARCHAR(255) NOT NULL,
-            creatorID VARCHAR(255) NOT NULL,
-            upVotes INTEGER(10) NOT NULL, 
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY(id)
-          )`, function(err, resp){
-                res.end();
-          })
-        }).catch(function (err) {
-          console.log(err);
-          res.json(err);
-        })
-    });
+  //get all messages from a certain event
 
   // create new message 
   app.post("/api/message", function(req, res){
     let event_id = req.body.id;
-
-    //=================== sequelize method ====================
-    // db['Messages_'+req.body.eventName].create({
-    //   content: req.body.content,
-    //   creatorID: req.body.id,
-    //   upVotes: 0
-    // });
-    // res.end();
-
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES('${req.body.content}', '${req.user.userName}');`, 
+    //console.log('content: ');
+    let content = escapeString(req.body.content);
+    console.log(content);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');
         console.table(result);
-        res.end()
+        res.end();
     });
   });
 
@@ -257,22 +266,39 @@ module.exports = function (app) {
   app.get("/api/message/:event_id", function(req, res){
     let event_id = req.params.event_id;
 
-    // ============= sequelize method ================= 
-    // db['Messages_'+req.params.eventname].findAll({})
-    // .then(function(messages){
-    //   console.log(messages);
-    //   res.json(messages);
-    // });
-
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id}`, function(err, result){
+    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
       res.send(result);
     });
   });
 
-
+  //used for making mysql queries with strings including special characters
+  function escapeString (str) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\"+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
+}
   //get event of specific name 
   // app.get("/api/event/:eventname", function (req, res) {
   //   db.Events.findAll({
@@ -292,6 +318,4 @@ module.exports = function (app) {
   //     });
 
   // })
-})
 }
-

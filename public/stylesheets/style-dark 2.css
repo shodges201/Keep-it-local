@@ -90,7 +90,7 @@ h1 {
   margin-bottom: -20px;
 }
 
-/* .element::-webkit-scrollbar { width: 0 !important } */
+
 
 #dark-panel {
   float: right;
@@ -105,7 +105,7 @@ h1 {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-  overflow: hidden;
+  overflow: scroll;
 }
 
 
@@ -344,13 +344,10 @@ button {
 .rsvp-btn,
 .msg-btn,
 .new-event-btn,
-.edit-btn, .confirm-btn{
+.edit-btn {
   float:right;
-  /* border:none; */
+  border:none;
   background:none;
-  border: 2px solid rgba(226, 169, 255, 0.7);
-  border-radius: 24px;
-  padding:10px 40px;
   font-size: 20px;
   padding:0px;
   color:rgba(226, 169, 255, 0.7);
@@ -358,9 +355,9 @@ button {
 
 .rsvp-btn:hover,
 .msg-btn:hover,
-.new-event-btn:hover,
-.confirm-btn:hover {
+.new-event-btn:hover {
   color:rgba(226, 169, 255);
+  /* color:rgba(121, 255, 199); */
 
 }
 

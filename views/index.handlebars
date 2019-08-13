@@ -1,6 +1,6 @@
 <div id="bubble">
-    <a href="/events">
-        <img src="/images/header.gif" id="header-logo">
+    <a href="/">
+        <img src="/images/header2.gif" id="header-logo">
     </a>
     <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
@@ -56,7 +56,8 @@
                     </tr>
                 {{/each}}
                 </table>
-                <button type="button" class="new-event-btn">make new event</button>
+                {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
+                <a href="/create" class="new-event-btn">make new event</a>
                 <br><br><br><br>
             </div>
         </div>
@@ -92,12 +93,7 @@
             </div>
         </div>
     </div>
-    <div id="messages">
-            <br>
-            <h2>Messages</h2>
-            <ul id="messages-list">
-            </ul>
-        </div>
+    
 
 </div>
 
@@ -106,6 +102,7 @@
 
 <footer class="footer">
     KEEP IT LOCAL®
+    <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script>

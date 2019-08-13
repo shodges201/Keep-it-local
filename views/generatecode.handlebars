@@ -48,16 +48,14 @@
                 method: "GET"
                 
             }).then(function(res){
-                
-              
-
-                $.ajax("/api/getcode", {
-                method: "POST",
-                
+                if(res.eligible){
+                    $.ajax("/api/getcode", {
+                        method: "POST"
+                    }).then(function(resp){
+                        console.log(resp);
+                    })
+                }
             })
-           
-            })
-
      
         });
 

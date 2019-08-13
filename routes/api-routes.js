@@ -4,7 +4,12 @@ var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
-var moment = require('moment')
+var moment = require('moment');
+var momentToString = function(currentTime){
+  let x = currentTime.split('-');
+  currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
+  return currentTime;
+}
 
 // var referralcode =function getCode(){Math.random().toString(36).substring(7);}
 
@@ -75,41 +80,45 @@ module.exports = function (app) {
 
   // This generates a code for the user when the button is checked.
   app.get("/api/codes", function (req, res) {
-    db.ReferralCodes.findAll({
+    db.User.findOne({
       where: {
-        creatorID: req.user.userName
+        userName: req.user.userName
       }
     }).then(function (result) {
 
-      const currentTime = moment().format(" MMM DD YYYY HH:mm:ss");
-      console.log(currentTime)
+      let currentTime = moment().format();
+      console.log(currentTime);
+      currentTime = momentToString(currentTime);
+      currentTime = moment(currentTime);
+      let eligible = false;
 
-      for (var i = 0; i < result.length; i++) {
+      let str = new Date(result.lastReferral).toISOString();
+      str = moment(str);
         
-        let str = (result[i].createdAt).toString();
-        let date = str.substring(3, 24);
-        
-        
-
-
-
-      }
-      res.json(result)
+      if(str.diff(currentTime, 'days') >= 0){
+          console.log("You're eligible for a new code")
+         eligible = true;
+        }
+      res.json({eligible: eligible})
     })
-
+  
   });
 
-  app.post("/api/getcode", function (req) {
+  app.post("/api/getcode", function (req, res) {
     db.ReferralCodes.create({
       creatorID: req.user.userName,
       code: voucher_codes.generate({
         length: 8,
         count: 5
       })[0]
-    }).then(function () {
+    }).then(function (resp) {
       console.log("code created");
-      res.end();
+      res.json(resp);
     })
+  })
+    
+  app.get("/code", function (req, res) {
+    res.render('generatecode');
   })
 
   // app.get("/:id", function(req,res){
@@ -175,9 +184,12 @@ module.exports = function (app) {
   app.post("/api/signup", function (req, res) {
     console.log(req.body);
     currentUser = req.body.username;
+    let now = moment().format();
+    now = momentToString(now);
     db.User.create({
       userName: req.body.username,
       password: req.body.password,
+      lastReferral: now
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function (err) {

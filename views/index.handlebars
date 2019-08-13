@@ -48,7 +48,7 @@
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -79,7 +79,7 @@
                 {{#each all_events}}
                     <tr class="listing-row">
                         
-                        <td><span class="listing-item listing-item-name"><a href="/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
@@ -109,21 +109,21 @@
 </footer>
 
 <script>
-    $(document).ready(function () {
-        $(".event-link").click(function () {
-            let event_id = $(this).attr("data-id").val()
-            $.ajax(`/${event_id}`, {
-                method: "GET",
-                data: { 
-                    id: event_id
-                }
-            }).then(function (result) {
-                console.log(result);
-                window.location.replace(result);
+    //$(document).ready(function () {
+       // $(".event-link").click(function () {
+            //let event_id = $(this).attr("data-id").val()
+            //$.ajax(`/events/${event_id}`, {
+               // method: "GET",
+               // data: { 
+                //    id: event_id
+               // }
+           // }).then(function (result) {
+              //  console.log(result);
+              //  window.location.replace(result);
                 //window.location = `/event/${id}`
-            })
-        })
+           // })
+       //})
         
         
-    })
+    //})
 </script>

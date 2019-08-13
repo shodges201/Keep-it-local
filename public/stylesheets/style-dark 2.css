@@ -344,7 +344,7 @@ button {
 .rsvp-btn,
 .msg-btn,
 .new-event-btn,
-.edit-btn, .confirm-btn{
+.edit-btn {
   float:right;
   border:none;
   background:none;
@@ -355,9 +355,9 @@ button {
 
 .rsvp-btn:hover,
 .msg-btn:hover,
-.new-event-btn:hover,
-.confirm-btn:hover {
+.new-event-btn:hover {
   color:rgba(226, 169, 255);
+  /* color:rgba(121, 255, 199); */
 
 }
 

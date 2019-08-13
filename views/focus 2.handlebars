@@ -13,12 +13,10 @@
 </div>
 <div id="event-main">
 
-    <h1 id="message-header"><span class="event-name">{{select_event.data.name}}</span></h1>
+    <h1><span class="event-name">{{select_event.data.name}}</span></h1>
     <br>
     <br>
-    <div id="message-description">
-        <p id="description">{{select_event.data.description}}</p>
-    </div>
+    <p>description description descriptiondescription description description descridescription description ption.</p>
     <br>
     <p><span class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
     <br>
@@ -26,9 +24,9 @@
     <br>
     <p>started by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
     {{#if select_event.ownedByUser}}
-        <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">Edit this event</button>
+        <button type="button" class="edit-btn" data-id="{{select_event.data.id}}">Edit this event</button>
     {{else}}
-        <button type="button" id="side-btn" class="rsvp-btn" data-id="{{select_event.data.id}}">RSVP to this event</button>
+        <button type="button" class="rsvp-btn" data-id="{{select_event.data.id}}">RSVP to this event</button>
     {{/if}}
     <br>
     <br>
@@ -196,45 +194,6 @@
             })
         })
     })
-    $(document.body).on("click", ".edit-btn", function(event){
-        console.log('edit item');
-        let headerText = $('.event-name').text();
-        $('.event-name').remove();
-        let headerContainer = $('<div>').addClass('input-field col s6');
-        let headerInput = $('<input>').attr('id', 'edit-event-name').attr('type', 'text').addClass('validate').val(headerText);
-        headerContainer.append(headerInput);
-        $("#message-header").append(headerContainer);
-
-        let descriptionText = $("#description").text();
-        $("#description").remove();
-        let descriptionContainer = $('<div>').addClass('input-field col s6');
-        let descriptionInput = $('<input>').attr('id', 'edit-event-description').attr('type', 'text').addClass('validate').val(descriptionText);
-        descriptionContainer.append(descriptionInput);
-        $("#message-description").append(descriptionContainer);
-        $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');
-    });
-
-    $(document.body).on('click', '.confirm-btn', function(event){
-        let newName = $("#edit-event-name").val().trim();
-        let newDescription = $('#edit-event-description').val().trim();
-        let eventID = $(this).data('id');
-        let queryURL = '/api/event/' + eventID;
-        $.ajax(queryURL, {
-            method: 'PUT',
-            data: {name: newName,
-                   description: newDescription}
-        }).then(function(){
-            $.ajax(queryURL, {
-                method: 'GET'
-            }).then(function(resp){
-                $("#message-description").empty();
-                $("#message-description").append($("<p>").attr("id", "description").text(resp.description));
-                $('#message-header').empty();
-                $('#message-header').append($('<span>').addClass('event-name').text(resp.name));
-                $('#side-btn').removeClass('confirm-btn').addClass('edit-btn').text('Edit this event');
-            })
-        })
-    });
 
     function formatDate(date){
         let months =  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

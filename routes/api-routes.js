@@ -58,7 +58,8 @@ module.exports = function (app) {
     res.render("signup");
   })
 
-  app.get("/:id", function(req,res){
+  //
+  app.get("/events/:id", function(req,res){
     console.log(req.user);
     if (req.user) {
       let all = [];
@@ -161,6 +162,34 @@ module.exports = function (app) {
     });
   })
 
+  app.put("/api/event/:id", function(req, res){
+    db.Events.update({
+      name: req.body.name,
+      description: req.body.description
+    },
+    {
+      where:{
+        id: req.params.id
+      }
+    }
+    ).then(function(data){
+      console.log('data: ');
+      console.log(data);
+      res.json(data);
+    }).catch(function (err) {
+      console.log(err);
+      res.json(err);
+    });
+  });
+
+  app.get('/api/event/:id', function(req, res){
+    db.Events.findOne({where:{id: req.params.id}, plain:true})
+    .then(function(data){
+      console.log(data);
+      res.json(data);
+    })
+  })
+
 
   app.get("/api/user_data", function(req, res) {
     console.log(req.user);
@@ -181,9 +210,13 @@ module.exports = function (app) {
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
-    let eventId;
+    let description = "";
+    if(req.body.description){
+      description = req.body.description;
+    }
     db.Events.create({
       name: req.body.name,
+      description: description,
       category: req.body.category,
       location: req.body.location,
       creatorID: req.body.id,

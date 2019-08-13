@@ -44,11 +44,21 @@
         $("#signup-form").on("click", function (event) {
             event.preventDefault();
         
-            $.ajax("/api/getcode", {
+            $.ajax("/api/codes", {
+                method: "GET"
+                
+            }).then(function(res){
+                
+              
+
+                $.ajax("/api/getcode", {
                 method: "POST",
                 
             })
-            window.location = "http://localhost:8080/yourcode"
+           
+            })
+
+     
         });
 
         $("#login-btn").on("click", function(event){

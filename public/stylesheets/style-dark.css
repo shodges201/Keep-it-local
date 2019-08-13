@@ -98,7 +98,7 @@ h1 {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-  overflow: scroll;
+  overflow: hidden;
 }
 
 
@@ -354,5 +354,5 @@ button {
 }
 
 #messages {
-  overflow:scroll;
+  overflow:hidden;
 }

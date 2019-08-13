@@ -6,6 +6,7 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
+var connection = require("../config/connection.js")
 
 // Helper function to manipulate the ISO86 timestamp to become an easier format to check
 var momentToString = function(currentTime){
@@ -13,6 +14,7 @@ var momentToString = function(currentTime){
   currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
   return currentTime;
 }
+
 
 
 module.exports = function (app) {
@@ -197,13 +199,14 @@ module.exports = function (app) {
   });
 
   // This generates a code for the user when the button is checked.
-  app.get("/api/codes", function (req, res) {
+  app.get("/api/code", function (req, res) {
     db.User.findOne({
       where: {
         userName: req.user.userName
       }
     }).then(function (result) {
     // Gets the current time in a moment object
+      
       let currentTime = moment().format();
       console.log(currentTime);
     // Calls our helper function to format the current time to match format of the time on the database
@@ -211,20 +214,29 @@ module.exports = function (app) {
       currentTime = moment(currentTime);
       let eligible = false;
 
-      let str = new Date(result.lastReferral).toISOString();
-      str = moment(str);
+      let lastRef = new Date(result.lastReferral).toISOString();
+      lastRef = moment(lastRef);
+    
+      if(lastRef.diff(currentTime, 'days') <= 3){
+        console.log("You're not eligible for a new code")
+        eligible = false;
+        res.json({eligible: eligible})
+      }
+      else {
+        console.log("You're eligible for a new code")
+        eligible = true;
+        res.json({eligible: eligible})
+      }
+
+      
     // Checks the lastReferral with current time. Edit the int to set the amount of days
-      if(str.diff(currentTime, 'days') >= 0){
-          console.log("You're eligible for a new code")
-         eligible = true;
-        }
-      res.json({eligible: eligible})
+    
     })
   
   });
 
   // Route used to post a referral code on click
-  app.post("/api/getcode", function (req, res) {
+  app.post("/api/code", function (req, res) {
     db.ReferralCodes.create({
       creatorID: req.user.userName,
       // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
@@ -234,10 +246,10 @@ module.exports = function (app) {
       })[0]
     }).then(function (resp) {
       console.log("code created");
+      console.log(resp);
       res.json(resp);
     })
   })
-
 
   // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){
@@ -277,11 +289,13 @@ module.exports = function (app) {
     });
   })
   
-
-  //get a single event
+  // get a single event
   app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id:req.params.id}, plain:true})
-    .then(function(data){
+    db.Events.findOne({
+      where: {
+        id:req.params.id}, 
+        plain:true
+    }).then(function(data){
       console.log(data);
       res.json(data);
     })
@@ -308,16 +322,28 @@ module.exports = function (app) {
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
+    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
+    // geocoder.geocode(fullAddr, function (err, data) {
+    //   if(err) throw err.stack;
+    //   console.log(data)
+    // });
     let description = "";
     if(req.body.description){
-      description = req.body.description;
+      description = req.body.description
     }
+
+
+
     db.Events.create({
       name: req.body.name,
       description: description,
+      //date:req.body.date,
       category: req.body.category,
+      // streetAddress: req.body.address,
       location: req.body.location,
-      creatorID: req.body.id,
+      creatorID: req.user.userName,
+      // startTime: req.body.startTime,
+      // endTime: req.body.endTime,
       upVotes: 0
     }).then(function (resp) {
       console.log("event created");

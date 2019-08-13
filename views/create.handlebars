@@ -21,22 +21,19 @@
     <div class="create">
         <form id="create-form">
             <label>name of event</label>
-            <input type="text" id="eventName" name="eventName" placeholder="Bootcamp Graduation Party"><br>
+            <input type="text" id="eventName" name="eventName" placeholder="Event Name" required><br>
             <label>date of event</label>
-            <input type="date" id="eventDate" name="eventDate"><br>
+            <input type="date" id="eventDate" name="eventDate" required><br>
             <label>category</label>
-            <input type="text" id="category" name="category" placeholder="Party"><br>
-            <label id="from-label">from</label><label>to</label><br>
-            <input type="time" id="startTime" name="startTime">
-            <input type="time" id="endTime" name="endTime"><br>
-            <label>address</label>
-            <input id="location" type="text" name="location" placeholder="300 Atrium Drive"> 
-            <label>city</label>
-            <input id="city" name="city" placeholder="Somerset">
-            <label>state</label>
-            <div id="location-form" class="input-field col s12"></div><br>
-            {{!-- <input type="text" name="password" placeholder="event details..."><br> --}}
-            <textarea id="details" placeholder="event detals..."></textarea>
+            <input type="text" id="category" name="category" placeholder="Comedy, Music, Party, etc." required><br>
+            {{!-- <label>street address</label>
+            <input id="location" type="text" name="location" placeholder="Street Address" required>  --}}
+            <label>location</label>
+            <input type="text" id="location" name="location" placeholder="city, state" required><br>
+            {{!-- <label>state</label>
+            <div id="location-form" class="input-field col s12"></div><br> --}}
+            <label>description</label>
+            <textarea id="details" placeholder="start time, dress code, byob, etc. " wrap="hard"></textarea>
             <button type="submit" id="create-btn">create event</button>
         </form>
     </div>
@@ -44,19 +41,67 @@
 
 
 
+<div id="refer-box">
+    <p id="refer-msg">here's your referral code</p>
+    <span id="refer-code"></span>
+</div>
+
 
 <footer class="footer">
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
-<script>
+<script type="text/javascript">
+
     $(document).ready(function () {
- 
+        $("#refer-box").hide()
+
+        $("#refer-link").click(function () {
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function (res) {
+                if (res.eligible) {
+                    $.ajax("/api/code", {
+                        method: "POST"
+                    }).then(function (resp) {
+                        console.log(resp.code);
+                        $("#refer-code").text(resp.code)
+                        $("#refer-box").fadeIn(1000)
+                    })
+                }
+                else {
+                    $("#refer-msg").text("You're not eligible code for a new code")
+                    $("#refer-box").fadeIn(1000)
+                }
+            })
+        })
+
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").hide()
+        })
         
 
+        $("#create-form").on("submit",function(event){
+            event.preventDefault()
+            let new_event = {
+                name:$("#create-form [name=eventName]").val().trim(),
+                date:$("#create-form [name=eventDate]").val(),
+                category:$("#create-form [name=category]").val().trim(),
+                //address:$("#create-form [name=location]").val(),
+                location:$("#create-form [name=location]").val(),
+                description:$("#details").val()
+            }
+            console.log(new_event)
+            $.ajax("api/event",{
+                method: "POST",
+                data: new_event
+            }).then(function(result){
+                window.location = "http://localhost:8080/events"
+            })
 
-        
+        })
 
 
         $(".event-link").click(function () {
@@ -80,21 +125,20 @@
             expandTextarea('txtarea');
         });
 
-
         //list used to populate state selector
-        let stateAbrev = ["AK", "AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-        let trigger = $("<select>").attr("id", "stateVal").append($('<option value="" disabled selected>NJ</option>'));
-        for (var i = 0; i < stateAbrev.length; i++) {
-            var item = $("<option>").attr("value", i).text(stateAbrev[i]);
-            trigger.append(item);
-        }
-        $("#location-form").append(trigger);
+        //let stateAbrev = ["AK", "AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
+        //let trigger = $("<select>").attr("id", "stateVal").append($('<option value="" disabled selected>State</option>'));
+        //for (var i = 0; i < stateAbrev.length; i++) {
+        //    var item = $("<option>").attr("value", i).text(stateAbrev[i]);
+        //    trigger.append(item);
+        //}
+        //$("#location-form").append(trigger);
         //initializes state selector trigger
-        $('select').formSelect();
-        $(document).on("click", ".dropdown-trigger", function () {
-            let stateIndex = $("#stateVal").val();
-            let stateName = stateAbrev[stateIndex];
-            console.log(stateName);
-        });
+        //$('select').formSelect();
+        //$(document).on("click", ".dropdown-trigger", function () {
+        //    let stateIndex = $("#stateVal").val();
+        //    let stateName = stateAbrev[stateIndex];
+        //    console.log(stateName);
+        //});
     });
 </script>

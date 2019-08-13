@@ -112,7 +112,7 @@
                     <th><span class="listing-header">name</span></th> 
                     <th><span class="listing-header">location</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
@@ -135,14 +135,32 @@
 
 
 
+<div id="refer-box">
+    <p>here's your referral code</p>
+    <span id="refer-code">e3R6tHg8v</span>
+</div>
+
 
 <footer class="footer">
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
-<script type="text/javascript">
-    $(document).ready(function(){
+<script>
+    $(document).ready(function () {
+        $("#refer-box").hide()
+
+        $("#refer-link").click(function () {
+            console.log("fading in")
+            $("#refer-box").show()
+            
+        })
+
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").hide()
+        })
+
         $(".new-event-btn").click(function () {
             $.ajax(`/create`, {
                 method: "GET"

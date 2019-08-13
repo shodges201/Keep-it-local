@@ -392,15 +392,25 @@ button {
   height: 150px;
 } */
 
+a#logout-link,
+#refer-link {
+  color: black;
+}
+
 #logout {
   position: absolute;
   right: 10px;
 }
-a#logout-link {
-  color: black;
+
+#refer-link {
+  position: absolute;
+  left: 1px;
+  background:none;
+  border:none;
 }
 
-a#logout-link:hover {
+a#logout-link:hover,
+#refer-link:hover {
   color: rgb(255, 255, 255);
 }
 
@@ -408,24 +418,36 @@ input#create-form {
   height:18px;
 }
 
-#startTime,
-#endTime {
-  width:49%;
-  float:left;
-  margin-right: 1%;
+
+#details {
+  color:white;
+  height: 150px;
 }
 
-#from-label {
-  margin-right:45%;
+#refer-box {
+  /* visibility: hidden; */
+  position: fixed;
+  z-index: 3;
+  left: 43%;
+  top: 40%;
+  width: 360px;
+  height: 140px;
+  background: rgb(0, 0, 0, 0.8);
+  color:white;
+  text-align: center;
+  padding:30px;
+  font-size:20px;
 }
 
-/* #location-form {
-  position: absolute;
-  bottom:200px;
-  right:100px;
-} */
+#refer-code {
+  color: red;
+  margin:0px;
+}
 
+<<<<<<< HEAD
 #details {
   color:white;
 >>>>>>> f1dd93188028012612caf393fe3b97478c101e24
 }
+=======
+>>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae

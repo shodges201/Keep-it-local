@@ -100,12 +100,20 @@
 
 
 
+<div id="refer-box">
+    <p>here's your referral code</p>
+    <span id="refer-code">e3R6tHg8v</span>
+</div>
+
+
 <footer class="footer">
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script>
+<<<<<<< HEAD
 <<<<<<< HEAD
     $(document).ready(function () {
         $(".event-link").click(function () {
@@ -125,6 +133,22 @@
     })
 =======
     //$(document).ready(function () {
+=======
+    $(document).ready(function () {
+        $("#refer-box").hide()
+
+        $("#refer-link").click(function () {
+            console.log("fading in")
+            $("#refer-box").fadeIn(1000)
+        })
+
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").fadeOut(1000)
+        })
+
+
+
+>>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae
        // $(".event-link").click(function () {
             //let event_id = $(this).attr("data-id").val()
             //$.ajax(`/events/${event_id}`, {
@@ -140,6 +164,10 @@
        //})
         
         
+<<<<<<< HEAD
     //})
 >>>>>>> f1dd93188028012612caf393fe3b97478c101e24
+=======
+    })
+>>>>>>> cb8827bfbc9761da5d68955ce028a8bf64b3b7ae
 </script>

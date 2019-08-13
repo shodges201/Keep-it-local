@@ -106,24 +106,6 @@
 </footer>
 
 <script>
-<<<<<<< HEAD
-    $(document).ready(function () {
-        $(".event-link").click(function () {
-            let event_id = $(this).attr("data-id").val()
-            $.ajax(`/${event_id}`, {
-                method: "GET",
-                data: { 
-                    id: event_id
-                }
-            }).then(function (result) {
-                window.location.replace(result)
-                // window.location = `/event/${id}`
-            })
-        })
-        
-        
-    })
-=======
     //$(document).ready(function () {
        // $(".event-link").click(function () {
             //let event_id = $(this).attr("data-id").val()
@@ -141,5 +123,4 @@
         
         
     //})
->>>>>>> f1dd93188028012612caf393fe3b97478c101e24
 </script>

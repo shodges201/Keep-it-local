@@ -114,6 +114,8 @@ module.exports = function (app) {
   });
 
 
+  
+
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
@@ -154,8 +156,8 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function(){
-      // res.redirect(`/${event_id}`)
-      res.end()
+      res.redirect(`/${event_id}`)
+      //res.end()
     }).catch(function (err) {
       console.log(err);
       res.json(err);

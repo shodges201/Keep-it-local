@@ -361,7 +361,10 @@ button {
 
 }
 
-#messages-list{
+#messages-list {
+  text-align: bottom;
   overflow:scroll;
+  /* overflow: hidden; */
   height: 150px;
+  scroll-behavior: smooth;
 }

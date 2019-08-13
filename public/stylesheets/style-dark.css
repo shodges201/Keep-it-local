@@ -109,7 +109,7 @@ h1 {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-  overflow: scroll;
+  overflow: hidden;
 }
 
 
@@ -376,6 +376,10 @@ button {
 
 }
 
+<<<<<<< HEAD
+#messages {
+  overflow:hidden;
+=======
 #messages-list {
   /* text-align: bottom; */
   overflow: scroll;
@@ -423,4 +427,5 @@ input#create-form {
 
 #details {
   color:white;
+>>>>>>> f1dd93188028012612caf393fe3b97478c101e24
 }

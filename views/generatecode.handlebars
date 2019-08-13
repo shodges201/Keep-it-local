@@ -1,0 +1,69 @@
+<div id="bubble">
+    <a href="/events">
+        <img src="/images/header.gif" id="header-logo">
+    </a>
+    <hgroup class="speech-bubble" style="text-align:center;">
+        <h1>WHAT'S<br>HAPPENIN' TN?</h1>
+    </hgroup>
+    <hgroup class="speech-bubble-2" style="text-align:center;">
+        <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
+    </hgroup>
+
+</div>
+
+
+<div id="dark-panel">
+    <br><br><br><br><br><br><br><br>
+    <div id="quote">
+        <h1>find out about<br> events near you.</h1>
+    </div>
+    <br><br><br><br><br><br>
+    
+    <div class="signup">
+        <form id="signup-form">
+            <label>Get a referral code</label><br>
+            <button type="submit" id="code-btn">Get Code</button>
+            
+        <span class="switch-link">already a member? <a href="/login">login</a></span>
+        </form>
+        <button id="login-btn">login</button>
+    </div>
+</div>
+
+
+
+
+<footer class="footer">
+    <p>KEEP IT LOCAL ©</p>
+</footer>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#signup-form").on("click", function (event) {
+            event.preventDefault();
+        
+            $.ajax("/api/codes", {
+                method: "GET"
+                
+            }).then(function(res){
+                if(res.eligible){
+                    $.ajax("/api/getcode", {
+                        method: "POST"
+                    }).then(function(resp){
+                        console.log(resp);
+                    })
+                }
+            })
+     
+        });
+
+        $("#login-btn").on("click", function(event){
+            event.preventDefault();
+            window.location = "http://localhost:8080/login";
+        })
+    })
+    
+
+</script>

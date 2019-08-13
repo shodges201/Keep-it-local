@@ -4,13 +4,73 @@ var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
-var connection = require('../config/connection');
+var voucher_codes = require('voucher-code-generator');
+var moment = require('moment');
+var momentToString = function(currentTime){
+  let x = currentTime.split('-');
+  currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
+  return currentTime;
+}
+
+// var referralcode =function getCode(){Math.random().toString(36).substring(7);}
 
 module.exports = function (app) {
 
-//====================== render/html routes ========================================
-  // If the user already has an account send them to the members page
-  app.get("/", notAuthenticated, function (req, res) {
+
+  //Loads the page that holds the button to generate a code
+  app.get("/getcode", function (req, res) {
+    res.render("generatecode");
+  })
+
+  // Loads a page that should display codes the user generated
+  app.get("/yourcode", function (req, res) {
+    res.render("yourcode")
+  })
+
+  // This generates a code for the user when the button is checked.
+  app.get("/api/codes", function (req, res) {
+    db.User.findOne({
+      where: {
+        userName: req.user.userName
+      }
+    }).then(function (result) {
+
+      let currentTime = moment().format();
+      console.log(currentTime);
+      currentTime = momentToString(currentTime);
+      currentTime = moment(currentTime);
+      let eligible = false;
+
+      let str = new Date(result.lastReferral).toISOString();
+      str = moment(str);
+        
+      if(str.diff(currentTime, 'days') >= 0){
+          console.log("You're eligible for a new code")
+         eligible = true;
+        }
+      res.json({eligible: eligible})
+    })
+  
+  });
+
+  app.post("/api/getcode", function (req, res) {
+    db.ReferralCodes.create({
+      creatorID: req.user.userName,
+      code: voucher_codes.generate({
+        length: 8,
+        count: 5
+      })[0]
+    }).then(function (resp) {
+      console.log("code created");
+      res.json(resp);
+    })
+  })
+    
+  app.get("/code", function (req, res) {
+    res.render('generatecode');
+  })
+
+   app.get("/", notAuthenticated, function (req, res) {
     console.log("login");
     res.render("login")
   });
@@ -142,9 +202,12 @@ module.exports = function (app) {
   app.post("/api/signup", function(req, res) {
     console.log(req.body);
     currentUser = req.body.username;
+    let now = moment().format();
+    now = momentToString(now);
     db.User.create({
       userName: req.body.username,
-      password: req.body.password
+      password: req.body.password,
+      lastReferral: now
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {
@@ -153,8 +216,9 @@ module.exports = function (app) {
     });
   });
 
+  // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){
-    console.log("GET /api/rsvp")
+    // console.log("GET /api/rsvp")
     let event_id = req.params.id;
     console.log("event_id received "+event_id)
     db.Events.findOne({
@@ -162,12 +226,12 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function(dbEvents){
-      console.log("looking for rsvp")
-      console.log(dbEvents)
+      // console.log("looking for rsvp")
+      // console.log(dbEvents)
       let event = {
         upVotes: dbEvents.dataValues.upVotes
       }
-      console.log("rsvp count "+event.upVotes)
+      // console.log("rsvp count "+event.upVotes)
       res.send(event)
     })
   })
@@ -190,6 +254,8 @@ module.exports = function (app) {
     });
   })
   
+
+  //get a single event
   app.get('/api/event/:id', function(req, res){
     db.Events.findOne({where:{id:req.params.id}, plain:true})
     .then(function(data){
@@ -198,26 +264,7 @@ module.exports = function (app) {
     })
   })
 
-  app.get("/api/rsvp/:id", function(req,res){
-    console.log("GET /api/rsvp")
-    let event_id = req.params.id;
-    console.log("event_id received "+event_id)
-    db.Events.findOne({
-      where: {
-        id: event_id
-      }
-    }).then(function(dbEvents){
-      console.log("looking for rsvp")
-      console.log(dbEvents)
-      let event = {
-        upVotes: dbEvents.dataValues.upVotes
-      }
-      console.log("rsvp count "+event.upVotes)
-      res.send(event)
-    })
-  })
-
-  //change name and/or description of event
+  //change name and/or description of an event
   app.put("/api/event/:id", function(req, res){
     db.Events.update({
       name: req.body.name,
@@ -236,31 +283,6 @@ module.exports = function (app) {
       console.log(err);
       res.json(err);
     });
-  });
-
-  //get the details of one single event
-  app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id: req.params.id}, plain:true})
-    .then(function(data){
-      console.log(data);
-      res.json(data);
-    })
-  })
-
-
-  app.get("/api/user_data", function(req, res) {
-    console.log(req.user);
-    if (!req.user) {
-      // The user is not logged in, send back an empty object
-      res.json({});
-    }
-    else {
-      // Otherwise send back the user's email and id
-      // Sending back a password, even a hashed password, isn't a good idea
-      res.json({
-        id: req.user.id
-      });
-    }
   });
 
   //create new event with a name, category, and location passed in
@@ -298,8 +320,6 @@ module.exports = function (app) {
       res.json(err);
     })
   });
-
-  //get all messages from a certain event
 
   // create new message 
   app.post("/api/message", function(req, res){
@@ -352,24 +372,7 @@ module.exports = function (app) {
                                   // and double/single quotes
         }
     });
-}
-  //get event of specific name 
-  // app.get("/api/event/:eventname", function (req, res) {
-  //   db.Events.findAll({
-  //     // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID'],
-  //     where:{name: req.params.eventname}
-  //   }).then(function (event) {
-  //       //checks if user created the event
-  //       let owner = event[0].dataValues.ownerID === req.user.username;
-  //       // returns a json object that has two keys
-  //       // eventDetails are is the table row object for that event
-  //       // ownedByUser is a boolean value denoting if the user created the event - used for front-end admin privileges
-  //       let result = {
-  //         eventDetails: event[0].dataValues,
-  //         ownedByUser: owner
-  //       };
-  //       res.json(result);
-  //     });
+  }
 
-  // })
 }
+

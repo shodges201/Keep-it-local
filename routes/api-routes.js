@@ -301,7 +301,30 @@ module.exports = function (app) {
       console.log(resp);
       res.json(resp);
     });
-  })
+  });
+
+  app.post("/api/code/admin", function (req, res) {
+    // Route used to post a referral code on click
+    if(req.body.apiKey === 'MA3Igp6a'){
+      db.ReferralCodes.create({
+        creatorID: 'admin',
+        // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
+        code: voucher_codes.generate({
+          length: 8,
+          count: 5
+        })[0]
+      }).then(function (resp) {
+        console.log("code created");
+        console.log(resp);
+        res.json(resp);
+      });
+    }
+    else{
+      res.statusMessage = 'Bad API key';
+      res.status(401).end();
+    }
+  });
+
 
   app.get("/api/rsvp/:id", function(req,res){
     // RSVP create and get

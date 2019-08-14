@@ -87,7 +87,7 @@
                     <th><span class="listing-header">creator</span></th>
                 </tr>
                 {{#each user_events}}
-                    <tr class="listing-row">
+                    <tr class="listing-row" data-id="{{this.id}}"> 
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
@@ -117,8 +117,8 @@
                     <th><span class="listing-header">creator</span></th>
                 </tr>
                 {{#each all_events}}
-                    <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                    <tr class="listing-row" data-id="{{this.id}}">
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
@@ -163,33 +163,17 @@
             })
         });
 
-        /*
-        window.onbeforeunload = function (event) {
-            event.preventDefault();
-            $.ajax("/api/logout", {
-                method: "PUT",
-                data: { active: false }
-            }).then(function (result) {
-                console.log("logged out")
-            })
-            //var message = 'You will be logged out';
-            if (typeof event == 'undefined') {
-                event = window.event;
-            }
-            if (event) {
-                
-        };
-        }*/
-
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
+                $("#refer-box").css('display', 'initial');
                 switch (res.status) {
                     case 0:
                         $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
+                        $("#refer-box").css('display', 'initial');
                         $("#refer-box").fadeIn(1000);
                         break;
                     case 1:
@@ -231,6 +215,12 @@
                 window.location.replace(result);
                 //window.location = `/event/${id}`
             })
+        })
+
+        $(document.body).on("click", ".listing-row", function (event) {
+            console.log('clicked row');
+            console.log(window.location.hostname + '/events/' + $(this).data('id'));
+            window.location.href = $(this).data('id');
         })
 
         $(document.body).on("click", ".rsvp-btn", function (event) {

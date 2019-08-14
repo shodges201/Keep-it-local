@@ -19,11 +19,12 @@
     </div>
     <br><br><br><br><br><br>
     
-    <div class="signup">
+     <div class="signup">
         <form id="signup-form">
             <label>join the network...</label><br>
             <input type="text" name="username" placeholder=" username">
             <input type="password" name="password" placeholder=" password">
+            <input type="referral" name="referral" placeholder="referral">
             <button type="submit" id="signup-btn">sign up</button>
             
         <span class="switch-link">already a member? <a href="/login">login</a></span>
@@ -63,15 +64,29 @@
             let newUser = {
                     username: $("#signup-form [name=username]").val().trim(),
                     password: $("#signup-form [name=password]").val().trim(),
-                    location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString()
+                    location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString(),
+                    referral: $("#signup-form [name=referral]").val().trim()
                 }
-            $.ajax("/api/signup", {
+             $.ajax("/api/checkcode", {
                 method: "POST",
                 data: newUser
-            }).then(function(result){
-                console.log("new user added")
-                window.location = "http://localhost:8080/events"
-            })
+                }).then(function(res){
+                    $.ajax("/api/signup", {
+                        method: "POST",
+                        data: newUser
+                    }).then(function(result){
+                        console.log("new user added");
+                        window.location = "http://localhost:8080/events"
+                    });
+            }).fail(function(xhr, status, error){
+                switch(xhr.status){
+                    case(400):
+                        M.toast({
+                            html: 'Please use a valid referral code',
+                            classes: 'toast'
+                        })
+                }
+            });
         }
 
         function error() {

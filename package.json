@@ -4,6 +4,7 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
+    "@turf/turf": "^5.1.6",
     "@types/node": {
       "integrity": "sha512-aK9jxMypeSrhiYofWWBf/T7O+KwaiAHzM4sveCdWPn71lzUSMimRnKzhXDKfKwV1kWoBo2P1aGgaIYGLf9/ljw==",
       "resolved": "https://registry.npmjs.org/@types/node/-/node-12.7.1.tgz",

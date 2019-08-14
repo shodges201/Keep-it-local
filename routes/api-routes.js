@@ -6,9 +6,9 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
-var Distance = require('geo-distance');
 var NodeGeocoder = require('node-geocoder');
 var connection = require('../config/connection');
+var turf = require('@turf/turf');
 var options = {
   provider: 'mapquest',
   // Optional depending on the providers
@@ -29,7 +29,7 @@ var momentToString = function(currentTime){
   return currentTime;
 }
 
-// var referralcode =function getCode(){Math.random().toString(36).substring(7);}
+
 
 module.exports = function (app) {
 
@@ -39,50 +39,12 @@ module.exports = function (app) {
     res.render("generatecode");
   })
 
-  // Loads a page that should display codes the user generated
+  // Loads a page that displays code the user generated
   app.get("/yourcode", function (req, res) {
     res.render("yourcode")
   })
 
-  // This generates a code for the user when the button is checked.
-  app.get("/api/codes", function (req, res) {
-    db.User.findOne({
-      where: {
-        userName: req.user.userName
-      }
-    }).then(function (result) {
-
-      let currentTime = moment().format();
-      console.log(currentTime);
-      currentTime = momentToString(currentTime);
-      currentTime = moment(currentTime);
-      let eligible = false;
-
-      let str = new Date(result.lastReferral).toISOString();
-      str = moment(str);
-        
-      if(str.diff(currentTime, 'days') >= 0){
-          console.log("You're eligible for a new code")
-         eligible = true;
-        }
-      res.json({eligible: eligible})
-    })
-  
-  });
-
-  app.post("/api/getcode", function (req, res) {
-    db.ReferralCodes.create({
-      creatorID: req.user.userName,
-      code: voucher_codes.generate({
-        length: 8,
-        count: 5
-      })[0]
-    }).then(function (resp) {
-      console.log("code created");
-      res.json(resp);
-    })
-  })
-    
+  // A route that renders the generatecode.hdbs html page
   app.get("/code", function (req, res) {
     res.render('generatecode');
   })
@@ -120,8 +82,19 @@ module.exports = function (app) {
         //,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
       })
         .then(function (dbEvents) {
+          console.log(req.user.currentLocation);
+          let currentLoc = formatCoords(req.user.currentLocation);
+
+          const options = {units: 'miles'};
           dbEvents.forEach(function (element) {
-            all.push(element.dataValues);
+            console.log('data vals: ');
+            console.log(element.dataValues);
+            let destinationCoords = formatCoords(element.dataValues.coords);
+            let distance = turf.distance(currentLoc, destinationCoords, options);
+            console.log(distance);
+            if(distance <= 30){
+              all.push(element.dataValues);
+            }
           });
           // all.push(dbEvents[0].dataValues);
           // console.log(all);
@@ -219,7 +192,7 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
-    console.log(convertLatLong(req.body.location));
+
     db.User.update({
       currentLocation: req.body.location
     },{
@@ -250,6 +223,59 @@ module.exports = function (app) {
       res.json(err);
     });
   });
+
+  // This generates a code for the user when the button is checked.
+  app.get("/api/code", function (req, res) {
+    db.User.findOne({
+      where: {
+        userName: req.user.userName
+      }
+    }).then(function (result) {
+    // Gets the current time in a moment object
+      
+      let currentTime = moment().format();
+      console.log(currentTime);
+    // Calls our helper function to format the current time to match format of the time on the database
+      currentTime = momentToString(currentTime);
+      currentTime = moment(currentTime);
+      let eligible = false;
+
+      let lastRef = new Date(result.lastReferral).toISOString();
+      lastRef = moment(lastRef);
+    
+      if(lastRef.diff(currentTime, 'days') <= 3){
+        console.log("You're not eligible for a new code")
+        eligible = false;
+        res.json({eligible: eligible})
+      }
+      else {
+        console.log("You're eligible for a new code")
+        eligible = true;
+        res.json({eligible: eligible})
+      }
+
+      
+    // Checks the lastReferral with current time. Edit the int to set the amount of days
+    
+    })
+  
+  });
+
+  // Route used to post a referral code on click
+  app.post("/api/code", function (req, res) {
+    db.ReferralCodes.create({
+      creatorID: req.user.userName,
+      // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
+      code: voucher_codes.generate({
+        length: 8,
+        count: 5
+      })[0]
+    }).then(function (resp) {
+      console.log("code created");
+      console.log(resp);
+      res.json(resp);
+    })
+  })
 
   // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){
@@ -289,11 +315,13 @@ module.exports = function (app) {
     });
   })
   
-
-  //get a single event
+  // get a single event
   app.get('/api/event/:id', function(req, res){
-    db.Events.findOne({where:{id:req.params.id}, plain:true})
-    .then(function(data){
+    db.Events.findOne({
+      where: {
+        id:req.params.id}, 
+        plain:true
+    }).then(function(data){
       console.log(data);
       res.json(data);
     })
@@ -320,16 +348,43 @@ module.exports = function (app) {
   //create new event with a name, category, and location passed in
   //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
+    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
+    // geocoder.geocode(fullAddr, function (err, data) {
+    //   if(err) throw err.stack;
+    //   console.log(data)
+    // });
     let description = "";
     if(req.body.description){
-      description = req.body.description;
+      description = req.body.description
     }
+    geocoder.geocode(req.body.location, function(err, data){
+      
+    let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
+    console.log(data[0].latitude.toString() + ', ' + data[0].longitude.toString());
+
+    let from = turf.point([data[0].latitude, data[0].longitude]);
+    let userLoc = req.user.currentLocation;
+    userLoc = userLoc.split(', ');
+    
+    let to = turf.point([userLoc[0], userLoc[1]]);
+    console.log(userLoc[0]+ ', ' + userLoc[1]);
+    let options = {units: 'miles'};
+
+
+    let distance = turf.distance(from, to, options);
+    console.log('distance: ' + distance);
+
     db.Events.create({
       name: req.body.name,
       description: description,
+      //date:req.body.date,
       category: req.body.category,
+      // streetAddress: req.body.address,
       location: req.body.location,
-      creatorID: req.body.id,
+      coords: loc,
+      creatorID: req.user.userName,
+      // startTime: req.body.startTime,
+      // endTime: req.body.endTime,
       upVotes: 0
     }).then(function (resp) {
       console.log("event created");
@@ -351,6 +406,7 @@ module.exports = function (app) {
       console.log(err);
       res.json(err);
     })
+  })
   });
 
   // create new message 
@@ -406,13 +462,10 @@ module.exports = function (app) {
     });
   }
 
-  function convertLatLong(str){
+  function formatCoords(str){
     str = str.split(', ');
-    let obj = {
-      latitude: parseFloat(str[0]),
-      longitude: parseFloat(str[1])
-    }
-    return obj;
+    let list = [parseFloat(str[0]), parseFloat(str[1])];
+    return list;
   }
 }
 

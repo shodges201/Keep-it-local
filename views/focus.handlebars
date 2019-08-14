@@ -112,7 +112,7 @@
                     <th><span class="listing-header">name</span></th> 
                     <th><span class="listing-header">location</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
@@ -135,14 +135,48 @@
 
 
 
+<div id="refer-box">
+    <p id="refer-msg">here's your referral code</p>
+    <span id="refer-code"></span>
+</div>
+
 
 <footer class="footer">
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+
+    $(document).ready(function () {
+
+        $("#refer-box").hide()
+
+        $("#refer-link").click(function () {
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function (res) {
+                if (res.eligible) {
+                    $.ajax("/api/code", {
+                        method: "POST"
+                    }).then(function (resp) {
+                        console.log(resp.code);
+                        $("#refer-code").text(resp.code)
+                        $("#refer-box").fadeIn(1000)
+                    })
+                }
+                else {
+                    $("#refer-msg").text("You're not eligible code for a new code")
+                    $("#refer-box").fadeIn(1000)
+                }
+            })
+        })
+
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").hide()
+        })
+
         $(".new-event-btn").click(function () {
             $.ajax(`/create`, {
                 method: "GET"
@@ -226,7 +260,7 @@
         let descriptionText = $("#description").text();
         $("#description").remove();
         let descriptionContainer = $('<div>').addClass('input-field col s6');
-        let descriptionInput = $('<input>').attr('id', 'edit-event-description').attr('type', 'text').addClass('validate').val(descriptionText);
+        let descriptionInput = $('<textarea>').attr('id', 'edit-event-description').val(descriptionText);
         descriptionContainer.append(descriptionInput);
         $("#message-description").append(descriptionContainer);
         $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');

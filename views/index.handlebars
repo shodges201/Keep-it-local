@@ -8,7 +8,7 @@
     <hgroup class="speech-bubble-2" style="text-align:center;">
         <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
     </hgroup>
-    
+
 </div>
 
 
@@ -54,7 +54,7 @@
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
                 {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
                 <a href="/create" class="new-event-btn">make new event</a>
@@ -87,13 +87,13 @@
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
                 <br><br><br><br>
             </div>
         </div>
     </div>
-    
+
 
 </div>
 
@@ -102,7 +102,7 @@
 
 <div id="refer-box">
     <p id="refer-msg">here's your referral code</p>
-    <span id="refer-code"></span>
+    {{!-- <span id="refer-code"></span> --}}
 </div>
 
 
@@ -120,30 +120,54 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $("#refer-box").css('display', 'initial');
+                $('#refer-box').css("display", "initial")
                 switch (res.status) {
-                    case 0:
-                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
-                        $("#refer-box").fadeIn(1000);
-                        break;
+                    
                     case 1:
-                        $.ajax("/api/code", {
-                            method: "POST"
-                        }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-msg").text("You're not eligible code for a new code yet.");
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+
+                        $.ajax("/api/allcodes", {
+                            method: "GET"
+                        }).then(function (allcodes) {
+                            if (allcodes.length == 0) {
+                                $("#refer-msg").text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").fadeIn(1000) 
+                                
+                            }
+                            else {
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i].code)
+                                let code = $("<span>").addClass("refer-code")
+                                code.text(allcodes[i].code).append("<br>")
+                                $("#refer-box").append(code)
+                                }
+                                $("#refer-msg").text("Here are your active codes:");
+                                $("#refer-box").fadeIn(1000)  
+                            }
                         })
                         break;
                     case 2:
                         $.ajax("/api/code", {
                             method: "POST"
                         }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+                            $.ajax("/api/allcodes", {
+                                method: "GET"
+                            }).then(function (allcodes) {
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i].code)
+                                   let code = $("<span>").addClass("refer-code")
+                                   code.text(allcodes[i].code).append("<br>")
+                                   $("#refer-box").append(code)
+
+                                  
+                                }
+                                $("#refer-box").fadeIn(1000)
+
+                            })
                         })
+
+
+
+
                         break;
                     default:
                         $("#refer-msg").text("Sorry, something went wrong...");

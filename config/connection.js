@@ -2,11 +2,13 @@ var mysql = require('mysql');
 require('dotenv').config();
 console.log(process.env);
 
+var connection;
+
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.DB_HOST);
   console.log("jaws");
 } else {
-var connection = mysql.createConnection({
+  console.log('non-jaws');
   connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -14,11 +16,14 @@ var connection = mysql.createConnection({
     password: "", // add your local password here.
     database: "events_db" // add your db name here
   });
-  });
-  
-  connection.connect(function(err) {
-    if (err) throw err.stack;
-    console.log("Connected!");
-  });
+}
 
-  module.exports = connection;
+connection.config.typeCast = function(field, next) {
+  if (field.type == "TINY" && field.length == 1) {
+    return field.string() == "1"; // 1 = true, 0 = false
+  }
+  return next();
+};
+
+
+module.exports = connection;

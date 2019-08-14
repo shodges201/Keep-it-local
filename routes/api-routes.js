@@ -41,7 +41,6 @@ module.exports = function (app) {
   });
 
   app.get("/logout", isAuthenticated, function(req, res) {
-    req.logout();
     res.redirect("/");
   });
 
@@ -196,7 +195,8 @@ module.exports = function (app) {
     console.log(req.body.location);
 
     db.User.update({
-      currentLocation: req.body.location
+      currentLocation: req.body.location,
+      active:true
     },{
       where: {
         userName: req.body.username
@@ -206,6 +206,21 @@ module.exports = function (app) {
       res.end();
      });
   });
+
+  app.put("/api/logout", function(req,res){
+    
+    db.User.update({
+      active: false
+    }, {
+      where: {
+        userName: req.user.userName
+      }
+    }).then(function (resp) {
+      console.log(resp);
+      req.logout();
+      res.end();
+    });
+  })
 
   app.post("/api/signup", function(req, res) {
     console.log('req.body: ');
@@ -217,7 +232,8 @@ module.exports = function (app) {
       userName: req.body.username,
       password: req.body.password,
       lastReferral: now,
-      currentLocation: req.body.location
+      currentLocation: req.body.location,
+      active:true
     }).then(function () {
       res.redirect(307, "/api/login");
     }).catch(function(err) {

@@ -61,6 +61,24 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+        
+        window.onbeforeunload = function (event) {
+            event.preventDefault();
+            $.ajax("/api/logout", {
+                method: "PUT",
+                data: { active: false }
+            }).then(function (result) {
+                console.log("logged out")
+            })
+            /*var message = 'You will be logged out';
+            if (typeof event == 'undefined') {
+                event = window.event;
+            }
+            if (event) {
+                
+            }*/
+        };
+
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {

@@ -15,15 +15,6 @@ var options = {
 };
 var geocoder = NodeGeocoder(options);
 
-/*
-geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
-        console.log("-------------------------");
-        console.log(data);
-      });
-*/
-
-
-
 module.exports = function (app) { 
 
   //====================== render/html routes ========================================//

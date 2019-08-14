@@ -164,7 +164,7 @@ module.exports = function (app) {
                     // }
                   }
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                    connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.log("Messages_"+req.params.id);
                       console.table(result);
@@ -518,7 +518,7 @@ module.exports = function (app) {
     //get all messages from a certain event
     let event_id = req.params.id;
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
+    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
       res.send(result);

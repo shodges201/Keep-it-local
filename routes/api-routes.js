@@ -41,7 +41,6 @@ module.exports = function (app) {
   });
 
   app.get("/logout", isAuthenticated, function(req, res) {
-    req.logout();
     res.redirect("/");
   });
 
@@ -194,18 +193,46 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
-
-    db.User.update({
-      currentLocation: req.body.location
-    },{
+    db.User.findOne({
       where: {
         userName: req.body.username
       }
-    }).then(function(resp){
-      console.log(resp);
-      res.end();
-     });
+    }).then(function(dbUser){
+      if(!dbUser.active){
+        db.User.update({
+          currentLocation: req.body.location,
+          active: true
+        }, {
+          where: {
+            userName: req.body.username
+          }
+        }).then(function (resp) {
+
+          console.log(resp);
+          res.end();
+        });
+      }
+      else {
+        res.redirect("/");
+      }
+    })
+      
   });
+
+  app.put("/api/logout", function(req,res){
+    
+    db.User.update({
+      active: false
+    }, {
+      where: {
+        userName: req.user.userName
+      }
+    }).then(function (resp) {
+      console.log(resp);
+      req.logout();
+      res.end();
+    });
+  })
 
   app.post("/api/signup", function(req, res) {
     console.log('req.body: ');
@@ -218,7 +245,8 @@ module.exports = function (app) {
       password: req.body.password,
       referral: req.body.referral,
       lastReferral: now,
-      currentLocation: req.body.location
+      currentLocation: req.body.location,
+      active:true
     }).then(function () {
       db.ReferralCodes.destroy({
         where: {

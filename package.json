@@ -160,6 +160,7 @@
       "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.0.4.tgz",
       "version": "1.0.4"
     },
+    "dotenv": "^8.0.0",
     "dottie": {
       "integrity": "sha512-ch5OQgvGDK2u8pSZeSYAQaV/lczImd7pMJ7BcEPXmnFVjy4yJIzP6CsODJUTH8mg1tyH1Z2abOiuJO3DjZ/GBw==",
       "resolved": "https://registry.npmjs.org/dottie/-/dottie-2.0.1.tgz",

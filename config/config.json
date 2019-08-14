@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "password",
-    "database": "events_db",
-    "host": "127.0.0.1",
+    "username": "cvzrayq3nwdhmsmc",
+    "password": "yjt76ne10wymwc67",
+    "database": "l2u6736043i4uqxd",
+    "host": "x3ztd854gaa7on6s.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "dialect": "mysql"
   },
   "test": {

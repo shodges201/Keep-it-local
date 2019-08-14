@@ -116,19 +116,6 @@
 
     $(document).ready(function () {
 
-        $(window).bind('unload', function () {
-            $.ajax("/api/logout", {
-                method: "PUT",
-                async: false,
-                data: { active: false }
-            }).then(function (result) {
-                console.log("logged out")
-                event.returnValue = "logged out."
-            })
-        });
-
-        $("#refer-box").hide()
-
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
                 method: "GET"

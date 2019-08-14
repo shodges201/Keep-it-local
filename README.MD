@@ -3,9 +3,15 @@
 "Keep It Local" is a private network used to build
 
 #
+## Features
+
+* Anonymously post and promote local events
+* RSVP to and leave messages on events
+* Refer who you want
+#
 ## Use by Referal
 
-In order to be able to use the Keep It Local Network, you must first be invited by a current users's Referal Code. Once you have created your own profile, you will be given your own Referal Code that will change every 3 days.
+In order to be able to be apart of the Keep It Local network, you must first be invited by a current users's Referal Code. Once you have created your own profile, you will be given your own Referal Code that will change every 3 days.
 
 ```js
 app.post("/api/code", function (req, res) {
@@ -25,16 +31,17 @@ app.post("/api/code", function (req, res) {
 #
 ## Built With
 
-[Bootstarp](https://getbootstrap.com/) - Web Framework
-[Materialize](https://materializecss.com/) - Web Framework
-[Handlebars](https://handlebarsjs.com/) - Templating
+* [Bootstarp](https://getbootstrap.com/) - Web Framework
+* [Materialize](https://materializecss.com/) - Web Framework
+* [Handlebars](https://handlebarsjs.com/) - Templating
+#
+## Team Members
+* Zubin Mulji
+* Lance Toledo
+* Scott Hodges
+* Quinton Smith
 #
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-#
-## Team Members
-Zubin Mulji
-Scott Hodges
-Lance Toledo
-Quinton Smith
+

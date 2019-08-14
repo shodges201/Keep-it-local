@@ -279,8 +279,8 @@ module.exports = function (app) {
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
 
-      test = momentToString(test);
-      test = moment(test);
+      // test = momentToString(test);
+      // test = moment(test);
 
       let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
@@ -290,8 +290,8 @@ module.exports = function (app) {
       userStart = moment(userStart);
     
     
-      //change the test to userStart 
-     if(lastRef.diff(test, 'days') < 3) {
+      //change the test to currentTime
+     if(lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }

@@ -216,13 +216,29 @@ module.exports = function (app) {
     db.User.create({
       userName: req.body.username,
       password: req.body.password,
+      referral: req.body.referral,
       lastReferral: now,
       currentLocation: req.body.location
     }).then(function () {
-      res.redirect(307, "/api/login");
+      db.ReferralCodes.destroy({
+        where: {
+          code: req.body.referral,
+        }
+      }).then(function(resp){
+        res.redirect(307, "/api/login");
+      })
     }).catch(function(err) {
       console.log(err);
       res.json(err);
+    });
+  });
+
+  app.post("/api/checkcode", function (req,res){
+    console.log(req.body.referral);
+    db.ReferralCodes.findOne({
+      where: {code: req.body.referral}}).then(function(result){
+        console.log(result);
+        res.end();
     });
   });
 

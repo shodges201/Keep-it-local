@@ -132,15 +132,13 @@ module.exports = function (app) {
       let user = [];
       let msgs = [];
       let focus;
-      let currentLoc = formatCoords(req.user.currentLocation);
+      let currentLoc = req.user.currentLocation;
       const options = {units: 'miles'};
       db.Events.findAll({
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
-            console.log('data vals: ');
-            console.log(element.dataValues);
-            let destinationCoords = formatCoords(element.dataValues.coords);
-            let distance = turf.distance(currentLoc, destinationCoords, options);
+            let destinationCoords = element.dataValues.coords;
+            let distance = distanceBetween(currentLoc, destinationCoords, options);
             console.log(distance);
             if(distance <= 30){
               console.log(distance);
@@ -156,8 +154,8 @@ module.exports = function (app) {
               }
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
-              let destinationCoords = formatCoords(item.dataValues.coords);
-              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let destinationCoords = item.dataValues.coords;
+              let distance = distanceBetween(currentLoc, destinationCoords, options);
               let dataVals = item.dataValues;
               dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
@@ -380,21 +378,12 @@ module.exports = function (app) {
       description = req.body.description
     }
     geocoder.geocode(req.body.location, function(err, data){
-      
     let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
-    console.log(data[0].latitude.toString() + ', ' + data[0].longitude.toString());
-
-    let from = turf.point([data[0].latitude, data[0].longitude]);
     let userLoc = req.user.currentLocation;
-    userLoc = userLoc.split(', ');
-    
-    let to = turf.point([userLoc[0], userLoc[1]]);
-    console.log(userLoc[0]+ ', ' + userLoc[1]);
-    let options = {units: 'miles'};
 
-
-    let distance = turf.distance(from, to, options);
+    let distance = distanceBetween(loc, userLoc);
     console.log('distance: ' + distance);
+
     if(distance >= 30){
       res.statusMessage = "Too far away";
       res.status(400).end();
@@ -501,6 +490,17 @@ module.exports = function (app) {
 
   function toTwoPlaces(num){
     return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+  }
+
+  //takes in comma seperated coordinates and returns the distance between them
+  function distanceBetween(coords1, coords2){
+    coords1 = formatCoords(coords1);
+    coords2 = formatCoords(coords2);
+    let from = turf.point(coords1);
+    let to = turf.point(coords2);
+    let options = {units: 'miles'};
+    let distance = turf.distance(from, to, options);
+    return distance;
   }
 }
 

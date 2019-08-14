@@ -193,18 +193,30 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
-
-    db.User.update({
-      currentLocation: req.body.location,
-      active:true
-    },{
+    db.User.findOne({
       where: {
         userName: req.body.username
       }
-    }).then(function(resp){
-      console.log(resp);
-      res.end();
-     });
+    }).then(function(dbUser){
+      if(!dbUser.active){
+        db.User.update({
+          currentLocation: req.body.location,
+          active: true
+        }, {
+          where: {
+            userName: req.body.username
+          }
+        }).then(function (resp) {
+
+          console.log(resp);
+          res.end();
+        });
+      }
+      else {
+        res.redirect("/");
+      }
+    })
+      
   });
 
   app.put("/api/logout", function(req,res){

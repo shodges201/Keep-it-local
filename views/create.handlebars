@@ -62,6 +62,18 @@
 
     $(document).ready(function () {
         
+        $(window).bind('unload', function () {
+            $.ajax("/api/logout", {
+                method: "PUT",
+                async: false,
+                data: { active: false }
+            }).then(function (result) {
+                console.log("logged out")
+                event.returnValue = "logged out."
+            })
+        });
+
+        /*
         window.onbeforeunload = function (event) {
             event.preventDefault();
             $.ajax("/api/logout", {
@@ -70,14 +82,14 @@
             }).then(function (result) {
                 console.log("logged out")
             })
-            /*var message = 'You will be logged out';
+            //var message = 'You will be logged out';
             if (typeof event == 'undefined') {
                 event = window.event;
             }
             if (event) {
                 
-            }*/
         };
+        }*/
 
         $("#refer-box").hide()
 

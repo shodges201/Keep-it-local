@@ -342,6 +342,7 @@ module.exports = function (app) {
       // streetAddress: req.body.address,
       location: req.body.location,
       creatorID: req.user.userName,
+      // creatorID: req.body.id,
       // startTime: req.body.startTime,
       // endTime: req.body.endTime,
       upVotes: 0

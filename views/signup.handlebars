@@ -78,6 +78,14 @@
                         console.log("new user added");
                         window.location = "http://localhost:8080/events"
                     });
+            }).fail(function(xhr, status, error){
+                switch(xhr.status){
+                    case(400):
+                        M.toast({
+                            html: 'Please use a valid referral code',
+                            classes: 'toast'
+                        })
+                }
             });
         }
 

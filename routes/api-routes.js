@@ -237,6 +237,10 @@ module.exports = function (app) {
     console.log(req.body.referral);
     db.ReferralCodes.findOne({
       where: {code: req.body.referral}}).then(function(result){
+        if(!result){
+          res.statusMessage = "Bad Referral Code";
+          res.status(400).end();
+        }
         console.log(result);
         res.end();
     });
@@ -296,7 +300,7 @@ module.exports = function (app) {
       console.log("code created");
       console.log(resp);
       res.json(resp);
-    })
+    });
   })
 
   app.get("/api/rsvp/:id", function(req,res){
@@ -400,6 +404,15 @@ module.exports = function (app) {
         res.statusMessage = "Too far away";
         res.status(400).end();
       }
+
+      let now = moment().format('YYYY-MM-DD');
+      let eventDate = req.body.date;
+      let future = compareDashedDates(now, eventDate);
+      if(!future){
+        res.statusMessage = "Invalid Date";
+        res.status(400).end();
+      }
+
       // else if(date is in the past){
         // res.statusMessage = "Invalid Date";
         // res.status(400).end();
@@ -520,6 +533,20 @@ module.exports = function (app) {
     let options = {units: 'miles'};
     let distance = turf.distance(from, to, options);
     return distance;
+  }
+
+  // takes two string respresentations of dates in format "YYYY-MM-DD"
+  function compareDashedDates(date1, date2){
+    date1 = date1.split('-');
+    date2 = date2.split('-');
+    for(let i = 0; i < date1.length; i++){
+      if(parseInt(date1[i]) < parseInt(date2[i])){
+        return true;
+      }
+      else if(parseInt(date1[i]) > parseInt(date2[i])){
+        return false;
+      }
+    }
   }
 }
 

@@ -241,7 +241,6 @@ module.exports = function (app) {
   });
 
   app.post("/api/checkcode", function (req,res){
-    console.log(req.body.referral);
     db.ReferralCodes.findOne({
       where: {code: req.body.referral}}).then(function(result){
         if(!result){
@@ -253,6 +252,16 @@ module.exports = function (app) {
     });
   });
 
+  app.get("/api/allcodes", function (req,res){
+    db.ReferralCodes.findAll({
+      where: {
+        creatorID: req.user.userName
+      }}).then(function(allcodes){
+        res.send(allcodes);
+        
+    })
+  })
+
   app.get("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
@@ -262,23 +271,27 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
+
+      let test = '2019-07-11T11:49:52-04:00'
+
       console.log(currentTime);
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
-      let eligible = false;
 
+      test = momentToString(test);
+      test = moment(test);
+
+      let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
     
-      if(userStart.diff(currentTime, 'days') <= 3) {
-        console.log("You're not eligible for a new code")
-        res.json({status: 0})
-      }
-      else if(lastRef.diff(currentTime, 'days') <= 3){
+    
+      //change the test to userStart 
+     if(lastRef.diff(test, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }

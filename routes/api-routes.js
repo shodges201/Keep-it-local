@@ -403,6 +403,7 @@ module.exports = function (app) {
       if(distance >= 30){
         res.statusMessage = "Too far away";
         res.status(400).end();
+        return;
       }
 
       let now = moment().format('YYYY-MM-DD');
@@ -411,6 +412,7 @@ module.exports = function (app) {
       if(!future){
         res.statusMessage = "Invalid Date";
         res.status(400).end();
+        return;
       }
 
       // else if(date is in the past){

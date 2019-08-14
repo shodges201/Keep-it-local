@@ -64,7 +64,7 @@ module.exports = function (app) {
       db.Events.findAll({
         // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
         //uncomment this line to only get events that are not created by the user
-        //,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
+        // ,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
       })
         .then(function (dbEvents) {
           dbEvents.forEach(function (element) {
@@ -171,6 +171,7 @@ module.exports = function (app) {
     db.User.create({
       userName: req.body.username,
       password: req.body.password,
+      referral: req.body.referral,
       lastReferral: now
     }).then(function () {
       res.redirect(307, "/api/login");
@@ -179,6 +180,18 @@ module.exports = function (app) {
       res.json(err);
     });
   });
+
+  app.get("/api/checkcode", function (req,res){
+    db.ReferralCodes.findAll({
+      attributes: ['code']
+    }).then(function(result){
+      for (var i=0; i<result.length; i++)
+      console.log(result);
+      res.send(result)
+  
+
+    })
+  })
 
   // This generates a code for the user when the button is checked.
   app.get("/api/code", function (req, res) {

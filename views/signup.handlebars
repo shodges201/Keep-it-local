@@ -24,6 +24,7 @@
             <label>join the network...</label><br>
             <input type="text" name="username" placeholder=" username">
             <input type="password" name="password" placeholder=" password">
+            <input type="referral" name="referral" placeholder="referral">
             <button type="submit" id="signup-btn">sign up</button>
             
         <span class="switch-link">already a member? <a href="/login">login</a></span>
@@ -43,11 +44,18 @@
 
     $(document).ready(function () {
         $("#signup-form").on("submit", function (event) {
+            console.log("I have been clicked")
             event.preventDefault();
             let newUser = {
                 username: $("#signup-form [name=username]").val().trim(),
-                password: $("#signup-form [name=password]").val().trim()
+                password: $("#signup-form [name=password]").val().trim(),
+                referral: $("#signup-form [name=referral]").val().trim()
             }
+            console.log("loading")
+            $.ajax("/api/checkcode", {
+                method: "GET"
+            }).then(function(res){
+            if(res = newUser.referral){
             $.ajax("/api/signup", {
                 method: "POST",
                 data: newUser
@@ -55,6 +63,11 @@
                 console.log("new user added")
                 window.location = "http://localhost:8080/events"
             })
+                }
+            })
+         
+            
+   
         });
 
         $("#login-btn").on("click", function(event){

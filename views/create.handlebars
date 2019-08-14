@@ -5,8 +5,14 @@
     <hgroup class="speech-bubble" style="text-align:center;">
         <h1>WHAT'S<br>HAPPENIN' TN?</h1>
     </hgroup>
+    <hgroup class="speech-bubble-3" style="text-align:center;">
+        <h1>WHERE'S THE<br>PARTY AT</h1>
+    </hgroup>
     <hgroup class="speech-bubble-2" style="text-align:center;">
         <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
+    </hgroup>
+    <hgroup class="speech-bubble-4" style="text-align:center;">
+        <h1>WHAT'S<br>THE MOVE</h1>
     </hgroup>
 
 </div>
@@ -63,6 +69,21 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+        setInterval(function(){
+        $(".speech-bubble").fadeToggle(800);
+    }, 7000);
+
+     setInterval(function(){
+        $(".speech-bubble-2").delay(7000).fadeToggle(800);
+    }, 7000);
+
+    setInterval(function(){
+        $(".speech-bubble-3").delay(20000).fadeToggle(800);
+    }, 7000);
+
+    setInterval(function(){
+        $(".speech-bubble-4").delay(5000).fadeToggle(800);
+    }, 9000);
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {

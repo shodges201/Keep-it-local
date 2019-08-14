@@ -38,21 +38,19 @@
             <div>
                 <table align="left" id="listings-table">
                 <tr>
-                
                     <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
-                    <th><span class="listing-header">distance</span></th> 
+                    <th><span class="listing-header">date</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">distance</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
-                
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
-                        <td><span class="listing-item listing-item-local">{{this.distance}} miles</span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
@@ -71,25 +69,23 @@
             <div>
                 <table align="left" id="listings-table">
                 <tr>
-
-                    <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
-                    <th><span class="listing-header">distance</span></th> 
-                    <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">rsvps</span></th> 
+                
+                    <th><span class="listing-header">name</span></th>
+                    <th><span class="listing-header">date</span></th>
+                    <th><span class="listing-header">category</span></th>
+                    <th><span class="listing-header">distance</span></th>
+                    <th><span class="listing-header">rsvps</span></th>
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
-                        <td><span class="listing-item listing-item-local">{{this.distance}} miles</span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
-                        
                     </tr>
                 {{/each}}
                 </table>
@@ -121,28 +117,44 @@
     $(document).ready(function () {
         $("#refer-box").hide()
 
-        $("#refer-link").click(function () {            
+        $("#refer-link").click(function () {
             $.ajax("/api/code", {
                 method: "GET"
-            }).then(function(res){
-                if(res.eligible){
-                    $.ajax("/api/code", {
-                        method: "POST"
-                    }).then(function(resp){
-                        console.log(resp.code);
-                        $("#refer-code").text(resp.code)
-                        $("#refer-box").fadeIn(1000)
-                    })
-                }
-                else{
-                    $("#refer-msg").text("You're not eligible code for a new code")
-                    $("#refer-box").fadeIn(1000)
+            }).then(function (res) {
+                switch (res.status) {
+                    case 0:
+                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
+                        $("#refer-box").fadeIn(1000);
+                        break;
+                    case 1:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-msg").text("You're not eligible code for a new code yet.");
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    case 2:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    default:
+                        $("#refer-msg").text("Sorry, something went wrong...");
+                        $("#refer-box").fadeIn(1000);
+                        break;
                 }
             })
         })
 
         $(document.body).on("dblclick", function (event) {
-            $("#refer-box").hide()
+            $("#refer-box").fadeOut(500)
         })
 
     })

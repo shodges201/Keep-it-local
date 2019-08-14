@@ -3,16 +3,15 @@ var db = require("../models");
 var passport = require("../config/passport");
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 var notAuthenticated = require("../config/middleware/notAuthenticated");
+var connection = require('../config/connection');
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var NodeGeocoder = require('node-geocoder');
-var connection = require('../config/connection');
 var turf = require('@turf/turf');
 var options = {
   provider: 'mapquest',
-  // Optional depending on the providers
-  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw' // for Mapquest, OpenCage, Google Premier
+  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw' 
 };
 var geocoder = NodeGeocoder(options);
 
@@ -23,32 +22,11 @@ geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
       });
 */
 
-var momentToString = function(currentTime){
-  let x = currentTime.split('-');
-  currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
-  return currentTime;
-}
 
 
+module.exports = function (app) { 
 
-module.exports = function (app) {
-
-
-  //Loads the page that holds the button to generate a code
-  app.get("/getcode", function (req, res) {
-    res.render("generatecode");
-  })
-
-  // Loads a page that displays code the user generated
-  app.get("/yourcode", function (req, res) {
-    res.render("yourcode")
-  })
-
-  // A route that renders the generatecode.hdbs html page
-  app.get("/code", function (req, res) {
-    res.render('generatecode');
-  })
-
+  //====================== render/html routes ========================================//
    app.get("/", notAuthenticated, function (req, res) {
     console.log("login");
     res.render("login")
@@ -79,11 +57,12 @@ module.exports = function (app) {
       let currentLoc = formatCoords(req.user.currentLocation);
       const options = {units: 'miles'};
       db.Events.findAll({
-        // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
-        //uncomment this line to only get events that are not created by the user
-        //,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
-      })
-        .then(function (dbEvents) {
+        where: {
+          creatorID: {
+            [db.Sequelize.Op.ne]: req.user.userName
+          }
+        }
+      }).then(function (dbEvents) {
           console.log(req.user.currentLocation);
           dbEvents.forEach(function (element) {
             console.log('data vals: ');
@@ -97,15 +76,11 @@ module.exports = function (app) {
               dataVals['distance'] = toTwoPlaces(distance);
               all.push(dataVals);
             }
-          });
-          // all.push(dbEvents[0].dataValues);
-          // console.log(all);
+          })
         }).then(function () {
           db.Events.findAll({ 
             where: { creatorID: req.user.userName } 
           }).then(function (dbUserEvents) {
-            // console.log("---------------user events----------------");
-            // console.log(dbUserEvents);
             dbUserEvents.forEach(function (item) {
               let destinationCoords = formatCoords(item.dataValues.coords);
               let distance = turf.distance(currentLoc, destinationCoords, options);
@@ -113,6 +88,8 @@ module.exports = function (app) {
               dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
             });
+            console.log(all)
+            console.log(user)
             res.render('index', { 
               all_events: all, 
               user_events: user 
@@ -135,6 +112,11 @@ module.exports = function (app) {
       let currentLoc = req.user.currentLocation;
       const options = {units: 'miles'};
       db.Events.findAll({
+          where: {
+            creatorID: {
+              [db.Sequelize.Op.ne]: req.user.userName
+            }
+          }
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
             let destinationCoords = element.dataValues.coords;
@@ -203,7 +185,7 @@ module.exports = function (app) {
     }
   });
 
-  //====================== api routes ========================================
+  //====================== api routes ========================================//
   app.post("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     res.end();
@@ -244,34 +226,38 @@ module.exports = function (app) {
     });
   });
 
-  // This generates a code for the user when the button is checked.
   app.get("/api/code", function (req, res) {
+    // This generates a code for the user when the button is checked.
     db.User.findOne({
       where: {
         userName: req.user.userName
       }
     }).then(function (result) {
-    // Gets the current time in a moment object
-      
+      // Gets the current time in a moment object
       let currentTime = moment().format();
       console.log(currentTime);
-    // Calls our helper function to format the current time to match format of the time on the database
+      // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
       let eligible = false;
 
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
+      
+      let userStart = new Date(result.createdAt).toISOString();
+      userStart = moment(userStart);
     
-      if(lastRef.diff(currentTime, 'days') <= 3){
+      if(userStart.diff(currentTime, 'days') <= 3) {
         console.log("You're not eligible for a new code")
-        eligible = false;
-        res.json({eligible: eligible})
+        res.json({status: 0})
+      }
+      else if(lastRef.diff(currentTime, 'days') <= 3){
+        console.log("You're not eligible for a new code")
+        res.json({status: 1})
       }
       else {
         console.log("You're eligible for a new code")
-        eligible = true;
-        res.json({eligible: eligible})
+        res.json({status: 2})
       }
 
       
@@ -281,8 +267,8 @@ module.exports = function (app) {
   
   });
 
-  // Route used to post a referral code on click
   app.post("/api/code", function (req, res) {
+    // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
       // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
@@ -297,8 +283,8 @@ module.exports = function (app) {
     })
   })
 
-  // RSVP create and get
   app.get("/api/rsvp/:id", function(req,res){
+    // RSVP create and get
     // console.log("GET /api/rsvp")
     let event_id = req.params.id;
     console.log("event_id received "+event_id)
@@ -335,8 +321,8 @@ module.exports = function (app) {
     });
   })
   
-  // get a single event
   app.get('/api/event/:id', function(req, res){
+    // get a single event
     db.Events.findOne({
       where: {
         id:req.params.id}, 
@@ -347,8 +333,8 @@ module.exports = function (app) {
     })
   })
 
-  //change name and/or description of an event
   app.put("/api/event/:id", function(req, res){
+    //change name and/or description of an event
     db.Events.update({
       name: req.body.name,
       description: req.body.description
@@ -365,9 +351,10 @@ module.exports = function (app) {
     });
   });
 
-  //create new event with a name, category, and location passed in
-  //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
   app.post("/api/event", function (req, res) {
+    //create new event with a name, category, and location passed in
+    //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
+
     // let fullAddr = `${req.body.address}, ${req.body.city_state}`
     // geocoder.geocode(fullAddr, function (err, data) {
     //   if(err) throw err.stack;
@@ -378,59 +365,68 @@ module.exports = function (app) {
       description = req.body.description
     }
     geocoder.geocode(req.body.location, function(err, data){
-    let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
-    let userLoc = req.user.currentLocation;
+      
+      let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
+      console.log(data[0].latitude.toString() + ', ' + data[0].longitude.toString());
 
-    let distance = distanceBetween(loc, userLoc);
-    console.log('distance: ' + distance);
+      let from = turf.point([data[0].latitude, data[0].longitude]);
+      let userLoc = req.user.currentLocation;
+      userLoc = userLoc.split(', ');
+      
+      let to = turf.point([userLoc[0], userLoc[1]]);
+      console.log(userLoc[0]+ ', ' + userLoc[1]);
+      let options = {units: 'miles'};
 
-    if(distance >= 30){
-      res.statusMessage = "Too far away";
-      res.status(400).end();
-    }
-    // else if(date is in the past){
-      // res.statusMessage = "Invalid Date";
-      // res.status(400).end();
-    // }
-    else{
-      db.Events.create({
-        name: req.body.name,
-        description: description,
-        //date:req.body.date,
-        category: req.body.category,
-        // streetAddress: req.body.address,
-        location: req.body.location,
-        coords: loc,
-        creatorID: req.user.userName,
-        // startTime: req.body.startTime,
-        // endTime: req.body.endTime,
-        upVotes: 0
-      }).then(function (resp) {
-        console.log("event created");
-        console.log(resp.dataValues.id);
-        eventID = resp.dataValues.id;
-      }).then(function(){
-        //create a new table with name Messages_<eventname>
-        connection.query(`CREATE TABLE Messages_${eventID}
-        (
-          id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-          content VARCHAR(255) NOT NULL,
-          creatorID VARCHAR(255) NOT NULL,
-          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-          )`, function(err, resp){
-            res.end();
-          });
+      let distance = turf.distance(from, to, options);
+      console.log('distance: ' + distance);
 
-      }).catch(function (err) {
-        console.log(err);
-        res.json(err);
-      })
-  }
-  })
+      if(distance >= 30){
+        res.statusMessage = "Too far away";
+        res.status(400).end();
+      }
+      // else if(date is in the past){
+        // res.statusMessage = "Invalid Date";
+        // res.status(400).end();
+      // }
+      else {
+        db.Events.create({
+          name: req.body.name,
+          description: description,
+          date:req.body.date,
+          category: req.body.category,
+          // streetAddress: req.body.address,
+          location: req.body.location,
+          coords: loc,
+          creatorID: req.user.userName,
+          // startTime: req.body.startTime,
+          // endTime: req.body.endTime,
+          upVotes: 0
+        }).then(function (resp) {
+          console.log("event created");
+          console.log(resp.dataValues.id);
+          eventID = resp.dataValues.id;
+          }).then(function(){
+            //create a new table with name Messages_<eventname>
+            connection.query(`CREATE TABLE Messages_${eventID}
+            (
+              id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
+              content VARCHAR(255) NOT NULL,
+              creatorID VARCHAR(255) NOT NULL,
+              createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+              )`, function(err, resp){
+                res.end();
+              });
+
+            }).catch(function (err) {
+              console.log(err);
+              res.json(err);
+              })
+      }
+    })
   });
 
-  // create new message 
   app.post("/api/message", function(req, res){
+    // create new message 
     let event_id = req.body.id;
     //console.log('content: ');
     let content = escapeString(req.body.content);
@@ -444,10 +440,9 @@ module.exports = function (app) {
     });
   });
 
-  //get all messages from a certain event
-  app.get("/api/message/:event_id", function(req, res){
-    let event_id = req.params.event_id;
-
+  app.get("/api/message/:id", function(req, res){
+    //get all messages from a certain event
+    let event_id = req.params.id;
     // ============= mysql method =======================
     connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
@@ -456,8 +451,10 @@ module.exports = function (app) {
     });
   });
 
-  //used for making mysql queries with strings including special characters
+
+  //====================== helper functions ========================================//
   function escapeString (str) {
+    //used for making mysql queries with strings including special characters
     return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
@@ -492,8 +489,14 @@ module.exports = function (app) {
     return parseFloat(Math.round(num * 100) / 100).toFixed(2);
   }
 
-  //takes in comma seperated coordinates and returns the distance between them
+  function momentToString(currentTime) {
+    let x = currentTime.split('-');
+    currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    return currentTime;
+  }
+
   function distanceBetween(coords1, coords2){
+    //takes in comma seperated coordinates and returns the distance between them
     coords1 = formatCoords(coords1);
     coords2 = formatCoords(coords2);
     let from = turf.point(coords1);

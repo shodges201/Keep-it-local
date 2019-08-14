@@ -193,16 +193,19 @@ li {
   margin-right:40px;
 }
 .listing-item-local {
-  margin-right:65px;
+  margin-right:55px;
 }
 .listing-item-cat {
-  margin-right:50px;
+  margin-right:60px;
 }
 .listing-item-votes {
   margin-right:70px;
 }
 .listing-item-id {
   margin-right:10px;
+}
+.listing-item-date {
+  margin-right:40px;
 }
 
 
@@ -327,16 +330,26 @@ button {
 
 
 .event-votes {
-  color: rgb(250, 149, 159)
+  /* color: rgb(250, 149, 159) */
+  color:rgba(226, 169, 255);
 }
 
 .event-location {
   color: rgb(154, 194, 255)
 }
 
+.event-date {
+  color: rgb(250, 149, 159)
+}
+
 .msg-date {
   color: rgb(250, 149, 159);
   margin-right: 5px;
+}
+
+.msg-time {
+  color: rgb(154, 194, 255);
+  margin-right: 7px;
 }
 
 .msg-user {
@@ -437,7 +450,7 @@ input#create-form {
   background: rgb(0, 0, 0, 0.8);
   color:white;
   text-align: center;
-  padding:50px;
+  padding:45px;
   font-size:18px;
 }
 

@@ -4,8 +4,8 @@ console.log(process.env);
 
 var connection;
 
-if (process.env.DB_HOST) {
-  connection = mysql.createConnection(process.env.DB_HOST);
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
   console.log("jaws");
 } else {
   console.log('non-jaws');

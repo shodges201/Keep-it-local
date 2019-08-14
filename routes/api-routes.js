@@ -61,7 +61,10 @@ module.exports = function (app) {
           creatorID: {
             [db.Sequelize.Op.ne]: req.user.userName
           }
-        }
+        },
+        order: [
+          ['date', 'DESC']
+        ]
       }).then(function (dbEvents) {
           console.log(req.user.currentLocation);
           dbEvents.forEach(function (element) {
@@ -79,7 +82,12 @@ module.exports = function (app) {
           })
         }).then(function () {
           db.Events.findAll({ 
-            where: { creatorID: req.user.userName } 
+            where: {
+                creatorID: req.user.userName
+            },
+            order: [
+                ['date', 'DESC']
+            ]
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
               let destinationCoords = formatCoords(item.dataValues.coords);
@@ -116,7 +124,10 @@ module.exports = function (app) {
             creatorID: {
               [db.Sequelize.Op.ne]: req.user.userName
             }
-          }
+          },
+          order: [
+            ['date', 'DESC']
+          ]
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
             let destinationCoords = element.dataValues.coords;
@@ -133,7 +144,10 @@ module.exports = function (app) {
           db.Events.findAll({
               where: {
                 creatorID: req.user.userName
-              }
+              },
+              order: [
+                ['date', 'DESC']
+              ]
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
               let destinationCoords = item.dataValues.coords;

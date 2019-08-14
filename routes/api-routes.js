@@ -41,6 +41,7 @@ module.exports = function (app) {
   });
 
   app.get("/logout", isAuthenticated, function(req, res) {
+    req.logout();
     res.redirect("/");
   });
 
@@ -177,7 +178,7 @@ module.exports = function (app) {
                     // }
                   }
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                    connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.log("Messages_"+req.params.id);
                       console.table(result);
@@ -207,76 +208,53 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
-    db.User.findOne({
+
+    db.User.update({
+      currentLocation: req.body.location
+    },{
       where: {
         userName: req.body.username
       }
-    }).then(function(dbUser){
-      if(!dbUser.active){
-        db.User.update({
-          currentLocation: req.body.location,
-          active: true
-        }, {
-          where: {
-            userName: req.body.username
-          }
-        }).then(function (resp) {
-
-          console.log(resp);
-          res.end();
-        });
-      }
-      else {
-        res.redirect("/");
-      }
-    })
-      
-  });
-
-  app.put("/api/logout", function(req,res){
-    
-    db.User.update({
-      active: false
-    }, {
-      where: {
-        userName: req.user.userName
-      }
-    }).then(function (resp) {
+    }).then(function(resp){
       console.log(resp);
-      req.logout();
       res.end();
-    });
-  })
+     });
+  });
 
   app.post("/api/signup", function(req, res) {
     console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
+    currentPassword = req.body.password;
     let now = moment().format();
     now = momentToString(now);
-    db.User.create({
-      userName: req.body.username,
-      password: req.body.password,
-      referral: req.body.referral,
-      lastReferral: now,
-      currentLocation: req.body.location,
-      active:true
-    }).then(function () {
-      db.ReferralCodes.destroy({
-        where: {
-          code: req.body.referral,
-        }
-      }).then(function(resp){
-        res.redirect(307, "/api/login");
-      })
-    }).catch(function(err) {
-      console.log(err);
-      res.json(err);
-    });
+    if(!currentUser || !currentPassword){
+      res.statusMessage = 'Bad username or password';
+      res.status(400).end();
+    }
+    else{
+      db.User.create({
+        userName: req.body.username,
+        password: req.body.password,
+        referral: req.body.referral,
+        lastReferral: now,
+        currentLocation: req.body.location
+      }).then(function () {
+        db.ReferralCodes.destroy({
+          where: {
+            code: req.body.referral,
+          }
+        }).then(function(resp){
+          res.redirect(307, "/api/login");
+        })
+      }).catch(function(err) {
+        console.log(err);
+        res.json(err);
+      });
+    }
   });
 
   app.post("/api/checkcode", function (req,res){
-    console.log(req.body.referral);
     db.ReferralCodes.findOne({
       where: {code: req.body.referral}}).then(function(result){
         if(!result){
@@ -288,6 +266,16 @@ module.exports = function (app) {
     });
   });
 
+  app.get("/api/allcodes", function (req,res){
+    db.ReferralCodes.findAll({
+      where: {
+        creatorID: req.user.userName
+      }}).then(function(allcodes){
+        res.send(allcodes);
+        
+    })
+  })
+
   app.get("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
@@ -297,23 +285,27 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
+
+      let test = '2019-07-11T11:49:52-04:00'
+
       console.log(currentTime);
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
-      let eligible = false;
 
+      // test = momentToString(test);
+      // test = moment(test);
+
+      let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
     
-      if(userStart.diff(currentTime, 'days') <= 3) {
-        console.log("You're not eligible for a new code")
-        res.json({status: 0})
-      }
-      else if(lastRef.diff(currentTime, 'days') <= 3){
+    
+      //change the test to currentTime
+     if(lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }
@@ -343,7 +335,30 @@ module.exports = function (app) {
       console.log(resp);
       res.json(resp);
     });
-  })
+  });
+
+  app.post("/api/code/admin", function (req, res) {
+    // Route used to post a referral code on click
+    if(req.body.apiKey === 'MA3Igp6a'){
+      db.ReferralCodes.create({
+        creatorID: 'admin',
+        // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
+        code: voucher_codes.generate({
+          length: 8,
+          count: 5
+        })[0]
+      }).then(function (resp) {
+        console.log("code created");
+        console.log(resp);
+        res.json(resp);
+      });
+    }
+    else{
+      res.statusMessage = 'Bad API key';
+      res.status(401).end();
+    }
+  });
+
 
   app.get("/api/rsvp/:id", function(req,res){
     // RSVP create and get
@@ -445,6 +460,7 @@ module.exports = function (app) {
       if(distance >= 30){
         res.statusMessage = "Too far away";
         res.status(400).end();
+        return;
       }
 
       let now = moment().format('YYYY-MM-DD');
@@ -453,6 +469,7 @@ module.exports = function (app) {
       if(!future){
         res.statusMessage = "Invalid Date";
         res.status(400).end();
+        return;
       }
 
       // else if(date is in the past){
@@ -515,7 +532,7 @@ module.exports = function (app) {
     //get all messages from a certain event
     let event_id = req.params.id;
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
+    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
       res.send(result);

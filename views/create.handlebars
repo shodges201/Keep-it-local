@@ -61,36 +61,6 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        
-        $(window).bind('unload', function () {
-            $.ajax("/api/logout", {
-                method: "PUT",
-                async: false,
-                data: { active: false }
-            }).then(function (result) {
-                console.log("logged out")
-                event.returnValue = "logged out."
-            })
-        });
-
-        /*
-        window.onbeforeunload = function (event) {
-            event.preventDefault();
-            $.ajax("/api/logout", {
-                method: "PUT",
-                data: { active: false }
-            }).then(function (result) {
-                console.log("logged out")
-            })
-            //var message = 'You will be logged out';
-            if (typeof event == 'undefined') {
-                event = window.event;
-            }
-            if (event) {
-                
-        };
-        }*/
-
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {
@@ -151,7 +121,7 @@
                 method: "POST",
                 data: new_event
             }).then(function(result){
-                window.location = "http://localhost:8080/events"
+                window.location.href = "/events"
             }).fail(function(xhr, status, error){
                 switch(xhr.status){
                     case(400):

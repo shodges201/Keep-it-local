@@ -441,6 +441,7 @@ input#create-form {
 }
 
 #refer-box {
+  /* visibility: hidden; */
   display: none;
   position: fixed;
   z-index: 3;
@@ -453,9 +454,16 @@ input#create-form {
   text-align: center;
   padding:45px;
   font-size:18px;
+  overflow: scroll;
+  overflow: -moz-scrollbars-none;
+  overflow: -ms-overflow-style: none;
 }
 
-#refer-code {
+#refer-box::-webkit-scrollbar{
+  width: 0 !important;
+}
+
+.refer-code {
   color: red;
   margin:0px;
 }

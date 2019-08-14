@@ -33,7 +33,7 @@
             {{!-- <label>state</label>
             <div id="location-form" class="input-field col s12"></div><br> --}}
             <label>description</label>
-            <textarea id="details" placeholder="start time, dress code, byob, etc. "></textarea>
+            <textarea id="details" placeholder="start time, dress code, byob, etc. " wrap="hard"></textarea>
             <button type="submit" id="create-btn">create event</button>
         </form>
     </div>
@@ -42,8 +42,8 @@
 
 
 <div id="refer-box">
-    <p>here's your referral code</p>
-    <span id="refer-code">e3R6tHg8v</span>
+    <p id="refer-msg">here's your referral code</p>
+    <span id="refer-code"></span>
 </div>
 
 
@@ -53,17 +53,33 @@
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
-<script>
+<script type="text/javascript">
+
     $(document).ready(function () {
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {
-            console.log("fading in")
-            $("#refer-box").fadeIn(1000)
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function (res) {
+                if (res.eligible) {
+                    $.ajax("/api/code", {
+                        method: "POST"
+                    }).then(function (resp) {
+                        console.log(resp.code);
+                        $("#refer-code").text(resp.code)
+                        $("#refer-box").fadeIn(1000)
+                    })
+                }
+                else {
+                    $("#refer-msg").text("You're not eligible code for a new code")
+                    $("#refer-box").fadeIn(1000)
+                }
+            })
         })
 
         $(document.body).on("dblclick", function (event) {
-            $("#refer-box").fadeOut(1000)
+            $("#refer-box").hide()
         })
         
 

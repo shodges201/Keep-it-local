@@ -17,14 +17,16 @@
     <br>
     <br>
     <div id="message-description">
-        <p id="description">{{select_event.data.description}}</p>
+        <p id="description" class="event">{{select_event.data.description}}</p>
     </div>
-    <br>
-    <p><span id="rsvp-count" class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
-    <br>
-    <p>located at <span class="event-location">{{select_event.data.location}}</span></p>
-    <br>
-    <p>started by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
+    
+    <p class="event"><span id="rsvp-count" class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
+    
+    <p class="event"> located at <span class="event-location">{{select_event.data.location}}</span></p>
+
+    <p class="event"> on <span class="event-date">{{moment select_event.data.date "MMMM DD, YYYY"}}</span></p>
+    
+    <p class="event">hosted by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
     {{#if select_event.ownedByUser}}
         <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">edit this event</button>
     {{else}}
@@ -39,9 +41,9 @@
         <ul id="messages-list">
             {{#each messages}}
                 {{#if select_event.ownedByUser}}
-                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span> <span class="msg-time">{{moment this.createdAt "hh:mm A"}}</span> <span class="msg-user">{{this.creatorID}}</span>  {{this.content}} </li>
                 {{else}}
-                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span>  <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
+                    <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span> <span class="msg-time">{{moment this.createdAt "hh:mm A"}}</span> <span class="msg-op">{{this.creatorID}}</span>  {{this.content}} </li>
                 {{/if}}
             {{/each}}
             <br><br>
@@ -76,20 +78,20 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                    <tr>
-
-                        <th><span class="listing-header">name</span></th>
-                        <th><span class="listing-header">location</span></th>
-                        <th><span class="listing-header">category</span></th>
-                        <th><span class="listing-header">votes</span></th>
-                        <th><span class="listing-header">creator</span></th>
-
-                    </tr>
-                    {{#each user_events}}
+                <tr>
+                    <th><span class="listing-header">name</span></th>
+                    <th><span class="listing-header">date</span></th>
+                    <th><span class="listing-header">category</span></th>
+                    <th><span class="listing-header">distance</span></th>
+                    <th><span class="listing-header">rsvps</span></th>
+                    <th><span class="listing-header">creator</span></th>
+                </tr>
+                {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
@@ -107,20 +109,20 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                    <tr>
-
-                        <th><span class="listing-header">name</span></th>
-                        <th><span class="listing-header">location</span></th>
-                        <th><span class="listing-header">category</span></th>
-                        <th><span class="listing-header">votes</span></th>
-                        <th><span class="listing-header">creator</span></th>
-
-                    </tr>
-                    {{#each all_events}}
+                <tr>
+                    <th><span class="listing-header">name</span></th>
+                    <th><span class="listing-header">date</span></th>
+                    <th><span class="listing-header">category</span></th>
+                    <th><span class="listing-header">distance</span></th>
+                    <th><span class="listing-header">rsvps</span></th>
+                    <th><span class="listing-header">creator</span></th>
+                </tr>
+                {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
@@ -135,48 +137,64 @@
 
 
 
+<div id="refer-box">
+    <p id="refer-msg">your referral code:</p>
+    <span id="refer-code"></span>
+</div>
+
 
 <footer class="footer">
-    <button id="myBtn">Referral</button>
-        <div id="myModal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
-  </div>
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
 <script type="text/javascript">
 
-    var modal = document.getElementById("myModal");
+    $(document).ready(function () {
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+        $("#refer-box").hide()
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+        $("#refer-link").click(function () {
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function (res) {
+                switch (res.status) {
+                    case 0:
+                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
+                        $("#refer-box").fadeIn(1000);
+                        break;
+                    case 1:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-msg").text("You're not eligible for a new code yet.");
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    case 2:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    default:
+                        $("#refer-msg").text("Sorry, something went wrong...");
+                        $("#refer-box").fadeIn(1000);
+                        break;
+                }
+            })
+        })
 
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").fadeOut(500)
+        })
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-
-    $(document).ready(function(){
         $(".new-event-btn").click(function () {
             $.ajax(`/create`, {
                 method: "GET"
@@ -186,15 +204,6 @@ window.onclick = function(event) {
                 //window.location = `/event/${id}`
             })
         })
-
-        //$(".event-link").click(function () {
-          //  let event_id = $(this).attr("data-id").val()
-            //$.ajax(`/${event_id}`, {
-              //  method: "GET" 
-            //}).then(function (result) {
-             //   window.location.replace(result);
-            //})
-        //})
 
         $(document.body).on("click", ".rsvp-btn", function (event) {
             let rsvp = {
@@ -248,7 +257,8 @@ window.onclick = function(event) {
                 })
         })
     })
-    $(document.body).on("click", ".edit-btn", function(event){
+    
+        $(document.body).on("click", ".edit-btn", function(event){
         console.log('edit item');
         let headerText = $('.event-name').text();
         $('.event-name').remove();
@@ -260,13 +270,13 @@ window.onclick = function(event) {
         let descriptionText = $("#description").text();
         $("#description").remove();
         let descriptionContainer = $('<div>').addClass('input-field col s6');
-        let descriptionInput = $('<input>').attr('id', 'edit-event-description').attr('type', 'text').addClass('validate').val(descriptionText);
+        let descriptionInput = $('<textarea>').attr('id', 'edit-event-description').addClass('validate details-edit').val(descriptionText);
         descriptionContainer.append(descriptionInput);
         $("#message-description").append(descriptionContainer);
         $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');
     });
 
-    $(document.body).on('click', '.confirm-btn', function(event){
+        $(document.body).on('click', '.confirm-btn', function(event){
         let newName = $("#edit-event-name").val().trim();
         let newDescription = $('#edit-event-description').val().trim();
         let eventID = $(this).data('id');
@@ -288,11 +298,12 @@ window.onclick = function(event) {
         })
     });
 
-    function formatDate(date){
+        function formatDate(date){
         let months =  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         let dateItems = (date.split('-' && 'T')[0]).split('-');
         return months[parseInt(dateItems[1])-1] + " " + dateItems[2] + ", " + dateItems[0];
     }
+    
     })
 
 </script>

@@ -38,19 +38,19 @@
             <div>
                 <table align="left" id="listings-table">
                 <tr>
-                
                     <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
+                    <th><span class="listing-header">date</span></th> 
                     <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">votes</span></th> 
+                    <th><span class="listing-header">distance</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
                     <th><span class="listing-header">creator</span></th>
-                
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row">
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
@@ -69,23 +69,23 @@
             <div>
                 <table align="left" id="listings-table">
                 <tr>
-
-                    <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">location</span></th> 
-                    <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">rsvps</span></th> 
+                
+                    <th><span class="listing-header">name</span></th>
+                    <th><span class="listing-header">date</span></th>
+                    <th><span class="listing-header">category</span></th>
+                    <th><span class="listing-header">distance</span></th>
+                    <th><span class="listing-header">rsvps</span></th>
                     <th><span class="listing-header">creator</span></th>
                 
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row">
-                        
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
-                        <td><span class="listing-item listing-item-local">{{this.location}}</span></td>
+                        <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
+                        <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
-                        
                     </tr>
                 {{/each}}
                 </table>
@@ -100,62 +100,62 @@
 
 
 
-<footer class="footer">
-    <button id="myBtn">Referral</button>
-        <div id="myModal" class="modal">
-
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
-  </div>
-
+<div id="refer-box">
+    <p id="refer-msg">here's your referral code</p>
+    <span id="refer-code"></span>
 </div>
+
+
+<footer class="footer">
+    <button id="refer-link">REFER A FRIEND</button>
     KEEP IT LOCAL®
     <span id="logout"><a href="/logout" id="logout-link">LOGOUT</a></span>
 </footer>
 
-<script>
+<script type="text/javascript">
 
-        var modal = document.getElementById("myModal");
+    $(document).ready(function () {
+        $("#refer-box").hide()
 
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+        $("#refer-link").click(function () {
+            $.ajax("/api/code", {
+                method: "GET"
+            }).then(function (res) {
+                switch (res.status) {
+                    case 0:
+                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
+                        $("#refer-box").fadeIn(1000);
+                        break;
+                    case 1:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-msg").text("You're not eligible code for a new code yet.");
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    case 2:
+                        $.ajax("/api/code", {
+                            method: "POST"
+                        }).then(function (resp) {
+                            console.log(resp.code);
+                            $("#refer-code").text(resp.code)
+                            $("#refer-box").fadeIn(1000)
+                        })
+                        break;
+                    default:
+                        $("#refer-msg").text("Sorry, something went wrong...");
+                        $("#refer-box").fadeIn(1000);
+                        break;
+                }
+            })
+        })
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+        $(document.body).on("dblclick", function (event) {
+            $("#refer-box").fadeOut(500)
+        })
 
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-    //$(document).ready(function () {
-       // $(".event-link").click(function () {
-            //let event_id = $(this).attr("data-id").val()
-            //$.ajax(`/events/${event_id}`, {
-               // method: "GET",
-               // data: { 
-                //    id: event_id
-               // }
-           // }).then(function (result) {
-              //  console.log(result);
-              //  window.location.replace(result);
-                //window.location = `/event/${id}`
-           // })
-       //})
-        
-        
-    //})
+    })
 </script>

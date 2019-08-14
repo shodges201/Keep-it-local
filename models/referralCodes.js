@@ -5,6 +5,11 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
+      },
+      creatorID:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        
       }
     });
     return referralCodes;

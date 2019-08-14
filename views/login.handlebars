@@ -44,35 +44,37 @@
     $(document).ready(function () {
         let usernameInput = $("#login-form [name=username]");
         let passwordInput = $("#login-form [name=password]");
-        console.log(usernameInput.val());
+        
         $("#login-form").on("submit", function (event) {
             event.preventDefault();
-            let userData = {
-                username: usernameInput.val().trim(),
-                password: passwordInput.val().trim()
-            }
-            console.log(usernameInput.name);
-
-            loginUser(userData.username, userData.password);
-
-            usernameInput.val("");
-            passwordInput.val("");
-
+            navigator.geolocation.getCurrentPosition(success, error);
             });
 
-            // loginUser does a post to our "api/login" route and if successful, redirects us the the members page
-            function loginUser(username, password) {
-                $.post("/api/login", {
-                    username: username,
-                    password: password
-                }).then(function (data) {
-                    //window.location.replace(data);
-                    // If there's an error, log the error
-                    window.location = "http://localhost:8080/events";
-                }).catch(function (err) {
-                    console.log(err);
-                });
-            }
-    });
+    function success(position) {
+            let newUser = {
+                    username: $("#login-form [name=username]").val().trim(),
+                    password: $("#login-form [name=password]").val().trim(),
+                    location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString()
+                }
+            console.log(newUser);
+            $.ajax("/api/login", {
+                method: "PUT",
+                data: newUser
+            }).then(function(result){
+                console.log("new user added");
+                window.location = "http://localhost:8080/events";
+            })
+    }
+
+    function error() {
+        console.log("failed");
+        usernameInput.val("");
+        passwordInput.val("");
+        M.toast({
+            html: 'Location failed! Try turning on location services, we need your location to validate your local status!',
+            classes: 'toast'
+        })
+    }
+});
 
 </script>

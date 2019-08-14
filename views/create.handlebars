@@ -83,22 +83,41 @@
         })
         
 
-        $("#create-form").on("submit",function(event){
-            event.preventDefault()
+        $("#create-form").on("submit", function(event){
+            event.preventDefault();
+           
             let new_event = {
                 name:$("#create-form [name=eventName]").val().trim(),
                 date:$("#create-form [name=eventDate]").val(),
                 category:$("#create-form [name=category]").val().trim(),
                 //address:$("#create-form [name=location]").val(),
                 location:$("#create-form [name=location]").val(),
-                description:$("#details").val()
+                description: $("#details").val()
             }
-            console.log(new_event)
+            console.log(new_event);
+
             $.ajax("api/event",{
                 method: "POST",
                 data: new_event
             }).then(function(result){
                 window.location = "http://localhost:8080/events"
+            }).fail(function(xhr, status, error){
+                switch(xhr.status){
+                    case(400):
+                        if(error === 'Too far away'){
+                            M.toast({
+                                html: 'Make sure your location is within 30 miles',
+                                classes: 'toast'
+                            })
+                        }
+                        else if(error === 'Invalid Date'){
+                            M.toast({
+                                html: 'Make sure your location is within 30 miles',
+                                classes: 'toast'
+                            })
+                        }
+                }
+                
             })
 
         })

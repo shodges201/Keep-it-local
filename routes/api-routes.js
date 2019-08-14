@@ -6,9 +6,23 @@ var notAuthenticated = require("../config/middleware/notAuthenticated");
 var Messages = require('../models/messages');
 var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
-var connection = require("../config/connection.js")
+var NodeGeocoder = require('node-geocoder');
+var connection = require('../config/connection');
+var turf = require('@turf/turf');
+var options = {
+  provider: 'mapquest',
+  // Optional depending on the providers
+  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw' // for Mapquest, OpenCage, Google Premier
+};
+var geocoder = NodeGeocoder(options);
 
-// Helper function to manipulate the ISO86 timestamp to become an easier format to check
+/*
+geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
+        console.log("-------------------------");
+        console.log(data);
+      });
+*/
+
 var momentToString = function(currentTime){
   let x = currentTime.split('-');
   currentTime = currentTime.replace('-' + x[x.length-1], '.000Z');
@@ -62,14 +76,27 @@ module.exports = function (app) {
     if (req.user) {
       let all = [];
       let user = [];
+      let currentLoc = formatCoords(req.user.currentLocation);
+      const options = {units: 'miles'};
       db.Events.findAll({
         // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
         //uncomment this line to only get events that are not created by the user
         //,where: {creatorID: {[db.Sequelize.Op.ne]: req.user.username}}
       })
         .then(function (dbEvents) {
+          console.log(req.user.currentLocation);
           dbEvents.forEach(function (element) {
-            all.push(element.dataValues);
+            console.log('data vals: ');
+            console.log(element.dataValues);
+            let destinationCoords = formatCoords(element.dataValues.coords);
+            let distance = turf.distance(currentLoc, destinationCoords, options);
+            console.log(distance);
+            if(distance <= 30){
+              console.log(distance);
+              let dataVals = element.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
+              all.push(dataVals);
+            }
           });
           // all.push(dbEvents[0].dataValues);
           // console.log(all);
@@ -80,6 +107,10 @@ module.exports = function (app) {
             // console.log("---------------user events----------------");
             // console.log(dbUserEvents);
             dbUserEvents.forEach(function (item) {
+              let destinationCoords = formatCoords(item.dataValues.coords);
+              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let dataVals = item.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
             });
             res.render('index', { 
@@ -101,10 +132,22 @@ module.exports = function (app) {
       let user = [];
       let msgs = [];
       let focus;
+      let currentLoc = formatCoords(req.user.currentLocation);
+      const options = {units: 'miles'};
       db.Events.findAll({
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
-            all.push(element.dataValues);
+            console.log('data vals: ');
+            console.log(element.dataValues);
+            let destinationCoords = formatCoords(element.dataValues.coords);
+            let distance = turf.distance(currentLoc, destinationCoords, options);
+            console.log(distance);
+            if(distance <= 30){
+              console.log(distance);
+              let dataVals = element.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
+              all.push(dataVals);
+            }
           });
         }).then(function() {
           db.Events.findAll({
@@ -113,6 +156,10 @@ module.exports = function (app) {
               }
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
+              let destinationCoords = formatCoords(item.dataValues.coords);
+              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let dataVals = item.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
             })
             }).then(function() {
@@ -167,6 +214,7 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
+
     db.User.update({
       currentLocation: req.body.location
     },{
@@ -331,40 +379,65 @@ module.exports = function (app) {
     if(req.body.description){
       description = req.body.description
     }
+    geocoder.geocode(req.body.location, function(err, data){
+      
+    let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
+    console.log(data[0].latitude.toString() + ', ' + data[0].longitude.toString());
+
+    let from = turf.point([data[0].latitude, data[0].longitude]);
+    let userLoc = req.user.currentLocation;
+    userLoc = userLoc.split(', ');
+    
+    let to = turf.point([userLoc[0], userLoc[1]]);
+    console.log(userLoc[0]+ ', ' + userLoc[1]);
+    let options = {units: 'miles'};
 
 
+    let distance = turf.distance(from, to, options);
+    console.log('distance: ' + distance);
+    if(distance >= 30){
+      res.statusMessage = "Too far away";
+      res.status(400).end();
+    }
+    // else if(date is in the past){
+      // res.statusMessage = "Invalid Date";
+      // res.status(400).end();
+    // }
+    else{
+      db.Events.create({
+        name: req.body.name,
+        description: description,
+        //date:req.body.date,
+        category: req.body.category,
+        // streetAddress: req.body.address,
+        location: req.body.location,
+        coords: loc,
+        creatorID: req.user.userName,
+        // startTime: req.body.startTime,
+        // endTime: req.body.endTime,
+        upVotes: 0
+      }).then(function (resp) {
+        console.log("event created");
+        console.log(resp.dataValues.id);
+        eventID = resp.dataValues.id;
+      }).then(function(){
+        //create a new table with name Messages_<eventname>
+        connection.query(`CREATE TABLE Messages_${eventID}
+        (
+          id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
+          content VARCHAR(255) NOT NULL,
+          creatorID VARCHAR(255) NOT NULL,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+          )`, function(err, resp){
+            res.end();
+          });
 
-    db.Events.create({
-      name: req.body.name,
-      description: description,
-      //date:req.body.date,
-      category: req.body.category,
-      // streetAddress: req.body.address,
-      location: req.body.location,
-      creatorID: req.user.userName,
-      // startTime: req.body.startTime,
-      // endTime: req.body.endTime,
-      upVotes: 0
-    }).then(function (resp) {
-      console.log("event created");
-      console.log(resp.dataValues.id);
-      eventID = resp.dataValues.id;
-    }).then(function(){
-      //create a new table with name Messages_<eventname>
-      connection.query(`CREATE TABLE Messages_${eventID}
-      (
-        id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-        content VARCHAR(255) NOT NULL,
-        creatorID VARCHAR(255) NOT NULL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`, function(err, resp){
-          res.end();
-        });
-
-    }).catch(function (err) {
-      console.log(err);
-      res.json(err);
-    })
+      }).catch(function (err) {
+        console.log(err);
+        res.json(err);
+      })
+  }
+  })
   });
 
   // create new message 
@@ -420,5 +493,14 @@ module.exports = function (app) {
     });
   }
 
+  function formatCoords(str){
+    str = str.split(', ');
+    let list = [parseFloat(str[0]), parseFloat(str[1])];
+    return list;
+  }
+
+  function toTwoPlaces(num){
+    return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+  }
 }
 

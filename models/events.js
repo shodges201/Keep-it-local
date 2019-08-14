@@ -18,6 +18,10 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: false
       },
+      coords: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       upVotes: {
         type: DataTypes.INTEGER,
         allowNull: false

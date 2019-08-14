@@ -286,7 +286,7 @@ module.exports = function (app) {
   app.post("/api/code", function (req, res) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
-      creatorID: req.user.userName,
+      creatorID: req.body.userName,
       // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
       code: voucher_codes.generate({
         length: 8,

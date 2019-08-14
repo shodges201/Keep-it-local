@@ -132,10 +132,22 @@ module.exports = function (app) {
       let user = [];
       let msgs = [];
       let focus;
+      let currentLoc = formatCoords(req.user.currentLocation);
+      const options = {units: 'miles'};
       db.Events.findAll({
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
-            all.push(element.dataValues);
+            console.log('data vals: ');
+            console.log(element.dataValues);
+            let destinationCoords = formatCoords(element.dataValues.coords);
+            let distance = turf.distance(currentLoc, destinationCoords, options);
+            console.log(distance);
+            if(distance <= 30){
+              console.log(distance);
+              let dataVals = element.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
+              all.push(dataVals);
+            }
           });
         }).then(function() {
           db.Events.findAll({
@@ -144,6 +156,10 @@ module.exports = function (app) {
               }
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
+              let destinationCoords = formatCoords(item.dataValues.coords);
+              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let dataVals = item.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
             })
             }).then(function() {
@@ -379,39 +395,48 @@ module.exports = function (app) {
 
     let distance = turf.distance(from, to, options);
     console.log('distance: ' + distance);
+    if(distance >= 30){
+      res.statusMessage = "Too far away";
+      res.status(400).end();
+    }
+    // else if(date is in the past){
+      // res.statusMessage = "Invalid Date";
+      // res.status(400).end();
+    // }
+    else{
+      db.Events.create({
+        name: req.body.name,
+        description: description,
+        //date:req.body.date,
+        category: req.body.category,
+        // streetAddress: req.body.address,
+        location: req.body.location,
+        coords: loc,
+        creatorID: req.user.userName,
+        // startTime: req.body.startTime,
+        // endTime: req.body.endTime,
+        upVotes: 0
+      }).then(function (resp) {
+        console.log("event created");
+        console.log(resp.dataValues.id);
+        eventID = resp.dataValues.id;
+      }).then(function(){
+        //create a new table with name Messages_<eventname>
+        connection.query(`CREATE TABLE Messages_${eventID}
+        (
+          id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
+          content VARCHAR(255) NOT NULL,
+          creatorID VARCHAR(255) NOT NULL,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+          )`, function(err, resp){
+            res.end();
+          });
 
-    db.Events.create({
-      name: req.body.name,
-      description: description,
-      //date:req.body.date,
-      category: req.body.category,
-      // streetAddress: req.body.address,
-      location: req.body.location,
-      coords: loc,
-      creatorID: req.user.userName,
-      // startTime: req.body.startTime,
-      // endTime: req.body.endTime,
-      upVotes: 0
-    }).then(function (resp) {
-      console.log("event created");
-      console.log(resp.dataValues.id);
-      eventID = resp.dataValues.id;
-    }).then(function(){
-      //create a new table with name Messages_<eventname>
-      connection.query(`CREATE TABLE Messages_${eventID}
-      (
-        id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
-        content VARCHAR(255) NOT NULL,
-        creatorID VARCHAR(255) NOT NULL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`, function(err, resp){
-          res.end();
-        });
-
-    }).catch(function (err) {
-      console.log(err);
-      res.json(err);
-    })
+      }).catch(function (err) {
+        console.log(err);
+        res.json(err);
+      })
+  }
   })
   });
 

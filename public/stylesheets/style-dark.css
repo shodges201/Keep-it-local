@@ -441,3 +441,7 @@ input#create-form {
   color: red;
   margin:0px;
 }
+
+.toast{
+  color: black;
+}

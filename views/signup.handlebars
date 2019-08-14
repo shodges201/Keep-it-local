@@ -76,8 +76,17 @@
                         data: newUser
                     }).then(function(result){
                         console.log("new user added");
-                        window.location = "http://localhost:8080/events"
-                    });
+                        //window.location = "http://localhost:8080/events"
+                    }).fail(function(xhr, status, error){
+                        switch(xhr.status){
+                            default:
+                                M.toast({
+                                    html: 'Bad request. Verify your information and try again.',
+                                    classes: 'toast'
+                                })
+                                break;
+                        }
+            });
             }).fail(function(xhr, status, error){
                 switch(xhr.status){
                     case(400):
@@ -85,6 +94,13 @@
                             html: 'Please use a valid referral code',
                             classes: 'toast'
                         })
+                        break;
+                    default:
+                        M.toast({
+                            html: 'Bad request. Verify your information and try again.',
+                            classes: 'toast'
+                        })
+                        break;
                 }
             });
         }

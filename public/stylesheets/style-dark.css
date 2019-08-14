@@ -314,6 +314,7 @@ button {
 }
 .listing-row:hover  {
   color:rgb(250, 149, 159);
+  cursor: pointer;
 }
 
 .event-link:hover {
@@ -443,7 +444,7 @@ input#create-form {
 }
 
 #refer-box {
-  /* visibility: hidden; */
+  display: none;
   position: fixed;
   z-index: 3;
   left: 43%;

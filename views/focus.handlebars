@@ -97,6 +97,7 @@
                     </tr>
                 {{/each}}
                 </table>
+                {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
                 <a href="/create" class="new-event-btn">make new event</a>
                 <br><br><br><br>
             </div>
@@ -151,19 +152,6 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
-        $(window).bind('unload', function () {
-            $.ajax("/api/logout", {
-                method: "PUT",
-                async: false,
-                data: { active: false }
-            }).then(function (result) {
-                console.log("logged out")
-                event.returnValue = "logged out."
-            })
-        });
-
-        $("#refer-box").hide()
 
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
@@ -266,9 +254,8 @@
                     $('#messages-list').empty();
                     result.forEach(function(item){
                         let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
-                        let time = $('<span>').addClass('msg-time').text(formatTime(item.createdAt));
                         let creator = $('<span>').addClass('msg-op').text(item.creatorID);
-                        let listItem = $('<li>').append(date).append(time).append(creator);
+                        let listItem = $('<li>').append(date).append(creator);
                         listItem.append($('<span>').addClass('msg-content').text(item.content));
                         $("#messages-list").append(listItem);
                     })
@@ -278,22 +265,22 @@
     })
     
         $(document.body).on("click", ".edit-btn", function(event){
-            console.log('edit item');
-            let headerText = $('.event-name').text();
-            $('.event-name').remove();
-            let headerContainer = $('<div>').addClass('input-field col s6');
-            let headerInput = $('<input>').attr('id', 'edit-event-name').attr('type', 'text').addClass('validate').val(headerText);
-            headerContainer.append(headerInput);
-            $("#message-header").append(headerContainer);
+        console.log('edit item');
+        let headerText = $('.event-name').text();
+        $('.event-name').remove();
+        let headerContainer = $('<div>').addClass('input-field col s6');
+        let headerInput = $('<input>').attr('id', 'edit-event-name').attr('type', 'text').addClass('validate').val(headerText);
+        headerContainer.append(headerInput);
+        $("#message-header").append(headerContainer);
 
-            let descriptionText = $("#description").text();
-            $("#description").remove();
-            let descriptionContainer = $('<div>').addClass('input-field col s6');
-            let descriptionInput = $('<textarea>').attr('id', 'edit-event-description').addClass('validate details-edit').val(descriptionText);
-            descriptionContainer.append(descriptionInput);
-            $("#message-description").append(descriptionContainer);
-            $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');
-        });
+        let descriptionText = $("#description").text();
+        $("#description").remove();
+        let descriptionContainer = $('<div>').addClass('input-field col s6');
+        let descriptionInput = $('<textarea>').attr('id', 'edit-event-description').addClass('validate details-edit').val(descriptionText);
+        descriptionContainer.append(descriptionInput);
+        $("#message-description").append(descriptionContainer);
+        $(this).addClass('confirm-btn').removeClass('edit-btn').text('Confirm Changes');
+    });
 
         $(document.body).on('click', '.confirm-btn', function(event){
         let newName = $("#edit-event-name").val().trim();
@@ -321,21 +308,7 @@
         let months =  ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         let dateItems = (date.split('-' && 'T')[0]).split('-');
         return months[parseInt(dateItems[1])-1] + " " + dateItems[2] + ", " + dateItems[0];
-        }
-
-        function formatTime(time) {
-            let pd = ['AM','PM'];
-            //let dateItems = (date.split('-' && 'T')[0]).split('-');
-            let timeItems = time.substring(11,16).split(":")
-            if(parseInt(timeItems[0])>12){
-                return parseInt(24-timeItems[0])+":"+timeItems[1]+" "+pd[0]
-            }
-            else {
-                return timeItems[0]+":"+timeItems[1]+" "+pd[1]
-            }
-        }
-
-
+    }
     
     })
 

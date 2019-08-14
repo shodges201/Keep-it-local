@@ -41,6 +41,7 @@ module.exports = function (app) {
   });
 
   app.get("/logout", isAuthenticated, function(req, res) {
+    req.logout();
     res.redirect("/");
   });
 
@@ -193,46 +194,18 @@ module.exports = function (app) {
   app.put("/api/login", passport.authenticate("local"), function (req, res) {
     console.log('tried to login');
     console.log(req.body.location);
-    db.User.findOne({
+
+    db.User.update({
+      currentLocation: req.body.location
+    },{
       where: {
         userName: req.body.username
       }
-    }).then(function(dbUser){
-      if(!dbUser.active){
-        db.User.update({
-          currentLocation: req.body.location,
-          active: true
-        }, {
-          where: {
-            userName: req.body.username
-          }
-        }).then(function (resp) {
-
-          console.log(resp);
-          res.end();
-        });
-      }
-      else {
-        res.redirect("/");
-      }
-    })
-      
-  });
-
-  app.put("/api/logout", function(req,res){
-    
-    db.User.update({
-      active: false
-    }, {
-      where: {
-        userName: req.user.userName
-      }
-    }).then(function (resp) {
+    }).then(function(resp){
       console.log(resp);
-      req.logout();
       res.end();
-    });
-  })
+     });
+  });
 
   app.post("/api/signup", function(req, res) {
     console.log('req.body: ');
@@ -245,8 +218,7 @@ module.exports = function (app) {
       password: req.body.password,
       referral: req.body.referral,
       lastReferral: now,
-      currentLocation: req.body.location,
-      active:true
+      currentLocation: req.body.location
     }).then(function () {
       db.ReferralCodes.destroy({
         where: {
@@ -431,6 +403,7 @@ module.exports = function (app) {
       if(distance >= 30){
         res.statusMessage = "Too far away";
         res.status(400).end();
+        return;
       }
 
       let now = moment().format('YYYY-MM-DD');
@@ -439,6 +412,7 @@ module.exports = function (app) {
       if(!future){
         res.statusMessage = "Invalid Date";
         res.status(400).end();
+        return;
       }
 
       // else if(date is in the past){

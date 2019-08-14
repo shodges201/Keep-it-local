@@ -236,6 +236,10 @@ module.exports = function (app) {
   app.post("/api/checkcode", function (req,res){
     db.ReferralCodes.findOne({
       where: {code: req.body.referral}}).then(function(result){
+        if(!result){
+          res.statusMessage = "Bad Referral Code";
+          res.status(400).end();
+        }
         console.log(result);
         res.end();
     });
@@ -261,28 +265,26 @@ module.exports = function (app) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
 
-      // let test = '2019-08-1T11:49:52-04:00'
+      let test = '2019-07-11T11:49:52-04:00'
 
       console.log(currentTime);
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
-      // test = momentToString(test);
-      // test = moment(test);
-      let eligible = false;
 
+      test = momentToString(test);
+      test = moment(test);
+
+      let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
-    // change the test to lastRef
-      if(lastRef.diff(currentTime, 'days') <= 3) {
-        console.log("You're not eligible for a new code")
-        res.json({status: 0})
-      }
-    //change the test to userStart 
-      else if(userStart(currentTime, 'days') <= 3){
+    
+    
+      //change the test to userStart 
+     if(lastRef.diff(test, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }
@@ -311,7 +313,7 @@ module.exports = function (app) {
       console.log("code created");
       console.log(resp);
       res.json(resp);
-    })
+    });
   })
 
   app.get("/api/rsvp/:id", function(req,res){
@@ -414,7 +416,18 @@ module.exports = function (app) {
       if(distance >= 30){
         res.statusMessage = "Too far away";
         res.status(400).end();
+        return;
       }
+
+      let now = moment().format('YYYY-MM-DD');
+      let eventDate = req.body.date;
+      let future = compareDashedDates(now, eventDate);
+      if(!future){
+        res.statusMessage = "Invalid Date";
+        res.status(400).end();
+        return;
+      }
+
       // else if(date is in the past){
         // res.statusMessage = "Invalid Date";
         // res.status(400).end();
@@ -535,6 +548,20 @@ module.exports = function (app) {
     let options = {units: 'miles'};
     let distance = turf.distance(from, to, options);
     return distance;
+  }
+
+  // takes two string respresentations of dates in format "YYYY-MM-DD"
+  function compareDashedDates(date1, date2){
+    date1 = date1.split('-');
+    date2 = date2.split('-');
+    for(let i = 0; i < date1.length; i++){
+      if(parseInt(date1[i]) < parseInt(date2[i])){
+        return true;
+      }
+      else if(parseInt(date1[i]) > parseInt(date2[i])){
+        return false;
+      }
+    }
   }
 }
 

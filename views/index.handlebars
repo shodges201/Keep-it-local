@@ -37,18 +37,17 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                    <tr>
-                        <th><span class="listing-header">name</span></th>
-                        <th><span class="listing-header">date</span></th>
-                        <th><span class="listing-header">category</span></th>
-                        <th><span class="listing-header">distance</span></th>
-                        <th><span class="listing-header">rsvps</span></th>
-                        <th><span class="listing-header">creator</span></th>
-                    </tr>
-                    {{#each user_events}}
-                    <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}"
-                                    class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                <tr>
+                    <th><span class="listing-header">name</span></th> 
+                    <th><span class="listing-header">date</span></th> 
+                    <th><span class="listing-header">category</span></th> 
+                    <th><span class="listing-header">distance</span></th> 
+                    <th><span class="listing-header">rsvps</span></th> 
+                    <th><span class="listing-header">creator</span></th>
+                </tr>
+                {{#each user_events}}
+                    <tr class="listing-row" data-id="{{this.id}}">
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
@@ -69,20 +68,19 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                    <tr>
-
-                        <th><span class="listing-header">name</span></th>
-                        <th><span class="listing-header">date</span></th>
-                        <th><span class="listing-header">category</span></th>
-                        <th><span class="listing-header">distance</span></th>
-                        <th><span class="listing-header">rsvps</span></th>
-                        <th><span class="listing-header">creator</span></th>
-
-                    </tr>
-                    {{#each all_events}}
-                    <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}"
-                                    class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                <tr>
+                
+                    <th><span class="listing-header">name</span></th>
+                    <th><span class="listing-header">date</span></th>
+                    <th><span class="listing-header">category</span></th>
+                    <th><span class="listing-header">distance</span></th>
+                    <th><span class="listing-header">rsvps</span></th>
+                    <th><span class="listing-header">creator</span></th>
+                
+                </tr>
+                {{#each all_events}}
+                    <tr class="listing-row" data-id="{{this.id}}">
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
@@ -117,7 +115,6 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-        $("#refer-box").hide()
 
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
@@ -125,18 +122,27 @@
             }).then(function (res) {
                 $('#refer-box').css("display", "initial")
                 switch (res.status) {
-                    case 0:
-                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
-                        $("#refer-box").fadeIn(1000);
-                        break;
+                    
                     case 1:
-                        $.ajax("/api/code", {
-                            method: "POST"
-                        }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-msg").text("You're not eligible code for a new code yet.");
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+
+                        $.ajax("/api/allcodes", {
+                            method: "GET"
+                        }).then(function (allcodes) {
+                            if (allcodes.length == 0) {
+                                $("#refer-msg").text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").fadeIn(1000) 
+                                
+                            }
+                            else {
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i].code)
+                                let code = $("<span>").addClass("refer-code")
+                                code.text(allcodes[i].code).append("<br>")
+                                $("#refer-box").append(code)
+                                }
+                                $("#refer-msg").text("Here are your active codes:");
+                                $("#refer-box").fadeIn(1000)  
+                            }
                         })
                         break;
                     case 2:
@@ -169,6 +175,13 @@
                         break;
                 }
             })
+        })
+
+        $(document.body).on("click", ".listing-row", function (event) {
+            console.log('clicked row');
+            console.log('/events/' + $(this).data('id'));
+
+            window.location.href = '/events/' + $(this).data('id')
         })
 
         $(document.body).on("dblclick", function (event) {

@@ -63,7 +63,15 @@
             }).then(function(result){
                 console.log("new user added");
                 window.location = "http://localhost:8080/events";
-            })
+            }).fail(function(xhr, status, error){
+                switch(xhr.status){
+                    case(401):
+                        M.toast({
+                            html: 'Bad username of password, try again',
+                            classes: 'toast'
+                        })
+                }
+                })
     }
 
     function error() {

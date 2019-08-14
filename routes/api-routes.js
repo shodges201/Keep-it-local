@@ -62,8 +62,7 @@ module.exports = function (app) {
             [db.Sequelize.Op.ne]: req.user.userName
           }
         }
-      })
-        .then(function (dbEvents) {
+      }).then(function (dbEvents) {
           console.log(req.user.currentLocation);
           dbEvents.forEach(function (element) {
             console.log('data vals: ');
@@ -110,7 +109,7 @@ module.exports = function (app) {
       let user = [];
       let msgs = [];
       let focus;
-      let currentLoc = formatCoords(req.user.currentLocation);
+      let currentLoc = req.user.currentLocation;
       const options = {units: 'miles'};
       db.Events.findAll({
           where: {
@@ -120,10 +119,8 @@ module.exports = function (app) {
           }
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
-            console.log('data vals: ');
-            console.log(element.dataValues);
-            let destinationCoords = formatCoords(element.dataValues.coords);
-            let distance = turf.distance(currentLoc, destinationCoords, options);
+            let destinationCoords = element.dataValues.coords;
+            let distance = distanceBetween(currentLoc, destinationCoords, options);
             console.log(distance);
             if(distance <= 30){
               console.log(distance);
@@ -139,8 +136,8 @@ module.exports = function (app) {
               }
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
-              let destinationCoords = formatCoords(item.dataValues.coords);
-              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let destinationCoords = item.dataValues.coords;
+              let distance = distanceBetween(currentLoc, destinationCoords, options);
               let dataVals = item.dataValues;
               dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
@@ -383,9 +380,6 @@ module.exports = function (app) {
       let distance = turf.distance(from, to, options);
       console.log('distance: ' + distance);
 
-      // let date = new Date(req.body.date).toISOString()
-      // date = moment(date);
-
       if(distance >= 30){
         res.statusMessage = "Too far away";
         res.status(400).end();
@@ -499,6 +493,17 @@ module.exports = function (app) {
     let x = currentTime.split('-');
     currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
     return currentTime;
+  }
+
+  function distanceBetween(coords1, coords2){
+    //takes in comma seperated coordinates and returns the distance between them
+    coords1 = formatCoords(coords1);
+    coords2 = formatCoords(coords2);
+    let from = turf.point(coords1);
+    let to = turf.point(coords2);
+    let options = {units: 'miles'};
+    let distance = turf.distance(from, to, options);
+    return distance;
   }
 }
 

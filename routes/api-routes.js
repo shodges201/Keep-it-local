@@ -211,26 +211,33 @@ module.exports = function (app) {
     console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
+    currentPassword = req.body.password;
     let now = moment().format();
     now = momentToString(now);
-    db.User.create({
-      userName: req.body.username,
-      password: req.body.password,
-      referral: req.body.referral,
-      lastReferral: now,
-      currentLocation: req.body.location
-    }).then(function () {
-      db.ReferralCodes.destroy({
-        where: {
-          code: req.body.referral,
-        }
-      }).then(function(resp){
-        res.redirect(307, "/api/login");
-      })
-    }).catch(function(err) {
-      console.log(err);
-      res.json(err);
-    });
+    if(!currentUser || !currentPassword){
+      res.statusMessage = 'Bad username or password';
+      res.status(400).end();
+    }
+    else{
+      db.User.create({
+        userName: req.body.username,
+        password: req.body.password,
+        referral: req.body.referral,
+        lastReferral: now,
+        currentLocation: req.body.location
+      }).then(function () {
+        db.ReferralCodes.destroy({
+          where: {
+            code: req.body.referral,
+          }
+        }).then(function(resp){
+          res.redirect(307, "/api/login");
+        })
+      }).catch(function(err) {
+        console.log(err);
+        res.json(err);
+      });
+    }
   });
 
   app.post("/api/checkcode", function (req,res){

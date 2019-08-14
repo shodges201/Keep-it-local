@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 require('dotenv').config();
+console.log(process.env);
 var connection = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USERNAME,
@@ -8,7 +9,7 @@ var connection = mysql.createConnection({
   });
   
   connection.connect(function(err) {
-    if (err) throw err;
+    if (err) throw err.stack;
     console.log("Connected!");
   });
 

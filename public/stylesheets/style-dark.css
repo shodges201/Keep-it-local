@@ -416,9 +416,13 @@ input#create-form {
 }
 
 
-#description {
+#details,
+.details-edit {
   color:white;
   height: 150px;
+}
+
+#description {
   white-space: pre-wrap;
 }
 

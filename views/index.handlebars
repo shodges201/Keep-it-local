@@ -101,7 +101,6 @@
 
 
 <div id="refer-box">
-    <p id="refer-msg">here's your referral code</p>
     {{!-- <span id="refer-code"></span> --}}
 </div>
 
@@ -120,7 +119,7 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $('#refer-box').css("display", "initial")
+                $('#refer-box').css("display", "initial").empty()
                 switch (res.status) {
                     
                     case 1:
@@ -129,18 +128,22 @@
                             method: "GET"
                         }).then(function (allcodes) {
                             if (allcodes.length == 0) {
-                                $("#refer-msg").text("New users must wait 3 days before getting a referral code.");
+                                let msg = $("<p>").addClass("refer-msg") 
+                                msg.text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").append(msg)
                                 $("#refer-box").fadeIn(1000) 
                                 
                             }
+
                             else {
                                 for (var i = 0; i < allcodes.length; i++) {
                                     console.log(allcodes[i].code)
-                                let code = $("<span>").addClass("refer-code")
-                                code.text(allcodes[i].code).append("<br>")
-                                $("#refer-box").append(code)
+                                    let code = $("<span>").addClass("refer-code")
+                                    code.text(allcodes[i].code).append("<br>")
+                                    let msg = $("<p>").addClass("refer-msg") 
+                                    msg.text("Here are your active codes:")
+                                    $("#refer-box").append(msg,code)
                                 }
-                                $("#refer-msg").text("Here are your active codes:");
                                 $("#refer-box").fadeIn(1000)  
                             }
                         })
@@ -154,9 +157,11 @@
                             }).then(function (allcodes) {
                                 for (var i = 0; i < allcodes.length; i++) {
                                     console.log(allcodes[i].code)
-                                   let code = $("<span>").addClass("refer-code")
-                                   code.text(allcodes[i].code).append("<br>")
-                                   $("#refer-box").append(code)
+                                    let code = $("<span>").addClass("refer-code")
+                                    code.text(allcodes[i].code).append("<br>")
+                                    let msg = $("<p>").addClass("refer-msg") 
+                                    msg.text("Here are your active codes:")
+                                    $("#refer-box").append(msg,code)
 
                                   
                                 }

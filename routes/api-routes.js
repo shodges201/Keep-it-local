@@ -270,9 +270,18 @@ module.exports = function (app) {
     db.ReferralCodes.findAll({
       where: {
         creatorID: req.user.userName
-      }}).then(function(allcodes){
-        res.send(allcodes);
-        
+      },
+      limit: 5
+      }).then(function(allcodes){
+        mycodes = [];
+        for(let i = 0; i < allcodes.length; i++){
+          console.log(allcodes[0].dataValues);
+          if(allcodes[0].dataValues.creatorID === req.user.userName){
+            mycodes.push(allcodes[i].dataValues.code);
+          }
+        }
+        console.log(mycodes);
+        res.send(mycodes);
     })
   })
 
@@ -297,13 +306,13 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral).toISOString();
+      let lastRef = new Date(result.lastReferral);
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
     
-    
+      console.log(lastRef.diff(currentTime, 'days'));
       //change the test to currentTime
      if(lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")

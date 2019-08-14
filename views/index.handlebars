@@ -136,13 +136,14 @@
                             }
 
                             else {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Here are your active codes:");
+                                $("#refer-box").append(msg);
                                 for (var i = 0; i < allcodes.length; i++) {
-                                    console.log(allcodes[i].code)
-                                    let code = $("<span>").addClass("refer-code")
-                                    code.text(allcodes[i].code).append("<br>")
-                                    let msg = $("<p>").addClass("refer-msg") 
-                                    msg.text("Here are your active codes:")
-                                    $("#refer-box").append(msg,code)
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
                                 }
                                 $("#refer-box").fadeIn(1000)  
                             }
@@ -155,17 +156,16 @@
                             $.ajax("/api/allcodes", {
                                 method: "GET"
                             }).then(function (allcodes) {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Here are your active codes:");
+                                $("#refer-box").append(msg);
                                 for (var i = 0; i < allcodes.length; i++) {
-                                    console.log(allcodes[i].code)
-                                    let code = $("<span>").addClass("refer-code")
-                                    code.text(allcodes[i].code).append("<br>")
-                                    let msg = $("<p>").addClass("refer-msg") 
-                                    msg.text("Here are your active codes:")
-                                    $("#refer-box").append(msg,code)
-
-                                  
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
                                 }
-                                $("#refer-box").fadeIn(1000)
+                                $("#refer-box").fadeIn(1000)  
 
                             })
                         })

@@ -121,7 +121,7 @@
                 method: "POST",
                 data: new_event
             }).then(function(result){
-                window.location = "http://localhost:8080/events"
+                window.location.href = "/events"
             }).fail(function(xhr, status, error){
                 switch(xhr.status){
                     case(400):

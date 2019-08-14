@@ -8,7 +8,7 @@
     <hgroup class="speech-bubble-2" style="text-align:center;">
         <h1><a href="/events" id="home">#KEEPITLOCAL</a></h1>
     </hgroup>
-    
+
 </div>
 
 
@@ -37,24 +37,25 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                <tr>
-                    <th><span class="listing-header">name</span></th> 
-                    <th><span class="listing-header">date</span></th> 
-                    <th><span class="listing-header">category</span></th> 
-                    <th><span class="listing-header">distance</span></th> 
-                    <th><span class="listing-header">rsvps</span></th> 
-                    <th><span class="listing-header">creator</span></th>
-                </tr>
-                {{#each user_events}}
+                    <tr>
+                        <th><span class="listing-header">name</span></th>
+                        <th><span class="listing-header">date</span></th>
+                        <th><span class="listing-header">category</span></th>
+                        <th><span class="listing-header">distance</span></th>
+                        <th><span class="listing-header">rsvps</span></th>
+                        <th><span class="listing-header">creator</span></th>
+                    </tr>
+                    {{#each user_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}"
+                                    class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
                 {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
                 <a href="/create" class="new-event-btn">make new event</a>
@@ -68,32 +69,33 @@
             </h3>
             <div>
                 <table align="left" id="listings-table">
-                <tr>
-                
-                    <th><span class="listing-header">name</span></th>
-                    <th><span class="listing-header">date</span></th>
-                    <th><span class="listing-header">category</span></th>
-                    <th><span class="listing-header">distance</span></th>
-                    <th><span class="listing-header">rsvps</span></th>
-                    <th><span class="listing-header">creator</span></th>
-                
-                </tr>
-                {{#each all_events}}
+                    <tr>
+
+                        <th><span class="listing-header">name</span></th>
+                        <th><span class="listing-header">date</span></th>
+                        <th><span class="listing-header">category</span></th>
+                        <th><span class="listing-header">distance</span></th>
+                        <th><span class="listing-header">rsvps</span></th>
+                        <th><span class="listing-header">creator</span></th>
+
+                    </tr>
+                    {{#each all_events}}
                     <tr class="listing-row">
-                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}"
+                                    class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
                     </tr>
-                {{/each}}
+                    {{/each}}
                 </table>
                 <br><br><br><br>
             </div>
         </div>
     </div>
-    
+
 
 </div>
 
@@ -102,7 +104,7 @@
 
 <div id="refer-box">
     <p id="refer-msg">here's your referral code</p>
-    <span id="refer-code"></span>
+    {{!-- <span id="refer-code"></span> --}}
 </div>
 
 
@@ -121,6 +123,7 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
+                $('#refer-box').css("display", "initial")
                 switch (res.status) {
                     case 0:
                         $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
@@ -140,10 +143,25 @@
                         $.ajax("/api/code", {
                             method: "POST"
                         }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+                            $.ajax("/api/allcodes", {
+                                method: "GET"
+                            }).then(function (allcodes) {
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i].code)
+                                   let code = $("<span>").addClass("refer-code")
+                                   code.text(allcodes[i].code).append("<br>")
+                                   $("#refer-box").append(code)
+
+                                  
+                                }
+                                $("#refer-box").fadeIn(1000)
+
+                            })
                         })
+
+
+
+
                         break;
                     default:
                         $("#refer-msg").text("Sorry, something went wrong...");

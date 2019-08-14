@@ -76,6 +76,8 @@ module.exports = function (app) {
     if (req.user) {
       let all = [];
       let user = [];
+      let currentLoc = formatCoords(req.user.currentLocation);
+      const options = {units: 'miles'};
       db.Events.findAll({
         // attributes: ['name', 'category', 'location', 'upVotes', 'creatorID']
         //uncomment this line to only get events that are not created by the user
@@ -83,9 +85,6 @@ module.exports = function (app) {
       })
         .then(function (dbEvents) {
           console.log(req.user.currentLocation);
-          let currentLoc = formatCoords(req.user.currentLocation);
-
-          const options = {units: 'miles'};
           dbEvents.forEach(function (element) {
             console.log('data vals: ');
             console.log(element.dataValues);
@@ -93,7 +92,10 @@ module.exports = function (app) {
             let distance = turf.distance(currentLoc, destinationCoords, options);
             console.log(distance);
             if(distance <= 30){
-              all.push(element.dataValues);
+              console.log(distance);
+              let dataVals = element.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
+              all.push(dataVals);
             }
           });
           // all.push(dbEvents[0].dataValues);
@@ -105,6 +107,10 @@ module.exports = function (app) {
             // console.log("---------------user events----------------");
             // console.log(dbUserEvents);
             dbUserEvents.forEach(function (item) {
+              let destinationCoords = formatCoords(item.dataValues.coords);
+              let distance = turf.distance(currentLoc, destinationCoords, options);
+              let dataVals = item.dataValues;
+              dataVals['distance'] = toTwoPlaces(distance);
               user.push(item.dataValues);
             });
             res.render('index', { 
@@ -466,6 +472,10 @@ module.exports = function (app) {
     str = str.split(', ');
     let list = [parseFloat(str[0]), parseFloat(str[1])];
     return list;
+  }
+
+  function toTwoPlaces(num){
+    return parseFloat(Math.round(num * 100) / 100).toFixed(2);
   }
 }
 

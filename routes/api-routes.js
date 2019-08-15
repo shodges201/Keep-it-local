@@ -227,7 +227,8 @@ module.exports = function (app) {
     currentUser = req.body.username;
     currentPassword = req.body.password;
     let now = moment().format();
-    now = momentToString(now);
+    // now = momentToString(now);
+    now = now.toISOString()
     if(!currentUser || !currentPassword){
       res.statusMessage = 'Bad username or password';
       res.status(400).end();
@@ -306,7 +307,7 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral).toISOString();
+      let lastRef = new Date(result.lastReferral); //.toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
@@ -441,11 +442,6 @@ module.exports = function (app) {
     //create new event with a name, category, and location passed in
     //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
 
-    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
-    // geocoder.geocode(fullAddr, function (err, data) {
-    //   if(err) throw err.stack;
-    //   console.log(data)
-    // });
     let description = "";
     if(req.body.description){
       description = req.body.description

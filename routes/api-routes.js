@@ -226,8 +226,8 @@ module.exports = function (app) {
     console.log(req.body);
     currentUser = req.body.username;
     currentPassword = req.body.password;
-    let now = moment().format();
-    now = momentToString(now);
+    // let now = moment().format();
+    // now = momentToString(now);
     // now = now.toISOString()
     if(!currentUser || !currentPassword){
       res.statusMessage = 'Bad username or password';
@@ -238,7 +238,7 @@ module.exports = function (app) {
         userName: req.body.username,
         password: req.body.password,
         referral: req.body.referral,
-        lastReferral: now,
+        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
         currentLocation: req.body.location
       }).then(function () {
         db.ReferralCodes.destroy({
@@ -307,7 +307,7 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral); //.toISOString();
+      let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();

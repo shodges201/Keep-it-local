@@ -488,6 +488,7 @@ input#create-form {
   overflow: scroll;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
+  height:40px;
 }
 
 #refer-scroll::-webkit-scrollbar {

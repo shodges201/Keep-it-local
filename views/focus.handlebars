@@ -157,31 +157,60 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $("#refer-box").css('display', 'initial');
+                $('#refer-box').css("display", "initial").empty()
                 switch (res.status) {
-                    case 0:
-                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
-                        $("#refer-box").css('display', 'initial');
-                        $("#refer-box").fadeIn(1000);
-                        break;
+
                     case 1:
-                        $.ajax("/api/code", {
-                            method: "POST"
-                        }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-msg").text("You're not eligible for a new code yet.");
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+
+                        $.ajax("/api/allcodes", {
+                            method: "GET"
+                        }).then(function (allcodes) {
+                            if (allcodes.length == 0) {
+                                let msg = $("<p>").addClass("refer-msg")
+                                msg.text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").append(msg)
+                                $("#refer-box").fadeIn(1000)
+
+                            }
+
+                            else {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Here are your active codes:");
+                                $("#refer-box").append(msg);
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
+                                }
+                                $("#refer-box").fadeIn(1000)
+                            }
                         })
                         break;
                     case 2:
                         $.ajax("/api/code", {
                             method: "POST"
                         }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+                            $.ajax("/api/allcodes", {
+                                method: "GET"
+                            }).then(function (allcodes) {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Here are your active codes:");
+                                $("#refer-box").append(msg);
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
+                                }
+                                $("#refer-box").fadeIn(1000)
+
+                            })
                         })
+
+
+
+
                         break;
                     default:
                         $("#refer-msg").text("Sorry, something went wrong...");

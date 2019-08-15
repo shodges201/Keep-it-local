@@ -99,9 +99,8 @@
 
 
 
-
 <div id="refer-box">
-    <span id="refer-scroll"></span>
+    {{!-- <span id="refer-scroll"></span> --}}
 </div>
 
 
@@ -114,6 +113,7 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+        $("#refer-box").hide()
 
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
@@ -128,18 +128,18 @@
                             if (allcodes.length == 0) {
                                 let msg = $("<p>").addClass("refer-msg")
                                 msg.text("New users must wait 3 days before getting a referral code.");
-                                $("#refer-box").prepend(msg)
+                                $("#refer-box").append(msg)
                                 $("#refer-box").fadeIn(1000)
                             }
                             else {
                                 let msg = $("<p>").addClass("refer-msg");
-                                msg.text("Here are your active codes:");
-                                $("#refer-box").prepend(msg);
+                                msg.text("Here are your active referral codes:");
+                                $("#refer-box").append(msg);
                                 for (var i = 0; i < allcodes.length; i++) {
                                     console.log(allcodes[i]);
                                     let code = $("<span>").addClass("refer-code");
                                     code.text(allcodes[i]).append('<br>');
-                                    $("#refer-scroll").append(code);
+                                    $("#refer-box").append(code);
                                 }
                                 $("#refer-box").fadeIn(1000)
                             }
@@ -154,12 +154,12 @@
                             }).then(function (allcodes) {
                                 let msg = $("<p>").addClass("refer-msg");
                                 msg.text("Your active referral codes:");
-                                $("#refer-box").prepend(msg);
+                                $("#refer-box").append(msg);
                                 for (var i = 0; i < allcodes.length; i++) {
                                     console.log(allcodes[i]);
                                     let code = $("<span>").addClass("refer-code");
                                     code.text(allcodes[i]).append('<br>');
-                                    $("#refer-scroll").append(code);
+                                    $("#refer-box").append(code);
                                 }
                                 $("#refer-box").fadeIn(1000)
 
@@ -169,7 +169,7 @@
                     default:
                         let msg = $("<p>").addClass("refer-msg");
                         msg.text("Sorry, something went wrong...");
-                        $("#refer-box").prepend(msg);
+                        $("#refer-box").append(msg);
                         $("#refer-box").fadeIn(1000);
                         break;
                 }

@@ -470,9 +470,14 @@ input#create-form {
   text-align: center;
   padding:45px;
   font-size:18px;
-  
+  overflow: scroll;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
 }
 
+#refer-box::-webkit-scrollbar {
+  width: 0 !important;
+}
 
 
 .refer-code {
@@ -484,13 +489,4 @@ input#create-form {
   color: black;
 }
 
-#refer-scroll {
-  overflow: scroll;
-  overflow: -moz-scrollbars-none;
-  -ms-overflow-style: none;
-  height:40px;
-}
 
-#refer-scroll::-webkit-scrollbar {
-  width: 0 !important;
-}

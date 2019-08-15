@@ -66,7 +66,7 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $('#refer-box').css("display", "initial")
+                $('#refer-box').css("display", "initial").empty()
                 switch (res.status) {
                     case 1:
                         $.ajax("/api/allcodes", {

@@ -157,7 +157,7 @@
                                 method: "GET"
                             }).then(function (allcodes) {
                                 let msg = $("<p>").addClass("refer-msg");
-                                msg.text("Here are your active codes:");
+                                msg.text("Here are all your active codes:");
                                 $("#refer-box").append(msg);
                                 for (var i = 0; i < allcodes.length; i++) {
                                     console.log(allcodes[i]);

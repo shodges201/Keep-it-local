@@ -620,4 +620,3 @@ module.exports = function (app) {
     }
   }
 }
-

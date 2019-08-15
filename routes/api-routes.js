@@ -306,7 +306,7 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral);
+      let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();

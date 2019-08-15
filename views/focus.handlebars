@@ -214,65 +214,6 @@
             })
         })
 
-            $.ajax("/api/code", {
-                method: "GET"
-            }).then(function (res) {
-                $('#refer-box').css("display", "initial")
-                switch (res.status) {
-                    case 1:
-                        $.ajax("/api/allcodes", {
-                            method: "GET"
-                        }).then(function (allcodes) {
-                            if (allcodes.length == 0) {
-                                let msg = $("<p>").addClass("refer-msg")
-                                msg.text("New users must wait 3 days before getting a referral code.");
-                                $("#refer-box").prepend(msg)
-                                $("#refer-box").fadeIn(1000)
-                            }
-                            else {
-                                let msg = $("<p>").addClass("refer-msg");
-                                msg.text("Here are your active codes:");
-                                $("#refer-box").prepend(msg);
-                                for (var i = 0; i < allcodes.length; i++) {
-                                    console.log(allcodes[i]);
-                                    let code = $("<span>").addClass("refer-code");
-                                    code.text(allcodes[i]).append('<br>');
-                                    $("#refer-scroll").append(code);
-                                }
-                                $("#refer-box").fadeIn(1000)
-                            }
-                        })
-                        break;
-                    case 2:
-                        $.ajax("/api/code", {
-                            method: "POST"
-                        }).then(function (resp) {
-                            $.ajax("/api/allcodes", {
-                                method: "GET"
-                            }).then(function (allcodes) {
-                                let msg = $("<p>").addClass("refer-msg");
-                                msg.text("Your active referral codes:");
-                                $("#refer-box").prepend(msg);
-                                for (var i = 0; i < allcodes.length; i++) {
-                                    console.log(allcodes[i]);
-                                    let code = $("<span>").addClass("refer-code");
-                                    code.text(allcodes[i]).append('<br>');
-                                    $("#refer-scroll").append(code);
-                                }
-                                $("#refer-box").fadeIn(1000)
-
-                            })
-                        })
-                        break;
-                    default:
-                        let msg = $("<p>").addClass("refer-msg");
-                        msg.text("Sorry, something went wrong...");
-                        $("#refer-box").prepend(msg);
-                        $("#refer-box").fadeIn(1000);
-                        break;
-                }
-            })
-        })
 
         $(document.body).on("dblclick", function (event) {
             $("#refer-box").fadeOut(500)

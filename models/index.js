@@ -10,14 +10,15 @@ var db        = {};
 
 if (config.use_env_variable) {
   var sequelize = new Sequelize(process.env[config.use_env_variable]
-    ,{
-    pool: {
-      max: 1000,
-      min: 0,
-      acquire: 30000,
-      idle: 100000
-    }
-  });
+  //   ,{
+  //   pool: {
+  //     max: 1000,
+  //     min: 0,
+  //     acquire: 30000,
+  //     idle: 100000
+  //   }
+  // }
+  );
 } else {
   var sequelize = new Sequelize(config.database, config.username, config.password, config)
 }

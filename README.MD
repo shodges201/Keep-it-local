@@ -6,7 +6,7 @@
 * Anonymously post and promote local events
 * RSVP to and leave messages on events
 * Refer who you want
-#
+
 ## Use by Referal
 
 In order to be able to be apart of the Keep It Local network, you must first be invited by a current users's Referal Code. Once you have created your own profile, you will be given your own Referal Code that will change every 3 days.
@@ -26,7 +26,7 @@ app.post("/api/code", function (req, res) {
     })
   })
 ```
-#
+
 ## Built With
 
 * [Materialize](https://materializecss.com/) - Web Framework
@@ -35,13 +35,13 @@ app.post("/api/code", function (req, res) {
 * [Passport](http://www.passportjs.org/) - Login Authentication for Node.js
 * [Geocoder](https://developer.mapquest.com/documentation/geocoding-api/) - Library for geocoding via MapQuest API
 
-#
+
 ## Team Members
 * Zubin Mulji
 * Lance Toledo
 * Scott Hodges
 * Quinton Smith
-#
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

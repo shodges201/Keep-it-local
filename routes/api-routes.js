@@ -61,7 +61,10 @@ module.exports = function (app) {
           creatorID: {
             [db.Sequelize.Op.ne]: req.user.userName
           }
-        }
+        },
+        order: [
+          ['date', 'DESC']
+        ]
       }).then(function (dbEvents) {
           console.log(req.user.currentLocation);
           dbEvents.forEach(function (element) {
@@ -79,7 +82,12 @@ module.exports = function (app) {
           })
         }).then(function () {
           db.Events.findAll({ 
-            where: { creatorID: req.user.userName } 
+            where: {
+              creatorID: req.user.userName
+            },
+            order: [
+              ['date', 'DESC']
+            ]
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
               let destinationCoords = formatCoords(item.dataValues.coords);
@@ -116,7 +124,10 @@ module.exports = function (app) {
             creatorID: {
               [db.Sequelize.Op.ne]: req.user.userName
             }
-          }
+          },
+          order: [
+            ['date', 'DESC']
+          ]
         }).then(function (dbEvents) {
           dbEvents.forEach(function (element) {
             let destinationCoords = element.dataValues.coords;
@@ -133,7 +144,10 @@ module.exports = function (app) {
           db.Events.findAll({
               where: {
                 creatorID: req.user.userName
-              }
+              },
+              order: [
+                ['date', 'DESC']
+              ]
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
               let destinationCoords = item.dataValues.coords;
@@ -164,7 +178,7 @@ module.exports = function (app) {
                     // }
                   }
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                    connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.log("Messages_"+req.params.id);
                       console.table(result);
@@ -214,6 +228,7 @@ module.exports = function (app) {
     currentPassword = req.body.password;
     let now = moment().format();
     now = momentToString(now);
+    // now = now.toISOString()
     if(!currentUser || !currentPassword){
       res.statusMessage = 'Bad username or password';
       res.status(400).end();
@@ -223,7 +238,7 @@ module.exports = function (app) {
         userName: req.body.username,
         password: req.body.password,
         referral: req.body.referral,
-        lastReferral: now,
+        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
         currentLocation: req.body.location
       }).then(function () {
         db.ReferralCodes.destroy({
@@ -288,19 +303,22 @@ module.exports = function (app) {
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
 
-      // test = momentToString(test);
-      // test = moment(test);
+      test = momentToString(test);
+      test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral);
+      let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
     
+      console.log(currentTime)
+      console.log(lastRef)
+      console.log("=========")
       console.log(lastRef.diff(currentTime, 'days'));
-      //change the test to currentTime
-     if(lastRef.diff(currentTime, 'days') < 3) {
+      //change the currentTime to test to bypass 3 days.
+     if(currentTime.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }
@@ -320,9 +338,10 @@ module.exports = function (app) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
+      // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
       code: voucher_codes.generate({
         length: 8,
-        count: 1
+        count: 5
       })[0]
     }).then(function (resp) {
       console.log("code created");
@@ -426,11 +445,6 @@ module.exports = function (app) {
     //create new event with a name, category, and location passed in
     //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
 
-    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
-    // geocoder.geocode(fullAddr, function (err, data) {
-    //   if(err) throw err.stack;
-    //   console.log(data)
-    // });
     let description = "";
     if(req.body.description){
       description = req.body.description
@@ -526,9 +540,13 @@ module.exports = function (app) {
     //get all messages from a certain event
     let event_id = req.params.id;
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
+    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
+      let msgs_time = {
+        result:result,
+        time:result
+      }
       res.send(result);
     });
   });

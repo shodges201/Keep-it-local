@@ -254,7 +254,7 @@
                     $('#messages-list').empty();
                     result.forEach(function(item){
                         //let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
-                        let date = $('<span>').addClass('msg-time').text($.format.date(item.createdAt, "MMMM DD, YYYY"));
+                        let date = $('<span>').addClass('msg-date').text($.format.date(item.createdAt, "MMMM d, yyyy"));
                         let time = $('<span>').addClass('msg-time').text($.format.date(item.createdAt, "hh:mm a"));
                         let creator = $('<span>').addClass('msg-op').text(item.creatorID);
                         let listItem = $('<li>').append(date,time,creator);

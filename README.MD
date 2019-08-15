@@ -1,8 +1,6 @@
 # <img src="../Project-2/public/images/header2.gif"> KEEP IT LOCAL
 
-"Keep It Local" is a private network used to browse and post local events anonymously.
 
-#
 ## Features
 
 * Anonymously post and promote local events

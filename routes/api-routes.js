@@ -283,7 +283,7 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral).toISOString();
+      let lastRef = new Date(result.lastReferral);
       lastRef = moment(lastRef);
       
       let userStart = new Date(result.createdAt).toISOString();
@@ -311,10 +311,9 @@ module.exports = function (app) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
-      // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
       code: voucher_codes.generate({
         length: 8,
-        count: 5
+        count: 1
       })[0]
     }).then(function (resp) {
       console.log("code created");

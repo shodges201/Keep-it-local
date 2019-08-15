@@ -116,10 +116,11 @@
     $(document).ready(function () {
 
         $("#refer-link").click(function () {
+                $('#refer-box').css("display", "initial")
+                $('#refer-box').html("")
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $('#refer-box').css("display", "initial").empty()
                 switch (res.status) {
                     
                     case 1:

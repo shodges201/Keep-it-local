@@ -1,6 +1,6 @@
-# <img src="../Project-2/public/images/header2.gif">
+# <img src="../Project-2/public/images/header2.gif"> KEEP IT LOCAL
 
-"Keep It Local" is a private network used to build
+"Keep It Local" is a private network used to browse and post local events anonymously.
 
 #
 ## Features
@@ -31,9 +31,12 @@ app.post("/api/code", function (req, res) {
 #
 ## Built With
 
-* [Bootstarp](https://getbootstrap.com/) - Web Framework
 * [Materialize](https://materializecss.com/) - Web Framework
 * [Handlebars](https://handlebarsjs.com/) - Templating
+* [Moment](https://momentjs.com/docs/) - Library for parsing, manipulating time values
+* [Passport](http://www.passportjs.org/) - Login Authentication for Node.js
+* [Geocoder](https://developer.mapquest.com/documentation/geocoding-api/) - Library for geocoding via MapQuest API
+
 #
 ## Team Members
 * Zubin Mulji

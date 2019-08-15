@@ -540,6 +540,10 @@ module.exports = function (app) {
     connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
+      let msgs_time = {
+        result:result,
+        time:result
+      }
       res.send(result);
     });
   });

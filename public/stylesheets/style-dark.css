@@ -109,8 +109,16 @@ h1 {
   position: relative;
   font-size:19px;
   /* border: 2px solid rgba(0, 0, 0, 0.356); */
-  overflow: hidden;
+  overflow: scroll;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
 }
+
+#dark-panel::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+
 
 
 #Username {
@@ -396,11 +404,19 @@ button {
 }
 
 #messages-list {
-  /* text-align: bottom; */
-  overflow: scroll;
+  text-align: bottom;
   height: 150px;
+  overflow: scroll;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
   /* scroll-behavior: smooth; */
 }
+
+#messages-list::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+
 
 
 #logout-link,
@@ -454,14 +470,10 @@ input#create-form {
   text-align: center;
   padding:45px;
   font-size:18px;
-  overflow: scroll;
-  overflow: -moz-scrollbars-none;
-  overflow: -ms-overflow-style: none;
+  
 }
 
-#refer-box::-webkit-scrollbar{
-  width: 0 !important;
-}
+
 
 .refer-code {
   color: red;
@@ -470,4 +482,14 @@ input#create-form {
 
 .toast{
   color: black;
+}
+
+#refer-scroll {
+  overflow: scroll;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}
+
+#refer-scroll::-webkit-scrollbar {
+  width: 0 !important;
 }

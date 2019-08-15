@@ -227,8 +227,8 @@ module.exports = function (app) {
     currentUser = req.body.username;
     currentPassword = req.body.password;
     let now = moment().format();
-    // now = momentToString(now);
-    now = now.toISOString()
+    now = momentToString(now);
+    // now = now.toISOString()
     if(!currentUser || !currentPassword){
       res.statusMessage = 'Bad username or password';
       res.status(400).end();

@@ -116,6 +116,8 @@
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {
+                $('#refer-box').css("display", "initial")
+                $('#refer-box').html("")
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {

@@ -226,8 +226,8 @@ module.exports = function (app) {
     console.log(req.body);
     currentUser = req.body.username;
     currentPassword = req.body.password;
-    // let now = moment().format();
-    // now = momentToString(now);
+    let now = moment().format();
+    now = momentToString(now);
     // now = now.toISOString()
     if(!currentUser || !currentPassword){
       res.statusMessage = 'Bad username or password';
@@ -303,8 +303,8 @@ module.exports = function (app) {
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
 
-      // test = momentToString(test);
-      // test = moment(test);
+      test = momentToString(test);
+      test = moment(test);
 
       let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
@@ -313,9 +313,12 @@ module.exports = function (app) {
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
     
+      console.log(currentTime)
+      console.log(lastRef)
+      console.log("=========")
       console.log(lastRef.diff(currentTime, 'days'));
-      //change the test to currentTime
-     if(lastRef.diff(currentTime, 'days') < 3) {
+      //change the currentTime to test to bypass 3 days.
+     if(currentTime.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }
@@ -617,4 +620,3 @@ module.exports = function (app) {
     }
   }
 }
-

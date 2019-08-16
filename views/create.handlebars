@@ -47,8 +47,7 @@
 
 
 <div id="refer-box">
-    <p id="refer-msg">here's your referral code</p>
-    <span id="refer-code"></span>
+    {{!-- <span id="refer-scroll"></span> --}}
 </div>
 
 
@@ -67,32 +66,57 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
+                $('#refer-box').css("display", "initial").empty()
                 switch (res.status) {
-                    case 0:
-                        $("#refer-msg").text("New members must wait 3 days until they can refer a friend.");
-                        $("#refer-box").fadeIn(1000);
-                        break;
                     case 1:
-                        $.ajax("/api/code", {
-                            method: "POST"
-                        }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-msg").text("You're not eligible code for a new code yet.");
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+                        $.ajax("/api/allcodes", {
+                            method: "GET"
+                        }).then(function (allcodes) {
+                            if (allcodes.length == 0) {
+                                let msg = $("<p>").addClass("refer-msg")
+                                msg.text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").append(msg)
+                                $("#refer-box").fadeIn(1000)
+                            }
+                            else {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Here are your active referral codes:");
+                                $("#refer-box").append(msg);
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
+                                }
+                                $("#refer-box").fadeIn(1000)
+                            }
                         })
                         break;
                     case 2:
                         $.ajax("/api/code", {
                             method: "POST"
                         }).then(function (resp) {
-                            console.log(resp.code);
-                            $("#refer-code").text(resp.code)
-                            $("#refer-box").fadeIn(1000)
+                            $.ajax("/api/allcodes", {
+                                method: "GET"
+                            }).then(function (allcodes) {
+                                let msg = $("<p>").addClass("refer-msg");
+                                msg.text("Your active referral codes:");
+                                $("#refer-box").append(msg);
+                                for (var i = 0; i < allcodes.length; i++) {
+                                    console.log(allcodes[i]);
+                                    let code = $("<span>").addClass("refer-code");
+                                    code.text(allcodes[i]).append('<br>');
+                                    $("#refer-box").append(code);
+                                }
+                                $("#refer-box").fadeIn(1000)
+
+                            })
                         })
                         break;
                     default:
-                        $("#refer-msg").text("Sorry, something went wrong...");
+                        let msg = $("<p>").addClass("refer-msg");
+                        msg.text("Sorry, something went wrong...");
+                        $("#refer-box").append(msg);
                         $("#refer-box").fadeIn(1000);
                         break;
                 }
@@ -121,7 +145,7 @@
                 method: "POST",
                 data: new_event
             }).then(function(result){
-                window.location = "http://localhost:8080/events"
+                window.location.href = "/events"
             }).fail(function(xhr, status, error){
                 switch(xhr.status){
                     case(400):

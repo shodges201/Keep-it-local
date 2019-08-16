@@ -62,7 +62,22 @@
                 data: newUser
             }).then(function(result){
                 console.log("new user added");
-                window.location = "http://localhost:8080/events";
+                window.location.href = "/events";
+            }).fail(function(xhr, status, error){
+                switch(xhr.status){
+                    case(401):
+                        M.toast({
+                            html: 'Bad username or password, try again',
+                            classes: 'toast'
+                        })
+                        break;
+                    default:
+                        M.toast({
+                            html: 'Bad request. Verify your information and try again.',
+                            classes: 'toast'
+                        })
+                        break;
+                }
             })
     }
 

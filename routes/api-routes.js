@@ -83,10 +83,10 @@ module.exports = function (app) {
         }).then(function () {
           db.Events.findAll({ 
             where: {
-                creatorID: req.user.userName
+              creatorID: req.user.userName
             },
             order: [
-                ['date', 'DESC']
+              ['date', 'DESC']
             ]
           }).then(function (dbUserEvents) {
             dbUserEvents.forEach(function (item) {
@@ -178,7 +178,7 @@ module.exports = function (app) {
                     // }
                   }
                   }).then(function() {
-                    connection.query(`SELECT * FROM events_db.Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                    connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
                       if (err) throw err.stack;
                       console.log("Messages_"+req.params.id);
                       console.table(result);
@@ -225,30 +225,37 @@ module.exports = function (app) {
     console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
-    let now = moment().format();
-    now = momentToString(now);
-    db.User.create({
-      userName: req.body.username,
-      password: req.body.password,
-      referral: req.body.referral,
-      lastReferral: now,
-      currentLocation: req.body.location
-    }).then(function () {
-      db.ReferralCodes.destroy({
-        where: {
-          code: req.body.referral,
-        }
-      }).then(function(resp){
-        res.redirect(307, "/api/login");
-      })
-    }).catch(function(err) {
-      console.log(err);
-      res.json(err);
-    });
+    currentPassword = req.body.password;
+    // let now = moment().format();
+    // now = momentToString(now);
+    // now = now.toISOString()
+    if(!currentUser || !currentPassword){
+      res.statusMessage = 'Bad username or password';
+      res.status(400).end();
+    }
+    else{
+      db.User.create({
+        userName: req.body.username,
+        password: req.body.password,
+        referral: req.body.referral,
+        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
+        currentLocation: req.body.location
+      }).then(function () {
+        db.ReferralCodes.destroy({
+          where: {
+            code: req.body.referral,
+          }
+        }).then(function(resp){
+          res.redirect(307, "/api/login");
+        })
+      }).catch(function(err) {
+        console.log(err);
+        res.json(err);
+      });
+    }
   });
 
   app.post("/api/checkcode", function (req,res){
-    console.log(req.body.referral);
     db.ReferralCodes.findOne({
       where: {code: req.body.referral}}).then(function(result){
         if(!result){
@@ -260,6 +267,25 @@ module.exports = function (app) {
     });
   });
 
+  app.get("/api/allcodes", function (req,res){
+    db.ReferralCodes.findAll({
+      where: {
+        creatorID: req.user.userName
+      },
+      limit: 5
+      }).then(function(allcodes){
+        mycodes = [];
+        for(let i = 0; i < allcodes.length; i++){
+          console.log(allcodes[0].dataValues);
+          if(allcodes[0].dataValues.creatorID === req.user.userName){
+            mycodes.push(allcodes[i].dataValues.code);
+          }
+        }
+        console.log(mycodes);
+        res.send(mycodes);
+    })
+  })
+
   app.get("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
@@ -269,23 +295,32 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
-      console.log(currentTime);
+
+      let test = '2019-07-11T11:49:52-04:00'
+
+      
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
-      let eligible = false;
+      
 
+      // test = momentToString(test);
+      // test = moment(test);
+
+      let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
-      
+     
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
-    
-      if(userStart.diff(currentTime, 'days') <= 3) {
-        console.log("You're not eligible for a new code")
-        res.json({status: 0})
-      }
-      else if(lastRef.diff(currentTime, 'days') <= 3){
+      
+      console.log(currentTime);
+      console.log("========")
+      console.log(lastRef);
+      console.log("=====")
+      console.log(lastRef.diff(currentTime, 'days'));
+      //change the test to currentTime
+     if(lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }
@@ -315,7 +350,30 @@ module.exports = function (app) {
       console.log(resp);
       res.json(resp);
     });
-  })
+  });
+
+  app.post("/api/code/admin", function (req, res) {
+    // Route used to post a referral code on click
+    if(req.body.apiKey === 'MA3Igp6a'){
+      db.ReferralCodes.create({
+        creatorID: 'admin',
+        // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
+        code: voucher_codes.generate({
+          length: 8,
+          count: 5
+        })[0]
+      }).then(function (resp) {
+        console.log("code created");
+        console.log(resp);
+        res.json(resp);
+      });
+    }
+    else{
+      res.statusMessage = 'Bad API key';
+      res.status(401).end();
+    }
+  });
+
 
   app.get("/api/rsvp/:id", function(req,res){
     // RSVP create and get
@@ -389,11 +447,6 @@ module.exports = function (app) {
     //create new event with a name, category, and location passed in
     //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
 
-    // let fullAddr = `${req.body.address}, ${req.body.city_state}`
-    // geocoder.geocode(fullAddr, function (err, data) {
-    //   if(err) throw err.stack;
-    //   console.log(data)
-    // });
     let description = "";
     if(req.body.description){
       description = req.body.description
@@ -489,9 +542,13 @@ module.exports = function (app) {
     //get all messages from a certain event
     let event_id = req.params.id;
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM events_db.Messages_${event_id} ORDER BY id ASC`, function(err, result){
+    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
       if(err) throw err.stack;
       console.table(result);
+      let msgs_time = {
+        result:result,
+        time:result
+      }
       res.send(result);
     });
   });

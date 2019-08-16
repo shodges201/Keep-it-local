@@ -12,6 +12,11 @@ KEEP IT LOCAL® is for the kids.
 New users sign up with just a username and password, no additional personal information is stored. Each time they log on, they are asked for their current location and are shown all the events coming up in their area. Joining the network is referral-only. To build trust across the platform, we must ensure that a user is both in the local area and a mutual friend of someone in the network. To combat spammers, new users must wait 3 days initially before getting referral codes to pass to friends. After that, users can generate a new code every 3 days. Users can browse events and post messages anonymously while tapping into the different pockets of culture bubbling in their town. 
 
 
+[Try out the beta](https://keep-it-local.herokuapp.com/) using the below guest login.
+username: localhost8080
+password: localhost8080
+
+
 ## Features
 
 * Anonymously post and promote local events

@@ -13,6 +13,7 @@ New users sign up with just a username and password, no additional personal info
 
 
 [Try out the beta](https://keep-it-local.herokuapp.com/) using the below guest login.
+
 username: localhost8080
 password: localhost8080
 

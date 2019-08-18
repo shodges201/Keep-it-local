@@ -313,18 +313,18 @@ module.exports = function (app) {
       console.log("========")
       console.log(lastRef);
       console.log("=====")
-      console.log(lastRef.diff(currentTime, 'days'));
+      console.log(currentTime.diff(lastRef, 'days'));
       //change the test to currentTime
 
       let daysSince = currentTime.diff(lastRef, 'days');
 
      if(daysSince > 3) {
         console.log("You're not eligible for a new code")
-        //res.json({status: 1})
+        res.json({status: 1})
       }
       else {
         console.log("You're eligible for a new code")
-        //res.json({status: 2})
+        res.json({status: 2})
       }
       res.json({currentTime: currentTime, lastRef:lastRef, userStart: userStart, daysSince: daysSince});
       

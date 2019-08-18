@@ -157,7 +157,8 @@
             $.ajax("/api/code", {
                 method: "GET"
             }).then(function (res) {
-                $('#refer-box').css("display", "initial").empty()
+                $('#refer-box').css("display", "initial").empty();
+                console.log("status: " + res.status);
                 switch (res.status) {
                     case 1: //created within the last 3 days
                         $.ajax("/api/allcodes", {
@@ -167,8 +168,8 @@
                                 msg.text("New users must wait 3 days before getting a referral code.");
                                 $("#refer-box").append(msg)
                                 $("#refer-box").fadeIn(1000)
+                                break;
                             })
-                            break;
 
                     case 2: //not created within 3 days, but has gotten a code within the last 3 days
                             $.ajax("/api/allcodes", {
@@ -184,9 +185,8 @@
                                 $("#refer-box").append(code);
                             }
                             $("#refer-box").fadeIn(1000)
-
+                            break;
                         })
-                        break;
                     case 3: //not created within 3 days, and hasn't gotten a code within the last 3 days
                         $.ajax("/api/code", {
                             method: "POST"

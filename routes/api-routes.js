@@ -9,6 +9,8 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var NodeGeocoder = require('node-geocoder');
 var turf = require('@turf/turf');
+require('dotenv');
+console.log("mapquest key:" + process.env.DB_MAPQUESTKEY);
 const options = {
   provider: 'mapquest',
   apiKey: process.env.DB_MAPQUESTKEY 
@@ -287,12 +289,13 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
-
+      console.log('currentTime: ' + currentTime);
       let test = '2019-07-11T11:49:52-04:00'
 
       
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
+      console.log('currentTime: ' + currentTime);
       currentTime = moment(currentTime);
       
 
@@ -310,17 +313,24 @@ module.exports = function (app) {
       console.log("========")
       console.log(lastRef);
       console.log("=====")
-      console.log(lastRef.diff(currentTime, 'days'));
+      console.log(currentTime.diff(lastRef, 'days'));
       //change the test to currentTime
-     if(lastRef.diff(currentTime, 'days') < 3) {
-        console.log("You're not eligible for a new code")
+
+      let daysSince = currentTime.diff(lastRef, 'days');
+      let daysSinceCreated = currentTime.diff(userStart, 'days');
+      console.log(daysSince);
+
+      if(daysSinceCreated < 3){
         res.json({status: 1})
+      }
+      else if(daysSince < 3) {
+        console.log("You're not eligible for a new code")
+        res.json({status: 2});
       }
       else {
         console.log("You're eligible for a new code")
-        res.json({status: 2})
+        res.json({status: 3});
       }
-
       
     // Checks the lastReferral with current time. Edit the int to set the amount of days
     
@@ -340,7 +350,11 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      res.json(resp);
+      let now = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+      console.log(now);
+      db.User.update({ lastReferral: now }, { where: { userName: req.user.userName } }).then(function (data) {
+        res.json(resp);
+      });
     });
   });
 
@@ -587,8 +601,14 @@ module.exports = function (app) {
   }
 
   function momentToString(currentTime) {
-    let x = currentTime.split('-');
-    currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    if(currentTime.includes('+')){
+      let x = currentTime.split('+');
+      currentTime = x[0] + '.000Z';
+    }
+    else{
+      let x = currentTime.split('-');
+      currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    }
     return currentTime;
   }
 

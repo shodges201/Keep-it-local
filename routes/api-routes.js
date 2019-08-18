@@ -296,7 +296,7 @@ module.exports = function (app) {
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       console.log('currentTime: ' + currentTime);
-      //currentTime = moment(currentTime);
+      currentTime = moment(currentTime);
       
 
       // test = momentToString(test);
@@ -593,8 +593,14 @@ module.exports = function (app) {
   }
 
   function momentToString(currentTime) {
-    let x = currentTime.split('-');
-    currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    if(currentTime.includes('+')){
+      let x = currentTime.split('+');
+      currentTime = currentTime[0] + '.000Z';
+    }
+    else{
+      let x = currentTime.split('-');
+      currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    }
     return currentTime;
   }
 

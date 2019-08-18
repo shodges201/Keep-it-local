@@ -290,10 +290,11 @@ module.exports = function (app) {
 
       let test = '2019-07-11T11:49:52-04:00'
 
-      console.log(currentTime);
+      
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
       currentTime = moment(currentTime);
+      
 
       // test = momentToString(test);
       // test = moment(test);
@@ -301,10 +302,14 @@ module.exports = function (app) {
       let eligible = false;
       let lastRef = new Date(result.lastReferral).toISOString();
       lastRef = moment(lastRef);
-      
+     
       let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
-    
+      
+      console.log(currentTime);
+      console.log("========")
+      console.log(lastRef);
+      console.log("=====")
       console.log(lastRef.diff(currentTime, 'days'));
       //change the test to currentTime
      if(lastRef.diff(currentTime, 'days') < 3) {

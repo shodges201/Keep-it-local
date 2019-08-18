@@ -317,15 +317,19 @@ module.exports = function (app) {
       //change the test to currentTime
 
       let daysSince = currentTime.diff(lastRef, 'days');
+      let daysSinceCreated = currentTime.diff(userStart, 'days');
       console.log(daysSince);
 
-     if(daysSince < 3) {
+      if(daysSinceCreated < 3){
+        res.json({status: 1})
+      }
+      else if(daysSince < 3) {
         console.log("You're not eligible for a new code")
-        res.json({status: 1});
+        res.json({status: 2});
       }
       else {
         console.log("You're eligible for a new code")
-        res.json({status: 2});
+        res.json({status: 3});
       }
       
     // Checks the lastReferral with current time. Edit the int to set the amount of days

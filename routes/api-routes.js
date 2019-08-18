@@ -9,6 +9,8 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var NodeGeocoder = require('node-geocoder');
 var turf = require('@turf/turf');
+require('dotenv');
+console.log("mapquest key:" + process.env.DB_MAPQUESTKEY);
 const options = {
   provider: 'mapquest',
   apiKey: process.env.DB_MAPQUESTKEY 
@@ -287,13 +289,14 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
-
+      console.log('currentTime: ' + currentTime);
       let test = '2019-07-11T11:49:52-04:00'
 
       
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
-      currentTime = moment(currentTime);
+      console.log('currentTime: ' + currentTime);
+      //currentTime = moment(currentTime);
       
 
       // test = momentToString(test);

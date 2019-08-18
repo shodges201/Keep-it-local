@@ -346,7 +346,7 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      let now = moment(momentToString(moment().format()));
+      let now = momentToString(moment().format());
       console.log(now);
       db.User.update({ lastReferral: now }, { where: { userName: req.user.userName } }).then(function (data) {
         res.json(resp);

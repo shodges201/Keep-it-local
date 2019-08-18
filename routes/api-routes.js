@@ -595,7 +595,7 @@ module.exports = function (app) {
   function momentToString(currentTime) {
     if(currentTime.includes('+')){
       let x = currentTime.split('+');
-      currentTime = currentTime[0] + '.000Z';
+      currentTime = x[0] + '.000Z';
     }
     else{
       let x = currentTime.split('-');

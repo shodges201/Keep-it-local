@@ -9,20 +9,11 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var NodeGeocoder = require('node-geocoder');
 var turf = require('@turf/turf');
-var options = {
+const options = {
   provider: 'mapquest',
-  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw' 
+  apiKey: process.env.DB_MAPQUESTKEY 
 };
 var geocoder = NodeGeocoder(options);
-
-/*
-geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
-        console.log("-------------------------");
-        console.log(data);
-      });
-*/
-
-
 
 module.exports = function (app) { 
 
@@ -182,6 +173,7 @@ module.exports = function (app) {
                       if (err) throw err.stack;
                       console.log("Messages_"+req.params.id);
                       console.table(result);
+                      //connection.release();
                       res.render('focus', {
                         all_events: all,
                         user_events: user,
@@ -507,6 +499,7 @@ module.exports = function (app) {
               creatorID VARCHAR(255) NOT NULL,
               createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
               )`, function(err, resp){
+                //connection.release();
                 res.end();
               });
 
@@ -529,6 +522,7 @@ module.exports = function (app) {
         if (err) throw err.stack;
         console.log('got everything');
         console.table(result);
+        //connection.release();
         res.end();
     });
   });
@@ -544,6 +538,7 @@ module.exports = function (app) {
         result:result,
         time:result
       }
+      //connection.release();
       res.send(result);
     });
   });

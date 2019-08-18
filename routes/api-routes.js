@@ -317,8 +317,9 @@ module.exports = function (app) {
       //change the test to currentTime
 
       let daysSince = currentTime.diff(lastRef, 'days');
+      console.log(daysSince);
 
-     if(daysSince > 3) {
+     if(daysSince < 3) {
         console.log("You're not eligible for a new code")
         res.json({status: 1})
       }

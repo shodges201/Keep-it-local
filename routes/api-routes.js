@@ -530,7 +530,8 @@ module.exports = function (app) {
     //console.log('content: ');
     let content = escapeString(req.body.content);
     console.log(content);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, createdAt) VALUES("${content}", "${req.user.userName}", "${req.user.now}");`, 
+    console.log(req.body.now);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, createdAt) VALUES("${content}", "${req.user.userName}", "${req.body.now}");`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');

@@ -232,8 +232,9 @@ module.exports = function (app) {
         userName: req.body.username,
         password: req.body.password,
         referral: req.body.referral,
-        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
-        currentLocation: req.body.location
+        lastReferral: req.body.now,
+        currentLocation: req.body.location,
+        createdAt: req.body.now
       }).then(function () {
         db.ReferralCodes.destroy({
           where: {
@@ -294,7 +295,7 @@ module.exports = function (app) {
       let currentTime = moment();
       let dateTime = moment();
       console.log('date format: ');
-      console.log(JSON.stringify(dateTime._locale))
+      console.log()
       console.log('currentTime: ' + currentTime);
       console.log(currentTime.local());
       let test = '2019-07-11T11:49:52-04:00'

@@ -159,11 +159,11 @@
 
     $(document).ready(function () {
         $("#refer-box").hide()
-        console.log(new Date());
+        console.log(new Date().toISOString());
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
                 method: "POST",
-                data: {now: new Date()}
+                data: {now: new Date().toISOString()}
             }).then(function (res) {
                 $('#refer-box').css("display", "initial").empty();
                 console.log("status: " + res.status);
@@ -198,7 +198,7 @@
                     case 3: //not created within 3 days, and hasn't gotten a code within the last 3 days
                         $.ajax("/api/newCode", {
                             method: "POST",
-                            data: {now: new Date()}
+                            data: {now: new Date().toISOString()}
                         }).then(function (resp) {
                             $.ajax("/api/allcodes", {
                                 method: "GET"

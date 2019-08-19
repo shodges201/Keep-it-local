@@ -292,14 +292,8 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       console.log(req.body.now);
-      let currentTime = moment();
-      let dateTime = moment();
-      console.log('date format: ');
-      console.log()
+      let currentTime = moment(req.body.now);
       console.log('currentTime: ' + currentTime);
-      console.log(currentTime.local());
-      let test = '2019-07-11T11:49:52-04:00'
-
       
       // Calls our helper function to format the current time to match format of the time on the database
       currentTime = momentToString(currentTime);
@@ -311,10 +305,9 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral).toISOString();
-      lastRef = moment(lastRef);
+      let lastRef = moment(result.lastReferral);
      
-      let userStart = new Date(result.createdAt).toISOString();
+      let userStart = result.createdAt;
       userStart = moment(userStart);
       
       console.log(currentTime);
@@ -358,8 +351,6 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      let now = moment(req.body.now).format();
-      console.log(now);
       db.User.update({ lastReferral: req.body.now }, { where: { userName: req.user.userName } }).then(function (data) {
         res.json(resp);
       });

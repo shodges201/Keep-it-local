@@ -43,11 +43,11 @@
             {{#each messages}}
             {{#if select_event.ownedByUser}}
             <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span> <span
-                    class="msg-time">{{moment this.createdAt "hh:mm A"}}</span> <span
+                    class="msg-time">{{moment this.createdAt "h:mm A"}}</span> <span
                     class="msg-user">{{this.creatorID}}</span> {{this.content}} </li>
             {{else}}
             <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span> <span
-                    class="msg-time">{{moment this.createdAt "hh:mm A"}}</span> <span
+                    class="msg-time">{{moment this.createdAt "h:mm A"}}</span> <span
                     class="msg-op">{{this.creatorID}}</span> {{this.content}} </li>
             {{/if}}
             {{/each}}

@@ -162,8 +162,7 @@
         console.log(new Date().toISOString());
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
-                method: "POST",
-                data: {now: new Date().toISOString()}
+                method: "GET"
             }).then(function (res) {
                 $('#refer-box').css("display", "initial").empty();
                 console.log("status: " + res.status);
@@ -172,15 +171,15 @@
                         $.ajax("/api/allcodes", {
                             method: "GET"
                         }).then(function (allcodes) {
-                            let msg = $("<p>").addClass("refer-msg")
-                            msg.text("New users must wait 3 days before getting a referral code.");
-                            $("#refer-box").append(msg)
-                            $("#refer-box").fadeIn(1000)
+                                let msg = $("<p>").addClass("refer-msg")
+                                msg.text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").append(msg)
+                                $("#refer-box").fadeIn(1000)
 
-                        })
+                            })
                         break;
                     case 2: //not created within 3 days, but has gotten a code within the last 3 days
-                        $.ajax("/api/allcodes", {
+                            $.ajax("/api/allcodes", {
                             method: "GET"
                         }).then(function (allcodes) {
                             let msg = $("<p>").addClass("refer-msg");
@@ -196,9 +195,8 @@
                         })
                         break;
                     case 3: //not created within 3 days, and hasn't gotten a code within the last 3 days
-                        $.ajax("/api/newCode", {
-                            method: "POST",
-                            data: {now: new Date().toISOString()}
+                        $.ajax("/api/code", {
+                            method: "POST"
                         }).then(function (resp) {
                             $.ajax("/api/allcodes", {
                                 method: "GET"
@@ -221,7 +219,7 @@
                         })
                         break;
 
-
+                    
                     default:
                         let msg = $("<p>").addClass("refer-msg");
                         msg.text("Sorry, something went wrong...");
@@ -230,7 +228,7 @@
                         break;
                 }
             })
-        })
+        })  
 
         $(document.body).on("dblclick", function (event) {
             $("#refer-box").fadeOut(500)

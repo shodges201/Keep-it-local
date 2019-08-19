@@ -289,6 +289,8 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
+      let dateTime = (new Date()).toString();
+      console.log('date format: ' + dateTime);
       console.log('currentTime: ' + currentTime);
       let test = '2019-07-11T11:49:52-04:00'
 
@@ -488,10 +490,6 @@ module.exports = function (app) {
         return;
       }
 
-      // else if(date is in the past){
-        // res.statusMessage = "Invalid Date";
-        // res.status(400).end();
-      // }
       else {
         db.Events.create({
           name: req.body.name,
@@ -518,7 +516,6 @@ module.exports = function (app) {
               creatorID VARCHAR(255) NOT NULL,
               createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
               )`, function(err, resp){
-                //connection.release();
                 res.end();
               });
 
@@ -541,7 +538,6 @@ module.exports = function (app) {
         if (err) throw err.stack;
         console.log('got everything');
         console.table(result);
-        //connection.release();
         res.end();
     });
   });
@@ -590,16 +586,21 @@ module.exports = function (app) {
     });
   }
 
+  //creates an array of two floats
+  //first item is longitude
+  //second item is latitude
   function formatCoords(str){
     str = str.split(', ');
     let list = [parseFloat(str[0]), parseFloat(str[1])];
     return list;
   }
 
+  //cuts a float value to two sig figs
   function toTwoPlaces(num){
     return parseFloat(Math.round(num * 100) / 100).toFixed(2);
   }
 
+  //turns a string with time zone on the end into a string with .000Z on the end for more functionality with moment package
   function momentToString(currentTime) {
     if(currentTime.includes('+')){
       let x = currentTime.split('+');

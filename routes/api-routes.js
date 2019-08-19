@@ -292,8 +292,8 @@ module.exports = function (app) {
       // Gets the current time in a moment object
       console.log(req.body.now);
       let currentTime = moment(req.body.now);
-      let dateTime = (new Date()).toString();
-      console.log('date format: ' + dateTime);
+      let dateTime = moment();
+      console.log('date format: ' + dateTime._locale);
       console.log('currentTime: ' + currentTime);
       console.log(currentTime.local());
       let test = '2019-07-11T11:49:52-04:00'

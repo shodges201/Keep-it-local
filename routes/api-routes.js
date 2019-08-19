@@ -288,7 +288,7 @@ module.exports = function (app) {
       }
     }).then(function (result) {
       // Gets the current time in a moment object
-      let currentTime = moment().local();
+      let currentTime = moment().format();
       console.log('currentTime: ' + currentTime);
       let test = '2019-07-11T11:49:52-04:00'
 

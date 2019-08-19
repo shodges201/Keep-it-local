@@ -285,7 +285,7 @@
                 data: {
                     id: this_id,
                     content: this_content, 
-                    now: new Date().toISOString()
+                    now: new Date().toLocaleString()
                 }
             }).then(function (result) {
                 console.log("new message posted");

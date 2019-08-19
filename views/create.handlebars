@@ -137,7 +137,8 @@
                 category:$("#create-form [name=category]").val().trim(),
                 //address:$("#create-form [name=location]").val(),
                 location:$("#create-form [name=location]").val(),
-                description: $("#details").val()
+                description: $("#details").val(),
+                now: new Date().toLocaleString()
             }
             console.log(new_event);
 

@@ -313,14 +313,15 @@ module.exports = function (app) {
       console.log("========")
       console.log(lastRef);
       console.log("=====")
-      console.log(currentTime.diff(lastRef, 'days'));
       //change the test to currentTime
 
       let daysSince = currentTime.diff(lastRef, 'days');
       let daysSinceCreated = currentTime.diff(userStart, 'days');
-      console.log(daysSince);
+      console.log('daysSince: ' + daysSince);
+      console.log('daysSinceCreated: ' + daysSinceCreated);
 
       if(daysSinceCreated < 3){
+        console.log('too new of a user');
         res.json({status: 1})
       }
       else if(daysSince < 3) {

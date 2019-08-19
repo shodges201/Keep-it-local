@@ -117,7 +117,8 @@
 
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
-                method: "GET"
+                method: "POST",
+                data: {now: new Date().toISOString()}
             }).then(function (res) {
                 $('#refer-box').css("display", "initial").empty();
                 console.log("status: " + res.status);
@@ -150,11 +151,12 @@
                         })
                         break;
                     case 3: //not created within 3 days, and hasn't gotten a code within the last 3 days
-                        $.ajax("/api/code", {
+                        $.ajax("/api/newCode", {
                             method: "POST"
                         }).then(function (resp) {
                             $.ajax("/api/allcodes", {
-                                method: "GET"
+                                method: "GET",
+                                data: {now: new Date().toISOString()}
                             }).then(function (allcodes) {
                                 let newCodeMsg = $("<p>").addClass("refer-msg");
                                 newCodeMsg.text("Here is your new code:\n").append("<br>").append($('<span>').addClass('refer-code').text(allcodes[0]).append("<br>"));

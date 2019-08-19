@@ -172,15 +172,15 @@
                         $.ajax("/api/allcodes", {
                             method: "GET"
                         }).then(function (allcodes) {
-                            let msg = $("<p>").addClass("refer-msg")
-                            msg.text("New users must wait 3 days before getting a referral code.");
-                            $("#refer-box").append(msg)
-                            $("#refer-box").fadeIn(1000)
+                                let msg = $("<p>").addClass("refer-msg")
+                                msg.text("New users must wait 3 days before getting a referral code.");
+                                $("#refer-box").append(msg)
+                                $("#refer-box").fadeIn(1000)
 
-                        })
+                            })
                         break;
                     case 2: //not created within 3 days, but has gotten a code within the last 3 days
-                        $.ajax("/api/allcodes", {
+                            $.ajax("/api/allcodes", {
                             method: "GET"
                         }).then(function (allcodes) {
                             let msg = $("<p>").addClass("refer-msg");
@@ -197,11 +197,11 @@
                         break;
                     case 3: //not created within 3 days, and hasn't gotten a code within the last 3 days
                         $.ajax("/api/newCode", {
-                            method: "POST",
-                            data: {now: new Date().toISOString()}
+                            method: "POST"
                         }).then(function (resp) {
                             $.ajax("/api/allcodes", {
-                                method: "GET"
+                                method: "GET",
+                                data: {now: new Date().toISOString()}
                             }).then(function (allcodes) {
                                 let newCodeMsg = $("<p>").addClass("refer-msg");
                                 newCodeMsg.text("Here is your new code:\n").append("<br>").append($('<span>').addClass('refer-code').text(allcodes[0]).append("<br>"));
@@ -221,7 +221,7 @@
                         })
                         break;
 
-
+                    
                     default:
                         let msg = $("<p>").addClass("refer-msg");
                         msg.text("Sorry, something went wrong...");

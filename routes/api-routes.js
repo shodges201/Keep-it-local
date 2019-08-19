@@ -232,8 +232,9 @@ module.exports = function (app) {
         userName: req.body.username,
         password: req.body.password,
         referral: req.body.referral,
-        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
-        currentLocation: req.body.location
+        lastReferral: req.body.now,
+        currentLocation: req.body.location,
+        createdAt: req.body.now
       }).then(function () {
         db.ReferralCodes.destroy({
           where: {
@@ -280,7 +281,9 @@ module.exports = function (app) {
     })
   })
 
-  app.get("/api/code", function (req, res) {
+  //used for comparing now to the time the user was created, and the time the user last got a referral code
+  //a post is used so the current time/date can be passed in the body from the front-end
+  app.post("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
       where: {
@@ -288,15 +291,11 @@ module.exports = function (app) {
       }
     }).then(function (result) {
       // Gets the current time in a moment object
-      let currentTime = moment().format();
-      let dateTime = (new Date()).toString();
-      console.log('date format: ' + dateTime);
+      console.log(req.body.now);
+      let currentTime = moment(req.body.now);
       console.log('currentTime: ' + currentTime);
-      let test = '2019-07-11T11:49:52-04:00'
-
       
       // Calls our helper function to format the current time to match format of the time on the database
-      currentTime = momentToString(currentTime);
       console.log('currentTime: ' + currentTime);
       currentTime = moment(currentTime);
       
@@ -305,24 +304,24 @@ module.exports = function (app) {
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = new Date(result.lastReferral).toISOString();
-      lastRef = moment(lastRef);
+      let lastRef = moment(result.lastReferral);
      
-      let userStart = new Date(result.createdAt).toISOString();
+      let userStart = result.createdAt;
       userStart = moment(userStart);
       
       console.log(currentTime);
       console.log("========")
       console.log(lastRef);
       console.log("=====")
-      console.log(currentTime.diff(lastRef, 'days'));
       //change the test to currentTime
 
       let daysSince = currentTime.diff(lastRef, 'days');
       let daysSinceCreated = currentTime.diff(userStart, 'days');
-      console.log(daysSince);
+      console.log('daysSince: ' + daysSince);
+      console.log('daysSinceCreated: ' + daysSinceCreated);
 
       if(daysSinceCreated < 3){
+        console.log('too new of a user');
         res.json({status: 1})
       }
       else if(daysSince < 3) {
@@ -340,7 +339,7 @@ module.exports = function (app) {
   
   });
 
-  app.post("/api/code", function (req, res) {
+  app.post("/api/newCode", function (req, res) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
@@ -352,9 +351,7 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      let now = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-      console.log(now);
-      db.User.update({ lastReferral: now }, { where: { userName: req.user.userName } }).then(function (data) {
+      db.User.update({ lastReferral: req.body.now }, { where: { userName: req.user.userName } }).then(function (data) {
         res.json(resp);
       });
     });
@@ -514,7 +511,7 @@ module.exports = function (app) {
               id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
               content VARCHAR(255) NOT NULL,
               creatorID VARCHAR(255) NOT NULL,
-              createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+              createdAt VARCHAR(255) NOT NULL
               )`, function(err, resp){
                 res.end();
               });
@@ -533,7 +530,8 @@ module.exports = function (app) {
     //console.log('content: ');
     let content = escapeString(req.body.content);
     console.log(content);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
+    console.log(req.body.now);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, createdAt) VALUES("${content}", "${req.user.userName}", "${req.body.now}");`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');

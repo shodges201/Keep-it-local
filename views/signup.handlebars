@@ -65,7 +65,8 @@
                     username: $("#signup-form [name=username]").val().trim(),
                     password: $("#signup-form [name=password]").val().trim(),
                     location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString(),
-                    referral: $("#signup-form [name=referral]").val().trim()
+                    referral: $("#signup-form [name=referral]").val().trim(),
+                    now: new Date().toISOString()
                 }
              $.ajax("/api/checkcode", {
                 method: "POST",

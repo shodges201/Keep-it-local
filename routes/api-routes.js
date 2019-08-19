@@ -293,7 +293,8 @@ module.exports = function (app) {
       console.log(req.body.now);
       let currentTime = moment();
       let dateTime = moment();
-      console.log('date format: ' + dateTime._locale);
+      console.log('date format: ');
+      console.log(JSON.stringify(dateTime._locale))
       console.log('currentTime: ' + currentTime);
       console.log(currentTime.local());
       let test = '2019-07-11T11:49:52-04:00'

@@ -284,7 +284,8 @@
                 method: "POST",
                 data: {
                     id: this_id,
-                    content: this_content
+                    content: this_content, 
+                    now: new Date().toISOString()
                 }
             }).then(function (result) {
                 console.log("new message posted");
@@ -297,8 +298,8 @@
                     $('#messages-list').empty();
                     result.forEach(function (item) {
                         //let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
-                        let date = $('<span>').addClass('msg-date').text($.format.date(item.createdAt, "MMMM d, yyyy"));
-                        let time = $('<span>').addClass('msg-time').text($.format.date(item.createdAt, "hh:mm a"));
+                        let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
+                        let time = $('<span>').addClass('msg-time').text(formatTime(item.createdAt));
                         let creator = $('<span>').addClass('msg-op').text(item.creatorID);
                         let listItem = $('<li>').append(date, time, creator);
                         listItem.append($('<span>').addClass('msg-content').text(item.content));
@@ -353,8 +354,15 @@
 
         function formatDate(date) {
             let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            let dateItems = (date.split('-' && 'T')[0]).split('-');
-            return months[parseInt(dateItems[1]) - 1] + " " + dateItems[2] + ", " + dateItems[0];
+            let dateItems = date.split('/');
+            return months[parseInt(dateItems[0]) - 1] + " " + dateItems[1] + ", " + dateItems[2];
+        }
+
+        function formatTime(date){
+            let timeList = date.split(' ');
+            let amORpm = timeList[timeList.length-1];
+            timeList = timeList[1].split(':');
+            return timeList[0] + ":" + timeList[1] + " " + amORpm;
         }
 
     })

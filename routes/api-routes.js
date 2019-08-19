@@ -511,7 +511,7 @@ module.exports = function (app) {
               id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
               content VARCHAR(255) NOT NULL,
               creatorID VARCHAR(255) NOT NULL,
-              createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+              createdAt VARCHAR(255) NOT NULL
               )`, function(err, resp){
                 res.end();
               });
@@ -530,7 +530,7 @@ module.exports = function (app) {
     //console.log('content: ');
     let content = escapeString(req.body.content);
     console.log(content);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`, 
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, createdAt) VALUES("${content}", "${req.user.userName}", "${req.user.now}");`, 
       function(err, result){
         if (err) throw err.stack;
         console.log('got everything');

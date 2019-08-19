@@ -280,7 +280,9 @@ module.exports = function (app) {
     })
   })
 
-  app.get("/api/code", function (req, res) {
+  //used for comparing now to the time the user was created, and the time the user last got a referral code
+  //a post is used so the current time/date can be passed in the body from the front-end
+  app.post("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
       where: {
@@ -288,7 +290,7 @@ module.exports = function (app) {
       }
     }).then(function (result) {
       // Gets the current time in a moment object
-      let currentTime = moment().format();
+      let currentTime = moment(req.body.now).format();
       let dateTime = (new Date()).toString();
       console.log('date format: ' + dateTime);
       console.log('currentTime: ' + currentTime);
@@ -340,7 +342,7 @@ module.exports = function (app) {
   
   });
 
-  app.post("/api/code", function (req, res) {
+  app.post("/api/newCode", function (req, res) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
@@ -352,9 +354,9 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      let now = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+      let now = moment(req.body.now).format();
       console.log(now);
-      db.User.update({ lastReferral: now }, { where: { userName: req.user.userName } }).then(function (data) {
+      db.User.update({ lastReferral: req.body.now }, { where: { userName: req.user.userName } }).then(function (data) {
         res.json(resp);
       });
     });

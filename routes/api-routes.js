@@ -296,7 +296,6 @@ module.exports = function (app) {
       console.log('currentTime: ' + currentTime);
       
       // Calls our helper function to format the current time to match format of the time on the database
-      currentTime = momentToString(currentTime);
       console.log('currentTime: ' + currentTime);
       currentTime = moment(currentTime);
       

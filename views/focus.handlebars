@@ -159,6 +159,7 @@
 
     $(document).ready(function () {
         $("#refer-box").hide()
+        console.log(new Date());
         $("#refer-link").click(function () {
             $.ajax("/api/code", {
                 method: "POST",

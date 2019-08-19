@@ -290,6 +290,7 @@ module.exports = function (app) {
       }
     }).then(function (result) {
       // Gets the current time in a moment object
+      console.log(req.body.now);
       let currentTime = moment(req.body.now).format();
       let dateTime = (new Date()).toString();
       console.log('date format: ' + dateTime);

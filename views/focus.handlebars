@@ -354,7 +354,8 @@
 
         function formatDate(date) {
             let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            let dateItems = date.split('/');
+            let dateItems = date.split(', ');
+            dateItems = dateItems[0].split('/');
             return months[parseInt(dateItems[0]) - 1] + " " + dateItems[1] + ", " + dateItems[2];
         }
 

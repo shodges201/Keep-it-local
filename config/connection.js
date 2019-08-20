@@ -2,6 +2,14 @@ var mysql = require('mysql');
 require('dotenv').config();
 console.log(process.env);
 
+  // "development": {
+  //   "username": "cvzrayq3nwdhmsmc",
+  //   "password": "yjt76ne10wymwc67",
+  //   "database": "l2u6736043i4uqxd",
+  //   "host": "x3ztd854gaa7on6s.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  //   "dialect": "mysql"
+  // },
+
 var connection;
 
 if (process.env.JAWSDB_URL) {

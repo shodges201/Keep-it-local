@@ -39,7 +39,7 @@
     <div id="messages">
         <br>
         <h4>Messages</h4>
-        <ul id="messages-list">
+        <ul id="messages-list" data-nummessages="{{messages.length}}">
             {{#each messages}}
             {{#if select_event.ownedByUser}}
             <li><span class="msg-date">{{moment this.createdAt "MMMM DD, YYYY"}}</span> <span
@@ -51,7 +51,6 @@
                     class="msg-op">{{this.creatorID}}</span> {{this.content}} </li>
             {{/if}}
             {{/each}}
-            <br><br>
         </ul>
         <input type="text" id="new-msg" placeholder="new message">
         <button type="button" class="msg-btn" data-id="{{select_event.data.id}}">post</button>
@@ -142,7 +141,9 @@
 
 </div>
 
-
+{{!-- <div id="prompt">
+    <p id="new-msgs">X new messages!</p>
+</div> --}}
 
 <div id="refer-box">
     {{!-- <span id="refer-scroll"></span> --}}
@@ -156,8 +157,10 @@
 </footer>
 
 <script type="text/javascript">
-
     $(document).ready(function () {
+        var interval = setInterval(check, 10000);
+        var messages = document.getElementById("messages-list");
+        messages.scrollTop = messages.scrollHeight;
         $("#refer-box").hide()
         console.log(new Date().toISOString());
         $("#refer-link").click(function () {
@@ -247,10 +250,40 @@
         })
 
         $(document.body).on("click", ".listing-row", function (event) {
+            clearInterval(interval);
             console.log('clicked row');
             console.log(window.location.hostname + '/events/' + $(this).data('id'));
             window.location.href = $(this).data('id');
         })
+
+        function check(){
+            console.log('checking for new messages');
+            let messagesList = $('#messages-list');
+            let id = $(".msg-btn").data('id');
+            let numMessages = messagesList.data('nummessages');
+            $.ajax(`/api/message/${id}`, {
+                type: "GET"
+            }).then(function(data){
+                console.table(data);
+                if(data.length > numMessages){
+                    let difference = data.length - parseInt(numMessages);
+                    console.log(difference);
+                    for(i = numMessages; i < data.length; i++){
+                        let item = data[i];
+                        console.log(item);
+                        let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
+                        let time = $('<span>').addClass('msg-time').text(formatTime(item.createdAt));
+                        let creator = $('<span>').addClass('msg-op').text(item.creatorID);
+                        let listItem = $('<li>').append(date, time, creator);
+                        listItem.append($('<span>').addClass('msg-content').text(item.content));
+                        messagesList.append(listItem);
+                    }
+                    messagesList.data('nummessages', data.length);
+                    var messages = document.getElementById("messages-list");
+                    messages.scrollTop = messages.scrollHeight;
+                }
+            })
+        }
 
         $(document.body).on("click", ".rsvp-btn", function (event) {
             let rsvp = {

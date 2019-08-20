@@ -158,7 +158,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var interval = setInterval(check, 10000);
+        var interval = setInterval(check, 5000);
         var messages = document.getElementById("messages-list");
         messages.scrollTop = messages.scrollHeight;
         $("#refer-box").hide()
@@ -310,6 +310,7 @@
 
         $(".msg-btn").click(function (event) {
             event.preventDefault();
+            clearInterval(interval);
             let this_id = $(this).attr("data-id");
             let this_content = $("#new-msg").val().trim();
             console.log(this_id + this_content);
@@ -328,7 +329,8 @@
                 }).then(function (result) {
                     console.log('result');
                     console.log(result);
-                    $('#messages-list').empty();
+                    let messagesList = $('#messages-list');
+                    messagesList.empty();
                     result.forEach(function (item) {
                         //let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
                         let date = $('<span>').addClass('msg-date').text(formatDate(item.createdAt));
@@ -338,7 +340,10 @@
                         listItem.append($('<span>').addClass('msg-content').text(item.content));
                         $("#messages-list").append(listItem);
                     })
-                    $("#messages-list").scrollTop = $("#messages-list").scrollHeight;
+                    messagesList.data('nummessages', result.length);
+                    var messages = document.getElementById("messages-list");
+                    messages.scrollTop = messages.scrollHeight;
+                    interval = setInterval(check, 5000);
                 })
             })
         })

@@ -17,6 +17,9 @@ New users sign are only asked for a username and password, no additional persona
 username: username 
 password: password
 
+## Preview
+
+![Preview Photo](public/images/keep-it-local.png)
 
 ## Features
 

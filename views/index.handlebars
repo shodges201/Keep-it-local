@@ -47,13 +47,21 @@
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row" data-id="{{this.id}}">
+                        <td class="td-col-name"><span><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td class="td-col-date"><span>{{moment this.date "MM/DD/YY"}}</span></td>
+                        <td class="td-col-cat"><span>{{this.category}}</span></td>
+                        <td class="td-col-dist"><span>{{this.distance}} mi</span></td>
+                        <td class="td-col-rsvp"><span>{{this.upVotes}}</span></td>
+                        <td class="td-col-id"><span>{{this.creatorID}}</span></td>
+                    </tr>
+                    {{!-- <tr class="listing-row" data-id="{{this.id}}">
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
-                    </tr>
+                    </tr> --}}
                     {{/each}}
                 </table>
                 {{!-- <button type="button" class="new-event-btn">make new event</button> --}}
@@ -80,13 +88,21 @@
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row" data-id="{{this.id}}">
+                        <td class="td-col-name"><span><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
+                        <td class="td-col-date"><span>{{moment this.date "MM/DD/YY"}}</span></td>
+                        <td class="td-col-cat"><span>{{this.category}}</span></td>
+                        <td class="td-col-dist"><span>{{this.distance}} mi</span></td>
+                        <td class="td-col-rsvp"><span>{{this.upVotes}}</span></td>
+                        <td class="td-col-id"><span>{{this.creatorID}}</span></td>
+                    </tr>
+                    {{!-- <tr class="listing-row" data-id="{{this.id}}">
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
                         <td><span class="listing-item listing-item-date">{{moment this.date "MM/DD/YY"}}</span></td>
                         <td><span class="listing-item listing-item-cat">{{this.category}}</span></td>
                         <td><span class="listing-item listing-item-local">{{this.distance}} mi</span></td>
                         <td><span class="listing-item listing-item-votes">{{this.upVotes}}</span></td>
                         <td><span class="listing-item listing-item-id">{{this.creatorID}}</span></td>
-                    </tr>
+                    </tr> --}}
                     {{/each}}
                 </table>
                 <br><br><br><br>

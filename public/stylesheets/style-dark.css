@@ -204,14 +204,14 @@ li {
   font-size:18px;
 }
 
-.listing-item-name {
-  margin-right:40px;
+/* .listing-item-name {
+  margin-right:20px;
 }
 .listing-item-local {
   margin-right:55px;
 }
 .listing-item-cat {
-  margin-right:60px;
+  margin-right:40px;
 }
 .listing-item-votes {
   margin-right:70px;
@@ -221,7 +221,27 @@ li {
 }
 .listing-item-date {
   margin-right:40px;
+} */
+
+
+
+.td-col-name{
+  width:30%;
 }
+.td-col-date{
+  width:15%;
+}
+.td-col-cat{
+  width:17%;
+}
+.td-col-dist{
+  width:17%;
+}
+.td-col-rsvp{
+  width:10%;
+  padding-left:5px;
+}
+
 
 
 
@@ -394,7 +414,6 @@ button {
   font-size: 20px;
   padding:0px;
   color:rgba(226, 169, 255, 0.7);
-  text-transform: lowercase;
 }
 
 .rsvp-btn:hover,
@@ -508,3 +527,15 @@ button:focus {
 }
 
 
+.input-field {
+  padding: 0px;
+  margin:0px;
+}
+
+#edit-event-name {
+  font-size:24px;
+}
+
+#edit-event-description {
+  height:100px;
+}

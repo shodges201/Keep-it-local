@@ -23,9 +23,11 @@ input:-webkit-autofill:active {
 #event-main {
   position: absolute;
   left: 5%;
-  top: 20%;
+  top: 18%;
   font-size:18px;
   width: 40%;
+  height: 80%;
+  overflow: scroll;
 }
 
 #header-logo {
@@ -155,11 +157,12 @@ h1 {
   left: 0;
   bottom: 0;
   width: 100vw;
-  height:1vw;
+  height:1.5vw;
   background-color: rgb(142, 142, 142);
   color: black;
   text-align: center;
   padding-bottom:21px;
+  font-size:1.1vw;
 }
 
 #logout {
@@ -195,6 +198,10 @@ li {
   /* color:rgb(105, 151, 128); */
   color:rgba(186, 243, 208, 0.6);
   letter-spacing: .5px;
+}
+
+.listing-item{
+  font-size:18px;
 }
 
 .listing-item-name {
@@ -387,6 +394,7 @@ button {
   font-size: 20px;
   padding:0px;
   color:rgba(226, 169, 255, 0.7);
+  text-transform: lowercase;
 }
 
 .rsvp-btn:hover,
@@ -401,11 +409,12 @@ button {
 
 #messages {
   overflow:hidden;
+  width:100%;
 }
 
 #messages-list {
   text-align: bottom;
-  height: 150px;
+  height: 140px;
   overflow: scroll;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
@@ -450,10 +459,13 @@ input#create-form {
 .details-edit {
   color:white;
   height: 150px;
+  margin-top: 5px;
 }
 
 #description {
   white-space: pre-wrap;
+  border-bottom: gray 1px solid;
+  padding-bottom:15px;
 }
 
 #refer-box {
@@ -487,6 +499,12 @@ input#create-form {
 
 .toast{
   color: black;
+}
+
+
+button:focus {
+  outline:none;
+  background:none;
 }
 
 

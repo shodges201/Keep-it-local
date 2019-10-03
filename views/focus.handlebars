@@ -13,26 +13,26 @@
 </div>
 <div id="event-main">
 
-    <h1 id="message-header"><span class="event-name">{{select_event.data.name}}</span></h1>
-    <br>
-    <br>
-    <div id="message-description">
-        <p id="description" class="event">{{select_event.data.description}}</p>
-    </div>
-    
-    <p class="event"><span id="rsvp-count" class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
-    
-    <p class="event"> located at <span class="event-location">{{select_event.data.location}}</span></p>
+    <div id="event-focus">
+        <h1 id="message-header"><span class="event-name">{{select_event.data.name}}</span></h1>
+        <br>
+        <div id="message-description">
+            <p id="description" class="event">{{select_event.data.description}}</p>
+        </div>
+        
+        <p class="event"><span id="rsvp-count" class="event-votes">{{select_event.data.upVotes}}</span> rsvps for this event.</p>
+        
+        <p class="event"> located at <span class="event-location">{{select_event.data.location}}</span></p>
 
-    <p class="event"> on <span class="event-date">{{moment select_event.data.date "MMMM DD, YYYY"}}</span></p>
-    
-    <p class="event">hosted by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
-    {{#if select_event.ownedByUser}}
-        <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">edit this event</button>
-    {{else}}
-        <button type="button" id="side-btn" class="rsvp-btn" data-id="{{select_event.data.id}}">rsvp to this event</button>
-    {{/if}}
-    <br>
+        <p class="event"> on <span class="event-date">{{moment select_event.data.date "MMMM DD, YYYY"}}</span></p>
+        
+        <p class="event">hosted by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
+        {{#if select_event.ownedByUser}}
+            <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">edit this event</button>
+        {{else}}
+            <button type="button" id="side-btn" class="rsvp-btn" data-id="{{select_event.data.id}}">rsvp to this event</button>
+        {{/if}}
+    </div>
     <br>
 
     <div id="messages">

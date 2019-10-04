@@ -182,9 +182,15 @@ module.exports = function (app) {
               }
             }).then(function(dbRSVPEvents){
                 console.log('dbRSVPEvents');
-                console.log(dbRSVPEvents.dataValues);
-                let rsvpCheck = req.user.id === dbRSVPEvents.dataValues.userID;
-                console.log(`currentUser did rsvp ${rsvpCheck}`);
+                console.log(dbRSVPEvents);
+                let rsvpCheck;
+                if(dbRSVPEvents){
+                  rsvpCheck=true
+                } else {
+                  rsvpCheck=false
+                }
+                // let rsvpCheck = req.user.id === dbRSVPEvents.dataValues.userID;
+                // console.log(`currentUser did rsvp ${rsvpCheck}`);
                 rsvp = {
                   didRSVP: rsvpCheck
                 }

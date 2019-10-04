@@ -118,6 +118,7 @@ module.exports = function (app) {
       let user = [];
       let msgs = [];
       let focus;
+      let rsvp;
       let currentLoc = req.user.currentLocation;
       const options = {
         units: 'miles'
@@ -168,32 +169,40 @@ module.exports = function (app) {
             console.log('dbUserEvents');
             console.log(dbUserEvents[0].dataValues);
             let owner = req.user.userName === dbUserEvents[0].dataValues.creatorID;
+            // let event_id = dbUserEvents[0].dataValues.id;
             focus = {
               data: dbUserEvents[0].dataValues,
               ownedByUser: owner
-              // equals: function(userID) {
-              //   if(this.data.creatorID == userID) {
-              //     return true
-              //   }
-              //   else {
-              //     return false
-              //   }
-              // }
             }
-          }).then(function () {
-            connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
-              if (err) throw err.stack;
-              console.log("Messages_" + req.params.id);
-              console.table(result);
-              res.render('focus', {
-                all_events: all,
-                user_events: user,
-                select_event: focus,
-                messages: result
-              });
-            });
+          }).then(function(){
+            db.RSVPs.findOne({
+              where:{
+                userID:req.user.id,
+                eventID:focus.data.id
+              }
+            }).then(function(dbRSVPEvents){
+                console.log('dbRSVPEvents');
+                console.log(dbRSVPEvents.dataValues);
+                let rsvpCheck = req.user.id === dbRSVPEvents.dataValues.userID;
+                console.log(`currentUser did rsvp ${rsvpCheck}`);
+                rsvp = {
+                  didRSVP: rsvpCheck
+                }
+              }).then(function () {
+                connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                  if (err) throw err.stack;
+                  console.log("Messages_" + req.params.id);
+                  console.table(result);
+                  res.render('focus', {
+                    all_events: all,
+                    user_events: user,
+                    select_event: focus,
+                    messages: result,
+                    currentUser: rsvp
+                  });
+                });
+              })
           })
-
         });
       });
     } else {
@@ -411,11 +420,16 @@ module.exports = function (app) {
         id: event_id
       }
     }).then(function () {
-      res.end();
-    }).catch(function (err) {
-      console.log(err);
-      res.json(err);
-    });
+      db.RSVPs.create({
+        userID: req.user.id,
+        eventID: event_id
+      })
+      }).then(function(){
+          res.end();
+        }).catch(function (err) {
+          console.log(err);
+          res.json(err);
+        });
   })
 
   app.get('/api/event/:id', function (req, res) {

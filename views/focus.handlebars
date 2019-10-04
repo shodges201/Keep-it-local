@@ -28,10 +28,11 @@
         
         <p class="event">hosted by <span class="event-creator">{{select_event.data.creatorID}}</span></p>
         {{#if select_event.ownedByUser}}
-            <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}">edit this event</button>
+            <button type="button" id="side-btn" class="edit-btn" data-id="{{select_event.data.id}}" data-rsvp="false">edit this event</button>
         {{else}}
-            <button type="button" id="side-btn" class="rsvp-btn rsvp" data-id="{{select_event.data.id}}">rsvp to this event</button>
+            <button type="button" id="side-btn" class="rsvp-btn rsvp" data-id="{{select_event.data.id}}" data-rsvp="{{currentUser.didRSVP}}">rsvp to this event</button>
         {{/if}}
+                
     </div>
     <br>
 
@@ -167,6 +168,12 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
+        let rsvpCheck = $("#side-btn").attr("data-rsvp")
+        console.log(`frontend rsvp check is ${rsvpCheck}`)
+        if(rsvpCheck=="true"){
+            $("#side-btn").removeClass("rsvp").text("you rsvp'd to this event!")
+        }
+
         $("#refer-box").hide()
 
         $("#refer-link").click(function () {

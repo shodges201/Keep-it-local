@@ -48,12 +48,15 @@ app.post("/api/code", function (req, res) {
 ```
 
 ## Built With
-
+* [JQuery](https://jquery.com/) - JavaScript Library for DOM Manipulation
 * [Materialize](https://materializecss.com/) - Web Framework
-* [Handlebars](https://handlebarsjs.com/) - Templating
+* [Handlebars](https://handlebarsjs.com/) - Templating Engine
 * [Moment](https://momentjs.com/docs/) - Library for parsing, manipulating time values
 * [Passport](http://www.passportjs.org/) - Login Authentication for Node.js
 * [Geocoder](https://developer.mapquest.com/documentation/geocoding-api/) - Library for geocoding via MapQuest API
+* [Node.js](https://nodejs.org/en/) - A JavaScript server runtime environment
+* [Express.js](http://expressjs.com/) - A Node.js framework used mostly for routing
+* [Sequelize ORM](https://sequelize.org/) - Promise-based Node.js ORM for MySQL 
 
 
 ## Team Members

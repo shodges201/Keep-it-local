@@ -85,7 +85,7 @@
                     <th><span class="listing-header">category</span></th>
                     <th><span class="listing-header">distance</span></th>
                     <th><span class="listing-header">rsvps</span></th>
-                    <th><span class="listing-header">cancel</span></th>
+                    <th><span class="listing-header">delete</span></th>
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row" data-id="{{this.id}}">
@@ -94,7 +94,7 @@
                         <td class="td-col-cat"><span>{{this.category}}</span></td>
                         <td class="td-col-dist"><span>{{this.distance}} mi</span></td>
                         <td class="td-col-rsvp"><span>{{this.upVotes}}</span></td>
-                        <td class="td-col-id"><span><button type="button" class="cancel-event" data-id="{{this.id}}" data-name="{{this.name}}">&#10753;</button></span></td>
+                        <td class="td-col-id"><span><button type="button" class="cancel-event" data-id="{{this.id}}" data-name="{{this.name}}">&#10754;</button></span></td>
                     </tr>
                     {{!-- <tr class="listing-row" data-id="{{this.id}}"> 
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
@@ -333,13 +333,13 @@
         $(document.body).on("click", ".cancel-event", function (event) {
             $("#refer-box").empty();
             let msg = $("<p>").addClass("refer-msg");
-            msg.text(`Are you sure you want to cancel your `);
+            msg.text(`Are you sure you want to delete your `);
             let name = $(this).attr("data-name");
             let title = $("<span>").css("color","rgb(154, 194, 255)").text(name);
             let q = $("<span>").text(" event?")
             msg.append(title,q)
             let event_id = $(this).attr("data-id")
-            let del_btn = $("<button>").attr("type", "button").attr("data-id", event_id).addClass("confirm-del-btn").text("confirm cancel")
+            let del_btn = $("<button>").attr("type", "button").attr("data-id", event_id).addClass("confirm-del-btn").text("confirm delete")
             $("#refer-box").append(msg,del_btn)
             $("#refer-box").fadeIn(800)
         })

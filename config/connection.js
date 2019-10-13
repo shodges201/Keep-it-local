@@ -2,6 +2,14 @@ var mysql = require('mysql');
 require('dotenv').config();
 console.log(process.env);
 
+  // "development": {
+  //   "username": "cvzrayq3nwdhmsmc",
+  //   "password": "yjt76ne10wymwc67",
+  //   "database": "l2u6736043i4uqxd",
+  //   "host": "x3ztd854gaa7on6s.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  //   "dialect": "mysql"
+  // },
+
 var connection;
 
 if (process.env.JAWSDB_URL) {
@@ -22,6 +30,14 @@ if (process.env.JAWSDB_URL) {
     console.log("Connected!");
   });
 }
+
+// var connection = mysql.createPool({
+//   connectionLimit : 10,
+//   host     : process.env.DB_HOST,
+//   user     : process.env.DB_USERNAME,
+//   password : process.env.DB_PASSWORD,
+//   database : process.env.DB_NAME
+// });
 
 connection.config.typeCast = function(field, next) {
   if (field.type == "TINY" && field.length == 1) {

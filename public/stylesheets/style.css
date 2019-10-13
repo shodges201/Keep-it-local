@@ -237,3 +237,16 @@ label {
 button {
   font-family: 'Roboto Condensed',monospace;
 }
+
+#prompt{
+  height: 60px;
+  width: 90px;
+  background-color: white;
+  color: rgba(233, 130, 254, 0.692);
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 20px;
+  overflow: hidden;
+}

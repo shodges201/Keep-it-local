@@ -9,22 +9,16 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var NodeGeocoder = require('node-geocoder');
 var turf = require('@turf/turf');
-var options = {
+require('dotenv');
+console.log("mapquest key:" + process.env.DB_MAPQUESTKEY);
+const options = {
   provider: 'mapquest',
-  apiKey: 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw'
+  apiKey: process.env.DB_MAPQUESTKEY || 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw'
 };
+
 var geocoder = NodeGeocoder(options);
 
-/*
-geocoder.geocode("300 Atrium Drive, Somerset, NJ", function ( err, data ) {
-        console.log("-------------------------");
-        console.log(data);
-      });
-*/
-
-
-
-module.exports = function (app) {
+module.exports = function (app) { 
 
   //====================== render/html routes ========================================//
   app.get("/", notAuthenticated, function (req, res) {
@@ -254,8 +248,9 @@ module.exports = function (app) {
         userName: req.body.username,
         password: req.body.password,
         referral: req.body.referral,
-        lastReferral: moment.utc().format('YYYY-MM-DD HH:mm:ss'),
-        currentLocation: req.body.location
+        lastReferral: req.body.now,
+        currentLocation: req.body.location,
+        createdAt: req.body.now
       }).then(function () {
         db.ReferralCodes.destroy({
           where: {
@@ -305,7 +300,9 @@ module.exports = function (app) {
     })
   })
 
-  app.get("/api/code", function (req, res) {
+  //used for comparing now to the time the user was created, and the time the user last got a referral code
+  //a post is used so the current time/date can be passed in the body from the front-end
+  app.post("/api/code", function (req, res) {
     // This generates a code for the user when the button is checked.
     db.User.findOne({
       where: {
@@ -314,12 +311,9 @@ module.exports = function (app) {
     }).then(function (result) {
       // Gets the current time in a moment object
       let currentTime = moment().format();
-
       let test = '2019-07-11T11:49:52-04:00'
-
-
       // Calls our helper function to format the current time to match format of the time on the database
-      currentTime = momentToString(currentTime);
+      console.log('currentTime: ' + currentTime);
       currentTime = moment(currentTime);
 
 
@@ -337,7 +331,6 @@ module.exports = function (app) {
       console.log("========")
       console.log(lastRef);
       console.log("=====")
-      console.log(lastRef.diff(currentTime, 'days'));
       //change the test to currentTime
       if (lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
@@ -350,15 +343,12 @@ module.exports = function (app) {
           status: 2
         })
       }
-
-
       // Checks the lastReferral with current time. Edit the int to set the amount of days
-
     })
 
   });
 
-  app.post("/api/code", function (req, res) {
+  app.post("/api/newCode", function (req, res) {
     // Route used to post a referral code on click
     db.ReferralCodes.create({
       creatorID: req.user.userName,
@@ -370,7 +360,9 @@ module.exports = function (app) {
     }).then(function (resp) {
       console.log("code created");
       console.log(resp);
-      res.json(resp);
+      db.User.update({ lastReferral: req.body.now }, { where: { userName: req.user.userName } }).then(function (data) {
+        res.json(resp);
+      });
     });
   });
 
@@ -506,12 +498,7 @@ module.exports = function (app) {
         res.statusMessage = "Invalid Date";
         res.status(400).end();
         return;
-      }
-
-      // else if(date is in the past){
-      // res.statusMessage = "Invalid Date";
-      // res.status(400).end();
-      // }
+      } 
       else {
         db.Events.create({
           name: req.body.name,
@@ -566,8 +553,9 @@ module.exports = function (app) {
     //console.log('content: ');
     let content = escapeString(req.body.content);
     console.log(content);
-    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID) VALUES("${content}", "${req.user.userName}");`,
-      function (err, result) {
+    console.log(req.body.now);
+    connection.query(`INSERT INTO Messages_${event_id}(content, creatorID, createdAt) VALUES("${content}", "${req.user.userName}", "${req.body.now}");`, 
+      function(err, result){
         if (err) throw err.stack;
         console.log('got everything');
         console.table(result);
@@ -586,6 +574,7 @@ module.exports = function (app) {
         result: result,
         time: result
       }
+      //connection.release();
       res.send(result);
     });
   });
@@ -617,19 +606,30 @@ module.exports = function (app) {
     });
   }
 
-  function formatCoords(str) {
+  //creates an array of two floats
+  //first item is longitude
+  //second item is latitude
+  function formatCoords(str){
     str = str.split(', ');
     let list = [parseFloat(str[0]), parseFloat(str[1])];
     return list;
   }
 
-  function toTwoPlaces(num) {
+  //cuts a float value to two sig figs
+  function toTwoPlaces(num){
     return parseFloat(Math.round(num * 100) / 100).toFixed(2);
   }
 
+  //turns a string with time zone on the end into a string with .000Z on the end for more functionality with moment package
   function momentToString(currentTime) {
-    let x = currentTime.split('-');
-    currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    if(currentTime.includes('+')){
+      let x = currentTime.split('+');
+      currentTime = x[0] + '.000Z';
+    }
+    else{
+      let x = currentTime.split('-');
+      currentTime = currentTime.replace('-' + x[x.length - 1], '.000Z');
+    }
     return currentTime;
   }
 

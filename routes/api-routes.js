@@ -13,27 +13,28 @@ require('dotenv');
 console.log("mapquest key:" + process.env.DB_MAPQUESTKEY);
 const options = {
   provider: 'mapquest',
-  apiKey: process.env.DB_MAPQUESTKEY 
+  apiKey: process.env.DB_MAPQUESTKEY || 'vp4Ua1uwTlWCTF3R29jaF0LRR6GZgfuw'
 };
+
 var geocoder = NodeGeocoder(options);
 
 module.exports = function (app) { 
 
   //====================== render/html routes ========================================//
-   app.get("/", notAuthenticated, function (req, res) {
+  app.get("/", notAuthenticated, function (req, res) {
     console.log("login");
     res.render("login")
   });
 
-  app.get("/login", notAuthenticated, function(req,res){
+  app.get("/login", notAuthenticated, function (req, res) {
     res.render("login");
   });
-  
-  app.get("/signup", notAuthenticated, function(req,res){
+
+  app.get("/signup", notAuthenticated, function (req, res) {
     res.render("signup");
   });
 
-  app.get("/logout", isAuthenticated, function(req, res) {
+  app.get("/logout", isAuthenticated, function (req, res) {
     req.logout();
     res.redirect("/");
   });
@@ -48,7 +49,9 @@ module.exports = function (app) {
       let all = [];
       let user = [];
       let currentLoc = formatCoords(req.user.currentLocation);
-      const options = {units: 'miles'};
+      const options = {
+        units: 'miles'
+      };
       db.Events.findAll({
         where: {
           creatorID: {
@@ -59,136 +62,150 @@ module.exports = function (app) {
           ['date', 'DESC']
         ]
       }).then(function (dbEvents) {
-          console.log(req.user.currentLocation);
-          dbEvents.forEach(function (element) {
-            console.log('data vals: ');
-            console.log(element.dataValues);
-            let destinationCoords = formatCoords(element.dataValues.coords);
-            let distance = turf.distance(currentLoc, destinationCoords, options);
+        console.log(req.user.currentLocation);
+        dbEvents.forEach(function (element) {
+          console.log('data vals: ');
+          console.log(element.dataValues);
+          let destinationCoords = formatCoords(element.dataValues.coords);
+          let distance = turf.distance(currentLoc, destinationCoords, options);
+          console.log(distance);
+          if (distance <= 30) {
             console.log(distance);
-            if(distance <= 30){
-              console.log(distance);
-              let dataVals = element.dataValues;
-              dataVals['distance'] = toTwoPlaces(distance);
-              all.push(dataVals);
-            }
-          })
-        }).then(function () {
-          db.Events.findAll({ 
-            where: {
-              creatorID: req.user.userName
-            },
-            order: [
-              ['date', 'DESC']
-            ]
-          }).then(function (dbUserEvents) {
-            dbUserEvents.forEach(function (item) {
-              let destinationCoords = formatCoords(item.dataValues.coords);
-              let distance = turf.distance(currentLoc, destinationCoords, options);
-              let dataVals = item.dataValues;
-              dataVals['distance'] = toTwoPlaces(distance);
-              user.push(item.dataValues);
-            });
-            console.log(all)
-            console.log(user)
-            res.render('index', { 
-              all_events: all, 
-              user_events: user 
-            });
+            let dataVals = element.dataValues;
+            dataVals['distance'] = toTwoPlaces(distance);
+            all.push(dataVals);
+          }
+        })
+      }).then(function () {
+        db.Events.findAll({
+          where: {
+            creatorID: req.user.userName
+          },
+          order: [
+            ['date', 'DESC']
+          ]
+        }).then(function (dbUserEvents) {
+          dbUserEvents.forEach(function (item) {
+            let destinationCoords = formatCoords(item.dataValues.coords);
+            let distance = turf.distance(currentLoc, destinationCoords, options);
+            let dataVals = item.dataValues;
+            dataVals['distance'] = toTwoPlaces(distance);
+            user.push(item.dataValues);
+          });
+          console.log(all)
+          console.log(user)
+          res.render('index', {
+            all_events: all,
+            user_events: user
           });
         });
-    }
-    else{
+      });
+    } else {
       res.redirect('/');
     }
   });
 
-  app.get("/events/:id", isAuthenticated, function(req,res){
+  app.get("/events/:id", isAuthenticated, function (req, res) {
     console.log(req.user);
     if (req.user) {
       let all = [];
       let user = [];
       let msgs = [];
       let focus;
+      let rsvp;
       let currentLoc = req.user.currentLocation;
-      const options = {units: 'miles'};
+      const options = {
+        units: 'miles'
+      };
       db.Events.findAll({
+        where: {
+          creatorID: {
+            [db.Sequelize.Op.ne]: req.user.userName
+          }
+        },
+        order: [
+          ['date', 'DESC']
+        ]
+      }).then(function (dbEvents) {
+        dbEvents.forEach(function (element) {
+          let destinationCoords = element.dataValues.coords;
+          let distance = distanceBetween(currentLoc, destinationCoords, options);
+          console.log(distance);
+          if (distance <= 30) {
+            console.log(distance);
+            let dataVals = element.dataValues;
+            dataVals['distance'] = toTwoPlaces(distance);
+            all.push(dataVals);
+          }
+        });
+      }).then(function () {
+        db.Events.findAll({
           where: {
-            creatorID: {
-              [db.Sequelize.Op.ne]: req.user.userName
-            }
+            creatorID: req.user.userName
           },
           order: [
             ['date', 'DESC']
           ]
-        }).then(function (dbEvents) {
-          dbEvents.forEach(function (element) {
-            let destinationCoords = element.dataValues.coords;
+        }).then(function (dbUserEvents) {
+          dbUserEvents.forEach(function (item) {
+            let destinationCoords = item.dataValues.coords;
             let distance = distanceBetween(currentLoc, destinationCoords, options);
-            console.log(distance);
-            if(distance <= 30){
-              console.log(distance);
-              let dataVals = element.dataValues;
-              dataVals['distance'] = toTwoPlaces(distance);
-              all.push(dataVals);
-            }
-          });
-        }).then(function() {
+            let dataVals = item.dataValues;
+            dataVals['distance'] = toTwoPlaces(distance);
+            user.push(item.dataValues);
+          })
+        }).then(function () {
           db.Events.findAll({
-              where: {
-                creatorID: req.user.userName
-              },
-              order: [
-                ['date', 'DESC']
-              ]
+            where: {
+              id: req.params.id
+            }
           }).then(function (dbUserEvents) {
-            dbUserEvents.forEach(function (item) {
-              let destinationCoords = item.dataValues.coords;
-              let distance = distanceBetween(currentLoc, destinationCoords, options);
-              let dataVals = item.dataValues;
-              dataVals['distance'] = toTwoPlaces(distance);
-              user.push(item.dataValues);
-            })
-            }).then(function() {
-                db.Events.findAll({
-                    where: {
-                      id: req.params.id
-                    }
-                }).then(function (dbUserEvents) {
-                  console.log('dbUserEvents');
-                  console.log(dbUserEvents[0].dataValues);
-                  let owner = req.user.userName === dbUserEvents[0].dataValues.creatorID;
-                  focus = {
-                    data: dbUserEvents[0].dataValues,
-                    ownedByUser: owner
-                    // equals: function(userID) {
-                    //   if(this.data.creatorID == userID) {
-                    //     return true
-                    //   }
-                    //   else {
-                    //     return false
-                    //   }
-                    // }
-                  }
-                  }).then(function() {
-                    connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
-                      if (err) throw err.stack;
-                      console.log("Messages_"+req.params.id);
-                      console.table(result);
-                      //connection.release();
-                      res.render('focus', {
-                        all_events: all,
-                        user_events: user,
-                        select_event: focus,
-                        messages: result
-                      });
-                    });
-                  })
-                  
-            });
+            console.log('dbUserEvents');
+            console.log(dbUserEvents[0].dataValues);
+            let owner = req.user.userName === dbUserEvents[0].dataValues.creatorID;
+            // let event_id = dbUserEvents[0].dataValues.id;
+            focus = {
+              data: dbUserEvents[0].dataValues,
+              ownedByUser: owner
+            }
+          }).then(function(){
+            db.RSVPs.findOne({
+              where:{
+                userID:req.user.id,
+                eventID:focus.data.id
+              }
+            }).then(function(dbRSVPEvents){
+                console.log('dbRSVPEvents');
+                console.log(dbRSVPEvents);
+                let rsvpCheck;
+                if(dbRSVPEvents){
+                  rsvpCheck=true
+                } else {
+                  rsvpCheck=false
+                }
+                // let rsvpCheck = req.user.id === dbRSVPEvents.dataValues.userID;
+                // console.log(`currentUser did rsvp ${rsvpCheck}`);
+                rsvp = {
+                  didRSVP: rsvpCheck
+                }
+              }).then(function () {
+                connection.query(`SELECT * FROM Messages_${req.params.id} ORDER BY id ASC;`, function (err, result) {
+                  if (err) throw err.stack;
+                  console.log("Messages_" + req.params.id);
+                  console.table(result);
+                  res.render('focus', {
+                    all_events: all,
+                    user_events: user,
+                    select_event: focus,
+                    messages: result,
+                    currentUser: rsvp
+                  });
+                });
+              })
+          })
         });
-    }
-    else{
+      });
+    } else {
       res.redirect("/");
     }
   });
@@ -205,17 +222,17 @@ module.exports = function (app) {
 
     db.User.update({
       currentLocation: req.body.location
-    },{
+    }, {
       where: {
         userName: req.body.username
       }
-    }).then(function(resp){
+    }).then(function (resp) {
       console.log(resp);
       res.end();
-     });
+    });
   });
 
-  app.post("/api/signup", function(req, res) {
+  app.post("/api/signup", function (req, res) {
     console.log('req.body: ');
     console.log(req.body);
     currentUser = req.body.username;
@@ -223,11 +240,10 @@ module.exports = function (app) {
     // let now = moment().format();
     // now = momentToString(now);
     // now = now.toISOString()
-    if(!currentUser || !currentPassword){
+    if (!currentUser || !currentPassword) {
       res.statusMessage = 'Bad username or password';
       res.status(400).end();
-    }
-    else{
+    } else {
       db.User.create({
         userName: req.body.username,
         password: req.body.password,
@@ -240,44 +256,47 @@ module.exports = function (app) {
           where: {
             code: req.body.referral,
           }
-        }).then(function(resp){
+        }).then(function (resp) {
           res.redirect(307, "/api/login");
         })
-      }).catch(function(err) {
+      }).catch(function (err) {
         console.log(err);
         res.json(err);
       });
     }
   });
 
-  app.post("/api/checkcode", function (req,res){
+  app.post("/api/checkcode", function (req, res) {
     db.ReferralCodes.findOne({
-      where: {code: req.body.referral}}).then(function(result){
-        if(!result){
-          res.statusMessage = "Bad Referral Code";
-          res.status(400).end();
-        }
-        console.log(result);
-        res.end();
+      where: {
+        code: req.body.referral
+      }
+    }).then(function (result) {
+      if (!result) {
+        res.statusMessage = "Bad Referral Code";
+        res.status(400).end();
+      }
+      console.log(result);
+      res.end();
     });
   });
 
-  app.get("/api/allcodes", function (req,res){
+  app.get("/api/allcodes", function (req, res) {
     db.ReferralCodes.findAll({
       where: {
         creatorID: req.user.userName
       },
       limit: 5
-      }).then(function(allcodes){
-        mycodes = [];
-        for(let i = 0; i < allcodes.length; i++){
-          console.log(allcodes[0].dataValues);
-          if(allcodes[0].dataValues.creatorID === req.user.userName){
-            mycodes.push(allcodes[i].dataValues.code);
-          }
+    }).then(function (allcodes) {
+      mycodes = [];
+      for (let i = 0; i < allcodes.length; i++) {
+        console.log(allcodes[0].dataValues);
+        if (allcodes[0].dataValues.creatorID === req.user.userName) {
+          mycodes.push(allcodes[i].dataValues.code);
         }
-        console.log(mycodes);
-        res.send(mycodes);
+      }
+      console.log(mycodes);
+      res.send(mycodes);
     })
   })
 
@@ -291,52 +310,42 @@ module.exports = function (app) {
       }
     }).then(function (result) {
       // Gets the current time in a moment object
-      console.log(req.body.now);
-      let currentTime = moment(req.body.now);
-      console.log('currentTime: ' + currentTime);
-      
+      let currentTime = moment().format();
+      let test = '2019-07-11T11:49:52-04:00'
       // Calls our helper function to format the current time to match format of the time on the database
       console.log('currentTime: ' + currentTime);
       currentTime = moment(currentTime);
-      
+
 
       // test = momentToString(test);
       // test = moment(test);
 
       let eligible = false;
-      let lastRef = moment(result.lastReferral);
-     
-      let userStart = result.createdAt;
+      let lastRef = new Date(result.lastReferral).toISOString();
+      lastRef = moment(lastRef);
+
+      let userStart = new Date(result.createdAt).toISOString();
       userStart = moment(userStart);
-      
+
       console.log(currentTime);
       console.log("========")
       console.log(lastRef);
       console.log("=====")
       //change the test to currentTime
-
-      let daysSince = currentTime.diff(lastRef, 'days');
-      let daysSinceCreated = currentTime.diff(userStart, 'days');
-      console.log('daysSince: ' + daysSince);
-      console.log('daysSinceCreated: ' + daysSinceCreated);
-
-      if(daysSinceCreated < 3){
-        console.log('too new of a user');
-        res.json({status: 1})
-      }
-      else if(daysSince < 3) {
+      if (lastRef.diff(currentTime, 'days') < 3) {
         console.log("You're not eligible for a new code")
-        res.json({status: 2});
-      }
-      else {
+        res.json({
+          status: 1
+        })
+      } else {
         console.log("You're eligible for a new code")
-        res.json({status: 3});
+        res.json({
+          status: 2
+        })
       }
-      
-    // Checks the lastReferral with current time. Edit the int to set the amount of days
-    
+      // Checks the lastReferral with current time. Edit the int to set the amount of days
     })
-  
+
   });
 
   app.post("/api/newCode", function (req, res) {
@@ -359,7 +368,7 @@ module.exports = function (app) {
 
   app.post("/api/code/admin", function (req, res) {
     // Route used to post a referral code on click
-    if(req.body.apiKey === 'MA3Igp6a'){
+    if (req.body.apiKey === 'MA3Igp6a') {
       db.ReferralCodes.create({
         creatorID: 'admin',
         // Generates an array of 5 random strings with 8 characters in length and selecting the first one.
@@ -372,24 +381,23 @@ module.exports = function (app) {
         console.log(resp);
         res.json(resp);
       });
-    }
-    else{
+    } else {
       res.statusMessage = 'Bad API key';
       res.status(401).end();
     }
   });
 
 
-  app.get("/api/rsvp/:id", function(req,res){
+  app.get("/api/rsvp/:id", function (req, res) {
     // RSVP create and get
     // console.log("GET /api/rsvp")
     let event_id = req.params.id;
-    console.log("event_id received "+event_id)
+    console.log("event_id received " + event_id)
     db.Events.findOne({
       where: {
         id: event_id
       }
-    }).then(function(dbEvents){
+    }).then(function (dbEvents) {
       // console.log("looking for rsvp")
       // console.log(dbEvents)
       let event = {
@@ -400,48 +408,51 @@ module.exports = function (app) {
     })
   })
 
-  app.put("/api/rsvp", function(req,res){
+  app.put("/api/rsvp", function (req, res) {
     console.log("PUT /api/rsvp")
     let event_id = req.body.event_id;
     db.Events.update({
       upVotes: db.sequelize.literal('upVotes + 1')
-    }, 
-    {
+    }, {
       where: {
         id: event_id
       }
-    }).then(function(){
-      res.end();
-    }).catch(function (err) {
-      console.log(err);
-      res.json(err);
-    });
+    }).then(function () {
+      db.RSVPs.create({
+        userID: req.user.id,
+        eventID: event_id
+      })
+      }).then(function(){
+          res.end();
+        }).catch(function (err) {
+          console.log(err);
+          res.json(err);
+        });
   })
-  
-  app.get('/api/event/:id', function(req, res){
+
+  app.get('/api/event/:id', function (req, res) {
     // get a single event
     db.Events.findOne({
       where: {
-        id:req.params.id}, 
-        plain:true
-    }).then(function(data){
+        id: req.params.id
+      },
+      plain: true
+    }).then(function (data) {
       console.log(data);
       res.json(data);
     })
   })
 
-  app.put("/api/event/:id", function(req, res){
+  app.put("/api/event/:id", function (req, res) {
     //change name and/or description of an event
     db.Events.update({
       name: req.body.name,
       description: req.body.description
-    },
-    {
-      where:{
+    }, {
+      where: {
         id: req.params.id
       }
-    }
-    ).then(function(data){
+    }).then(function (data) {
       res.json(data);
     }).catch(function (err) {
       res.json(err);
@@ -453,26 +464,28 @@ module.exports = function (app) {
     //upVotes is initially 0, and the creatorID is the user's id that is currently logged in.
 
     let description = "";
-    if(req.body.description){
+    if (req.body.description) {
       description = req.body.description
     }
-    geocoder.geocode(req.body.location, function(err, data){
-      
+    geocoder.geocode(req.body.location, function (err, data) {
+
       let loc = data[0].latitude.toString() + ', ' + data[0].longitude.toString();
       console.log(data[0].latitude.toString() + ', ' + data[0].longitude.toString());
 
       let from = turf.point([data[0].latitude, data[0].longitude]);
       let userLoc = req.user.currentLocation;
       userLoc = userLoc.split(', ');
-      
+
       let to = turf.point([userLoc[0], userLoc[1]]);
-      console.log(userLoc[0]+ ', ' + userLoc[1]);
-      let options = {units: 'miles'};
+      console.log(userLoc[0] + ', ' + userLoc[1]);
+      let options = {
+        units: 'miles'
+      };
 
       let distance = turf.distance(from, to, options);
       console.log('distance: ' + distance);
 
-      if(distance >= 30){
+      if (distance >= 30) {
         res.statusMessage = "Too far away";
         res.status(400).end();
         return;
@@ -481,17 +494,16 @@ module.exports = function (app) {
       let now = moment().format('YYYY-MM-DD');
       let eventDate = req.body.date;
       let future = compareDashedDates(now, eventDate);
-      if(!future){
+      if (!future) {
         res.statusMessage = "Invalid Date";
         res.status(400).end();
         return;
-      }
-
+      } 
       else {
         db.Events.create({
           name: req.body.name,
           description: description,
-          date:req.body.date,
+          date: req.body.date,
           category: req.body.category,
           // streetAddress: req.body.address,
           location: req.body.location,
@@ -504,27 +516,38 @@ module.exports = function (app) {
           console.log("event created");
           console.log(resp.dataValues.id);
           eventID = resp.dataValues.id;
-          }).then(function(){
-            //create a new table with name Messages_<eventname>
-            connection.query(`CREATE TABLE Messages_${eventID}
+        }).then(function () {
+          //create a new table with name Messages_<eventname>
+          connection.query(`CREATE TABLE Messages_${eventID}
             (
               id INTEGER(10) AUTO_INCREMENT PRIMARY KEY,
               content VARCHAR(255) NOT NULL,
               creatorID VARCHAR(255) NOT NULL,
-              createdAt VARCHAR(255) NOT NULL
-              )`, function(err, resp){
-                res.end();
-              });
+              createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+              )`, function (err, resp) {
+            res.end();
+          });
 
-            }).catch(function (err) {
-              console.log(err);
-              res.json(err);
-              })
+        }).catch(function (err) {
+          console.log(err);
+          res.json(err);
+        })
       }
     })
   });
 
-  app.post("/api/message", function(req, res){
+  app.delete("/api/event/:id", function(req,res){
+    db.Events.destroy({
+      where: {
+        id: req.params.id,
+      }
+    }).then(function (resp) {
+      console.log(resp)
+      res.status(200).end();
+    });
+  })
+
+  app.post("/api/message", function (req, res) {
     // create new message 
     let event_id = req.body.id;
     //console.log('content: ');
@@ -537,50 +560,49 @@ module.exports = function (app) {
         console.log('got everything');
         console.table(result);
         res.end();
-    });
+      });
   });
 
-  app.get("/api/message/:id", function(req, res){
+  app.get("/api/message/:id", function (req, res) {
     //get all messages from a certain event
     let event_id = req.params.id;
     // ============= mysql method =======================
-    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function(err, result){
-      if(err) throw err.stack;
+    connection.query(`SELECT * FROM Messages_${event_id} ORDER BY id ASC`, function (err, result) {
+      if (err) throw err.stack;
       console.table(result);
       let msgs_time = {
-        result:result,
-        time:result
+        result: result,
+        time: result
       }
       //connection.release();
       res.send(result);
     });
   });
 
-
   //====================== helper functions ========================================//
-  function escapeString (str) {
+  function escapeString(str) {
     //used for making mysql queries with strings including special characters
     return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-            case "%":
-                return "\\"+char; // prepends a backslash to backslash, percent,
-                                  // and double/single quotes
-        }
+      switch (char) {
+        case "\0":
+          return "\\0";
+        case "\x08":
+          return "\\b";
+        case "\x09":
+          return "\\t";
+        case "\x1a":
+          return "\\z";
+        case "\n":
+          return "\\n";
+        case "\r":
+          return "\\r";
+        case "\"":
+        case "'":
+        case "\\":
+        case "%":
+          return "\\" + char; // prepends a backslash to backslash, percent,
+          // and double/single quotes
+      }
     });
   }
 
@@ -611,29 +633,29 @@ module.exports = function (app) {
     return currentTime;
   }
 
-  function distanceBetween(coords1, coords2){
+  function distanceBetween(coords1, coords2) {
     //takes in comma seperated coordinates and returns the distance between them
     coords1 = formatCoords(coords1);
     coords2 = formatCoords(coords2);
     let from = turf.point(coords1);
     let to = turf.point(coords2);
-    let options = {units: 'miles'};
+    let options = {
+      units: 'miles'
+    };
     let distance = turf.distance(from, to, options);
     return distance;
   }
 
   // takes two string respresentations of dates in format "YYYY-MM-DD"
-  function compareDashedDates(date1, date2){
+  function compareDashedDates(date1, date2) {
     date1 = date1.split('-');
     date2 = date2.split('-');
-    for(let i = 0; i < date1.length; i++){
-      if(parseInt(date1[i]) < parseInt(date2[i])){
+    for (let i = 0; i < date1.length; i++) {
+      if (parseInt(date1[i]) < parseInt(date2[i])) {
         return true;
-      }
-      else if(parseInt(date1[i]) > parseInt(date2[i])){
+      } else if (parseInt(date1[i]) > parseInt(date2[i])) {
         return false;
       }
     }
   }
 }
-

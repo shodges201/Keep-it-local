@@ -4,4 +4,3 @@ VALUES ('Sommerset', 'David Blaine Magic Show', 'Magic', 'lightningbolt117', 5),
  ('Newark', 'Alpha Phi Deltas Dage', 'Party', 'mustang30000', 2),
 ('New York City', 'Kendrick Lamar', 'Concert', 'lilnasY',10);
 
-

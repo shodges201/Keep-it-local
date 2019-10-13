@@ -11,6 +11,11 @@ body {
   /* font-family: 'Work Sans', sans-serif; */
 }
 
+img {
+  height: 400px;
+  width: 600px;
+}
+
 #bubble {
   float: left;
 }
@@ -43,6 +48,18 @@ body {
   border-left: 0;
   margin-left: -10px;
   margin-bottom: -20px;
+}
+
+#login {
+  float: right;
+  margin: 20px 40px 30px;
+  /* position: absolute;
+  left: 50%; */
+  height: 94vh;
+  width: 45%;
+  background-color: rgba(96, 96, 96, 0.705);
+  color: white;
+  border-radius: 25px;
 }
 
 #dark-panel {

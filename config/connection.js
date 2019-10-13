@@ -21,8 +21,13 @@ if (process.env.JAWSDB_URL) {
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "", // add your local password here.
-    database: "events_db" // add your db name here
+    password: "DJ10ssless",
+    database: 'events_db'
+  });
+  
+  connection.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
   });
 }
 

@@ -23,9 +23,11 @@ input:-webkit-autofill:active {
 #event-main {
   position: absolute;
   left: 5%;
-  top: 20%;
+  top: 18%;
   font-size:18px;
   width: 40%;
+  height: 80%;
+  overflow: scroll;
 }
 
 #header-logo {
@@ -155,11 +157,12 @@ h1 {
   left: 0;
   bottom: 0;
   width: 100vw;
-  height:1vw;
+  height:1.5vw;
   background-color: rgb(142, 142, 142);
   color: black;
   text-align: center;
   padding-bottom:21px;
+  font-size:1.1vw;
 }
 
 #logout {
@@ -197,14 +200,18 @@ li {
   letter-spacing: .5px;
 }
 
-.listing-item-name {
-  margin-right:40px;
+.listing-item{
+  font-size:18px;
+}
+
+/* .listing-item-name {
+  margin-right:20px;
 }
 .listing-item-local {
   margin-right:55px;
 }
 .listing-item-cat {
-  margin-right:60px;
+  margin-right:40px;
 }
 .listing-item-votes {
   margin-right:70px;
@@ -214,7 +221,27 @@ li {
 }
 .listing-item-date {
   margin-right:40px;
+} */
+
+
+
+.td-col-name{
+  width:30%;
 }
+.td-col-date{
+  width:15%;
+}
+.td-col-cat{
+  width:17%;
+}
+.td-col-dist{
+  width:17%;
+}
+.td-col-rsvp{
+  width:10%;
+  padding-left:5px;
+}
+
 
 
 
@@ -320,22 +347,22 @@ button {
 .event-link {
   color:white;
 }
-.listing-row:hover  {
+/* .listing-row:hover  {
   color:rgb(250, 149, 159);
   cursor: pointer;
-}
+} */
 
 .event-link:hover {
   color:rgb(250, 149, 159);
 }
 
-.event-link:hover .listing-row{
+/* .event-link:hover .listing-row{
   color:rgb(250, 149, 159);
-}
+} */
 
-.listing-row:hover .event-link {
+/* .listing-row:hover .event-link {
   color:rgb(250, 149, 159);
-}
+} */
 
 
 .event-votes {
@@ -389,23 +416,61 @@ button {
   color:rgba(226, 169, 255, 0.7);
 }
 
+.cancel-event,
+.confirm-del-btn{
+  border:none;
+  background:none;
+  font-size: 20px;
+  padding:0px;
+  color:white;
+  transition-property: transform;
+  transition-duration: .5s;
+}
+
+.cancel-event:hover {
+  transform: rotateZ(45deg);
+  color:rgb(250, 149, 159);
+}
+.confirm-del-btn {
+  color:rgb(206, 98, 109,0.7);
+}
+.confirm-del-btn:hover {
+  color:rgb(250, 149, 159);
+}
+
+
+/* .hide-refer{
+  float:right;
+  color:white;
+}
+.hide-refer:hover{
+  color:rgb(250, 149, 159);
+} */
+
+
+
+.edit-btn, .confirm-btn{
+  margin-right:10px;
+}
+
 .rsvp-btn:hover,
 .msg-btn:hover,
 .new-event-btn:hover,
 .confirm-btn:hover,
-#create-btn:hover {
+#create-btn:hover,
+.edit-btn:hover {
   color:rgba(226, 169, 255);
-
 }
 
 
 #messages {
   overflow:hidden;
+  width:100%;
 }
 
 #messages-list {
   text-align: bottom;
-  height: 150px;
+  height: 140px;
   overflow: scroll;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
@@ -450,10 +515,13 @@ input#create-form {
 .details-edit {
   color:white;
   height: 150px;
+  margin-top: 5px;
 }
 
 #description {
   white-space: pre-wrap;
+  border-bottom: gray 1px solid;
+  padding-bottom:15px;
 }
 
 #refer-box {
@@ -463,16 +531,17 @@ input#create-form {
   z-index: 3;
   left: 43%;
   top: 40%;
-  width: 360px;
-  height: 140px;
+  width: 380px;
+  height: 170px;
   background: rgb(0, 0, 0, 0.8);
   color:white;
   text-align: center;
   padding:45px;
   font-size:18px;
-  overflow: scroll;
+  overflow: hidden;
+  /* overflow: scroll;
   overflow: -moz-scrollbars-none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: none; */
 }
 
 #refer-box::-webkit-scrollbar {
@@ -483,6 +552,10 @@ input#create-form {
 .refer-code {
   color: red;
   margin:0px;
+}
+
+.refer-title{
+  color: rgb(154, 194, 255);
 }
 
 .toast{
@@ -510,6 +583,26 @@ input#create-form {
   color: rgb(250, 149, 159);
   font-size: 20px;
   margin-bottom: 0px;
+}
+
+
+button:focus {
+  outline:none;
+  background:none;
+}
+
+
+.input-field {
+  padding: 0px;
+  margin:0px;
+}
+
+#edit-event-name {
+  font-size:24px;
+}
+
+#edit-event-description {
+  height:100px;
 }
 
 

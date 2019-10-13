@@ -43,7 +43,7 @@
                     <th><span class="listing-header">category</span></th> 
                     <th><span class="listing-header">distance</span></th> 
                     <th><span class="listing-header">rsvps</span></th> 
-                    <th><span class="listing-header">creator</span></th>
+                    <th><span class="listing-header">cancel</span></th>
                 </tr>
                 {{#each user_events}}
                     <tr class="listing-row" data-id="{{this.id}}">
@@ -52,7 +52,7 @@
                         <td class="td-col-cat"><span>{{this.category}}</span></td>
                         <td class="td-col-dist"><span>{{this.distance}} mi</span></td>
                         <td class="td-col-rsvp"><span>{{this.upVotes}}</span></td>
-                        <td class="td-col-id"><span>{{this.creatorID}}</span></td>
+                        <td class="td-col-id"><span><button type="button" class="cancel-event" data-id="{{this.id}}" data-name="{{this.name}}">&#10753;</button></span></td>
                     </tr>
                     {{!-- <tr class="listing-row" data-id="{{this.id}}">
                         <td><span class="listing-item listing-item-name"><a href="/events/{{this.id}}" class="event-link" data-id="{{this.id}}">{{this.name}}</a></span></td>
@@ -77,14 +77,12 @@
             <div>
                 <table align="left" id="listings-table">
                 <tr>
-                
                     <th><span class="listing-header">name</span></th>
                     <th><span class="listing-header">date</span></th>
                     <th><span class="listing-header">category</span></th>
                     <th><span class="listing-header">distance</span></th>
                     <th><span class="listing-header">rsvps</span></th>
                     <th><span class="listing-header">creator</span></th>
-                
                 </tr>
                 {{#each all_events}}
                     <tr class="listing-row" data-id="{{this.id}}">
@@ -192,12 +190,36 @@
             })
         })
 
-        $(document.body).on("click", ".listing-row", function (event) {
-            console.log('clicked row');
-            console.log('/events/' + $(this).data('id'));
-
-            window.location.href = '/events/' + $(this).data('id');
+        $(document.body).on("click", ".cancel-event", function (event) {
+            $("#refer-box").empty();
+            let msg = $("<p>").addClass("refer-msg");
+            msg.text(`Are you sure you want to cancel your `);
+            let name = $(this).attr("data-name");
+            let title = $("<span>").css("color", "rgb(154, 194, 255)").text(name);
+            let q = $("<span>").text(" event?")
+            msg.append(title, q)
+            let event_id = $(this).attr("data-id")
+            let del_btn = $("<button>").attr("type", "button").attr("data-id", event_id).addClass("confirm-del-btn").text("confirm cancel")
+            $("#refer-box").append(msg, del_btn)
+            $("#refer-box").fadeIn(800)
         })
+
+        $(document.body).on("click", ".confirm-del-btn", function (event) {
+            event.preventDefault()
+            let event_id = $(this).attr("data-id")
+            $.ajax("/api/event/"+event_id, {
+                method: "DELETE"
+            }).then(function (result) {
+                console.log(result)
+                window.location.href = '/events';
+            })
+        })
+
+        //$(document.body).on("click", ".listing-row", function (event) {
+        //    console.log('clicked row');
+        //    console.log('/events/' + $(this).data('id'));
+        //    window.location.href = '/events/' + $(this).data('id');
+        //})
 
         $(document.body).on("dblclick", function (event) {
             $("#refer-box").fadeOut(500)

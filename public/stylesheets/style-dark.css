@@ -347,22 +347,22 @@ button {
 .event-link {
   color:white;
 }
-.listing-row:hover  {
+/* .listing-row:hover  {
   color:rgb(250, 149, 159);
   cursor: pointer;
-}
+} */
 
 .event-link:hover {
   color:rgb(250, 149, 159);
 }
 
-.event-link:hover .listing-row{
+/* .event-link:hover .listing-row{
   color:rgb(250, 149, 159);
-}
+} */
 
-.listing-row:hover .event-link {
+/* .listing-row:hover .event-link {
   color:rgb(250, 149, 159);
-}
+} */
 
 
 .event-votes {
@@ -416,13 +416,50 @@ button {
   color:rgba(226, 169, 255, 0.7);
 }
 
+.cancel-event,
+.confirm-del-btn{
+  border:none;
+  background:none;
+  font-size: 20px;
+  padding:0px;
+  color:white;
+  transition-property: transform;
+  transition-duration: .5s;
+}
+
+.cancel-event:hover {
+  transform: rotateZ(45deg);
+  color:rgb(250, 149, 159);
+}
+.confirm-del-btn {
+  color:rgb(206, 98, 109,0.7);
+}
+.confirm-del-btn:hover {
+  color:rgb(250, 149, 159);
+}
+
+
+/* .hide-refer{
+  float:right;
+  color:white;
+}
+.hide-refer:hover{
+  color:rgb(250, 149, 159);
+} */
+
+
+
+.edit-btn, .confirm-btn{
+  margin-right:10px;
+}
+
 .rsvp-btn:hover,
 .msg-btn:hover,
 .new-event-btn:hover,
 .confirm-btn:hover,
-#create-btn:hover {
+#create-btn:hover,
+.edit-btn:hover {
   color:rgba(226, 169, 255);
-
 }
 
 
@@ -494,16 +531,17 @@ input#create-form {
   z-index: 3;
   left: 43%;
   top: 40%;
-  width: 360px;
-  height: 140px;
+  width: 380px;
+  height: 170px;
   background: rgb(0, 0, 0, 0.8);
   color:white;
   text-align: center;
   padding:45px;
   font-size:18px;
-  overflow: scroll;
+  overflow: hidden;
+  /* overflow: scroll;
   overflow: -moz-scrollbars-none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: none; */
 }
 
 #refer-box::-webkit-scrollbar {
@@ -514,6 +552,10 @@ input#create-form {
 .refer-code {
   color: red;
   margin:0px;
+}
+
+.refer-title{
+  color: rgb(154, 194, 255);
 }
 
 .toast{
@@ -539,3 +581,5 @@ button:focus {
 #edit-event-description {
   height:100px;
 }
+
+

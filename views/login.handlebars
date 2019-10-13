@@ -48,48 +48,48 @@
         $("#login-form").on("submit", function (event) {
             event.preventDefault();
             navigator.geolocation.getCurrentPosition(success, error);
-            });
+        });
 
-    function success(position) {
-            let newUser = {
-                    username: $("#login-form [name=username]").val().trim(),
-                    password: $("#login-form [name=password]").val().trim(),
-                    location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString()
-                }
-            console.log(newUser);
-            $.ajax("/api/login", {
-                method: "PUT",
-                data: newUser
-            }).then(function(result){
-                console.log("new user added");
-                window.location.href = "/events";
-            }).fail(function(xhr, status, error){
-                switch(xhr.status){
-                    case(401):
-                        M.toast({
-                            html: 'Bad username or password, try again',
-                            classes: 'toast'
-                        })
-                        break;
-                    default:
-                        M.toast({
-                            html: 'Bad request. Verify your information and try again.',
-                            classes: 'toast'
-                        })
-                        break;
-                }
+        function success(position) {
+                let newUser = {
+                        username: $("#login-form [name=username]").val().trim(),
+                        password: $("#login-form [name=password]").val().trim(),
+                        location: position.coords.latitude.toString() + ", " + position.coords.longitude.toString()
+                    }
+                console.log(newUser);
+                $.ajax("/api/login", {
+                    method: "PUT",
+                    data: newUser
+                }).then(function(result){
+                    console.log("new user added");
+                    window.location.href = "/events";
+                }).fail(function(xhr, status, error){
+                    switch(xhr.status){
+                        case(401):
+                            M.toast({
+                                html: 'Bad username or password, try again',
+                                classes: 'toast'
+                            })
+                            break;
+                        default:
+                            M.toast({
+                                html: 'Bad request. Verify your information and try again.',
+                                classes: 'toast'
+                            })
+                            break;
+                    }
+                })
+        }
+
+        function error() {
+            console.log("failed");
+            usernameInput.val("");
+            passwordInput.val("");
+            M.toast({
+                html: 'Location failed! Try turning on location services, we need your location to validate your local status!',
+                classes: 'toast'
             })
-    }
-
-    function error() {
-        console.log("failed");
-        usernameInput.val("");
-        passwordInput.val("");
-        M.toast({
-            html: 'Location failed! Try turning on location services, we need your location to validate your local status!',
-            classes: 'toast'
-        })
-    }
-});
+        }   
+    });
 
 </script>

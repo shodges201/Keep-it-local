@@ -549,6 +549,17 @@ module.exports = function (app) {
     })
   });
 
+  app.delete("/api/event/:id", function(req,res){
+    db.Events.destroy({
+      where: {
+        id: req.params.id,
+      }
+    }).then(function (resp) {
+      console.log(resp)
+      res.status(200).end();
+    });
+  })
+
   app.post("/api/message", function (req, res) {
     // create new message 
     let event_id = req.body.id;
@@ -578,7 +589,6 @@ module.exports = function (app) {
       res.send(result);
     });
   });
-
 
   //====================== helper functions ========================================//
   function escapeString(str) {

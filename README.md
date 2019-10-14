@@ -14,8 +14,8 @@ New users sign are only asked for a username and password, no additional persona
 
 [Try out the beta](https://keep-it-local.herokuapp.com/) using the below guest login.
 
-username: username 
-password: password
+username: test_user 
+password: test_password
 
 ## Preview
 

@@ -1,13 +1,6 @@
 # KEEP IT LOCAL®
 
-KEEP IT LOCAL® is a tool to help people better connect with their local communities. 
-
-KEEP IT LOCAL® is a tool for independent creatives to build scenes and find audiences.
-
-KEEP IT LOCAL® is an echo chamber to remind you of reality.
-
-KEEP IT LOCAL® is for the kids.
-
+KEEP IT LOCAL is a tool to help people better connect with their local communities. 
 
 New users sign are only asked for a username and password, no additional personal information is stored. In order to protect against possibly malicious users, a referral code is also required to create a new account, which can only be acquired from an existing user. Each time a user logs on, they are asked for their current location and are shown all the events coming up in their area. To build trust across the platform, we must ensure that a user is both in the local area and a mutual friend of someone in the network. To combat spammers, new users must wait 3 days initially before getting referral codes to pass to friends. After that, users can generate a new code every 3 days. Users can browse events and post messages anonymously while tapping into the different pockets of culture bubbling in their town. 
 
